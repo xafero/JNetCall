@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\JNetCall.Sharp\JNetCall.Sharp.csproj" />
+    <ProjectReference Include="..\JNetCall.Sharp\JNetCall.Sharp.csproj" />
   </ItemGroup>
 
 </Project>
