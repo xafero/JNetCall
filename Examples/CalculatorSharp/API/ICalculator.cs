@@ -1,6 +1,8 @@
+using System;
+
 namespace Example.API
 {
-    public interface ICalculator
+    public interface ICalculator : IDisposable
     {
         double Add(double n1, double n2);
         double Subtract(double n1, double n2);

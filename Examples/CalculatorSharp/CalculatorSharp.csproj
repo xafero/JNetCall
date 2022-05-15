@@ -6,4 +6,8 @@
     <RootNamespace>Example</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\JNetCall.Sharp\JNetCall.Sharp.csproj" />
+  </ItemGroup>
+
 </Project>
