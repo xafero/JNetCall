@@ -34,6 +34,13 @@ public final class ServiceHost<T> implements AutoCloseable {
         return svc;
     }
 
+    private void Write(PrintWriter bw, Gson gson, Object res, MethodStatus status) {
+        var obj = new MethodResult(res, status.getValue());
+        var text = gson.toJson(obj);
+        bw.println(text);
+        bw.flush();
+    }
+
     public void open(InputStream input, OutputStream output) throws Exception {
         var inst = createInst();
         var methods = inst.getClass().getMethods();
@@ -45,16 +52,23 @@ public final class ServiceHost<T> implements AutoCloseable {
             String json;
             while ((json = br.readLine()) != null) {
                 var call = gson.fromJson(json, MethodCall.class);
-                if (interfaces.containsKey(call.C)) {
-                    var method = Arrays.stream(methods)
-                            .filter(m -> m.getName().equalsIgnoreCase(call.M))
-                            .findFirst().get();
+                if (!interfaces.containsKey(call.C)) {
+                    Write(bw, gson, call.C, MethodStatus.ClassNotFound);
+                    continue;
+                }
+                var method = Arrays.stream(methods)
+                        .filter(m -> m.getName().equalsIgnoreCase(call.M))
+                        .findFirst().get();
+                if (method == null) {
+                    Write(bw, gson, call.M, MethodStatus.MethodNotFound);
+                    continue;
+                }
+                try {
                     var args = call.A;
                     var res = method.invoke(inst, args);
-                    var obj = new MethodResult(res);
-                    var text = gson.toJson(obj);
-                    bw.println(text);
-                    bw.flush();
+                    Write(bw, gson, res, MethodStatus.Ok);
+                } catch (Exception e) {
+                    Write(bw, gson, e.getMessage(), MethodStatus.MethodFailed);
                 }
             }
         }
