@@ -58,9 +58,10 @@ public final class ServiceHost<T> implements AutoCloseable {
                 }
                 var method = Arrays.stream(methods)
                         .filter(m -> m.getName().equalsIgnoreCase(call.M))
-                        .findFirst().get();
+                        .findFirst().orElse(null);
                 if (method == null) {
-                    Write(bw, gson, call.M, MethodStatus.MethodNotFound);
+                    var debug = call.C + "::" + call.M;
+                    Write(bw, gson, debug, MethodStatus.MethodNotFound);
                     continue;
                 }
                 try {
@@ -68,7 +69,9 @@ public final class ServiceHost<T> implements AutoCloseable {
                     var res = method.invoke(inst, args);
                     Write(bw, gson, res, MethodStatus.Ok);
                 } catch (Exception e) {
-                    Write(bw, gson, e.getMessage(), MethodStatus.MethodFailed);
+                    var debug = call.C + "::" + call.M;
+                    debug += " => " + e.getMessage();
+                    Write(bw, gson, debug, MethodStatus.MethodFailed);
                 }
             }
         }
