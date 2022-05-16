@@ -5,7 +5,7 @@ namespace JNetCall.Sharp
 {
     public static class ServiceEnv
     {
-        public static string GetBaseFolder()
+        private static string GetBaseFolder()
         {
             var baseDir = AppContext.BaseDirectory;
             var sep = Path.DirectorySeparatorChar;
@@ -23,9 +23,16 @@ namespace JNetCall.Sharp
         public static string BuildPath(string path)
         {
             var baseDir = GetBaseFolder();
-            var destDir = Path.Combine(baseDir, path);
+            var destDir = Path.Combine(baseDir, FixSlash(path));
             var target = Path.GetFullPath(destDir);
             return target;
+        }
+
+        private static string FixSlash(string path)
+        {
+            var sep = Path.DirectorySeparatorChar;
+            return path.Replace('/', sep)
+                .Replace('\\', sep);
         }
     }
 }
