@@ -54,7 +54,7 @@ namespace JNetCall.Sharp
             (_process = process).Start();
         }
 
-        private void Stop(int milliseconds = 500)
+        private void Stop(int milliseconds = 250)
         {
             _process?.WaitForExit(milliseconds);
             _process?.Kill(true);
@@ -95,8 +95,15 @@ namespace JNetCall.Sharp
             }
             Write(call);
             var input = Read<MethodResult>();
-            var raw = input.R;
-            invocation.ReturnValue = raw;
+            switch (input.S)
+            {
+                case MethodStatus.Ok:
+                    var raw = input.R;
+                    invocation.ReturnValue = raw;
+                    break;
+                default:
+                    throw new InvalidOperationException($"[{input.S}] {input.R}");
+            }
         }
 
         public void Dispose()

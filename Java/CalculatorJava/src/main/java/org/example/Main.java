@@ -2,6 +2,7 @@ package org.example;
 
 import com.jnetcall.java.ServiceHosts;
 import org.example.api.ICalculator;
+import org.example.api.IDataTyped;
 import org.example.impl.CalculatorService;
 
 public class Main {
@@ -10,6 +11,7 @@ public class Main {
 
         try (var host = ServiceHosts.create(CalculatorService.class)) {
             host.addServiceEndpoint(ICalculator.class);
+            host.addServiceEndpoint(IDataTyped.class);
 
             host.open(System.in, System.out);
         }
