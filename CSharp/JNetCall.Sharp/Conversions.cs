@@ -28,6 +28,8 @@ namespace JNetCall.Sharp
                 return value;
             if (type == typeof(int))
                 return Conv.ChangeType(value, type);
+            if (type == typeof(byte[]))
+                return ((JArray)value).ToObject<byte[]>();
             if (type.IsGenericType)
             {
                 var genType = type.GetGenericTypeDefinition();
@@ -35,8 +37,21 @@ namespace JNetCall.Sharp
                 {
                     var itemType = type.GetGenericArguments()[0];
                     var setType = typeof(SortedSet<>).MakeGenericType(itemType);
-                    var set = ((JArray)value).ToObject(setType);
-                    return set;
+                    return ((JArray)value).ToObject(setType);
+                }
+                if (genType == typeof(IList<>))
+                {
+                    var itemType = type.GetGenericArguments()[0];
+                    var listType = typeof(List<>).MakeGenericType(itemType);
+                    return ((JArray)value).ToObject(listType);
+                }
+                if (genType == typeof(IDictionary<,>))
+                {
+                    var dictTypes = type.GetGenericArguments();
+                    var keyType = dictTypes[0];
+                    var valType = dictTypes[1];
+                    var dictType = typeof(Dictionary<,>).MakeGenericType(keyType, valType);
+                    return ((JObject)value).ToObject(dictType);
                 }
             }
             var debug = $"{type} / {value} / {value.GetType()}";

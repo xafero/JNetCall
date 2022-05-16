@@ -5,6 +5,7 @@ import org.example.api.IDataTyped;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 public class CalculatorService implements ICalculator, IDataTyped {
@@ -106,7 +107,7 @@ public class CalculatorService implements ICalculator, IDataTyped {
     }
 
     @Override
-    public Map<String, Integer> GetSystemVariables(LocalDateTime dts, Duration dur,
+    public Map<String, Integer> GetSystemVariables(ZonedDateTime dts, Duration dur,
                                                    Map<String, Integer> parent) {
         var map = new LinkedHashMap<>(parent);
         map.put("year", dts.getYear());

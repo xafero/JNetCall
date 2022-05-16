@@ -1,7 +1,12 @@
 package com.jnetcall.java;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Base64;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public final class Conversions {
     private static final Base64.Decoder _decoder = Base64.getDecoder();
@@ -105,6 +110,30 @@ public final class Conversions {
             for (var i = 0; i < array.length; i++)
                 array[i] = (String) convert(String.class, list.get(i));
             return array;
+        }
+        if (type == Set.class) {
+            var list = (List) value;
+            var set = new TreeSet();
+            for (var item : list)
+                set.add(item);
+            return set;
+        }
+        if (type == ZonedDateTime.class){
+            var txt = (String)value;
+            var date = ZonedDateTime.parse(txt);
+            return date;
+        }
+        if (type == LocalDateTime.class){
+            var txt = (String)value;
+            var date = LocalDateTime.parse(txt);
+            return date;
+        }
+        if (type == Duration.class){
+            var txt = (String)value;
+            var tmp=txt.split(":");
+            txt = "PT"+tmp[0]+"H"+tmp[1]+"M"+tmp[2]+"S";
+            var date = Duration.parse(txt);
+            return date;
         }
         var debug = type + " / " + value + " / " + value.getClass();
         throw new IllegalArgumentException(debug);
