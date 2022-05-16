@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using Castle.DynamicProxy;
 using Newtonsoft.Json;
@@ -28,6 +29,10 @@ namespace JNetCall.Sharp
 
         private void Start()
         {
+            if (!File.Exists(_jar))
+            {
+                throw new FileNotFoundException("Java archive is missing!", _jar);
+            }
             var pwd = Environment.CurrentDirectory;
             var utf = Encoding.UTF8;
             var process = new Process
