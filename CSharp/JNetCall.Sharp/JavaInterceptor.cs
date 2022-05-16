@@ -99,7 +99,7 @@ namespace JNetCall.Sharp
             switch (input.S)
             {
                 case MethodStatus.Ok:
-                    var raw = input.R;
+                    var raw = Conversions.Convert(method.ReturnType, input.R);
                     invocation.ReturnValue = raw;
                     break;
                 default:

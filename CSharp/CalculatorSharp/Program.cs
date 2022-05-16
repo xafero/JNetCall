@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Example.API;
 using JNetCall.Sharp;
 using static JNetCall.Sharp.ServiceEnv;
@@ -49,6 +50,26 @@ namespace Example
             };
             txt = client.ToArrayText(b.y, b.s, b.i, b.l, b.f, b.d, b.b, b.c, b.t);
             Console.WriteLine("ArrayText({0}) = {2}          [{1}]", SerializeObject(b), txt, Environment.NewLine);
+
+            var lines = new List<string> { "Dog  ", "Hot", "Dog ", "Dog", "Hot    ", "Cat", "Cat", "Hot", "Hot" };
+            var lineCount = client.GetLineCount(lines.ToArray());
+            var set = client.GetUnique(lines, withTrim: true);
+            Console.WriteLine("Unique({0}) = {2}, {1}", string.Join("|", lines), string.Join("|", set), lineCount);
+
+            var list = client.GetDouble(set);
+            Console.WriteLine("Double({0}) = {1}", string.Join("|", set), string.Join("|", list));
+
+            var fs = client.AllocateBytes(3, 42);
+            Console.WriteLine("Allocate() = {0}", string.Join("|", fs));
+
+            var bs = client.GetFileSize(@"Z:\Nothing\Good\No fun with that file.txt");
+            Console.WriteLine("FileSize() = {0}", bs);
+
+            var now = DateTime.Now;
+            var dur = TimeSpan.FromSeconds(94);
+            var env = new Dictionary<string, int> { { "Caller", nameof(Program).Length } };
+            var dict = client.GetSystemVariables(now, dur, env);
+            Console.WriteLine("SystemVars({0} {1}) = {2}", now, dur, string.Join("|", dict));
 
             Console.WriteLine("\nPress <Enter> to terminate the client.");
             Console.ReadLine();

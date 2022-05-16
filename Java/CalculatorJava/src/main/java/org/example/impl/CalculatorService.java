@@ -3,7 +3,9 @@ package org.example.impl;
 import org.example.api.ICalculator;
 import org.example.api.IDataTyped;
 
-import java.util.Arrays;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class CalculatorService implements ICalculator, IDataTyped {
 
@@ -65,5 +67,50 @@ public class CalculatorService implements ICalculator, IDataTyped {
         bld.append(", c = " + Arrays.toString(c));
         bld.append(", t = " + Arrays.toString(t));
         return bld.toString();
+    }
+
+    @Override
+    public int GetLineCount(String[] lines) {
+        return lines.length;
+    }
+
+    @Override
+    public long GetFileSize(String path) {
+        return path.length();
+    }
+
+    @Override
+    public byte[] AllocateBytes(int size, byte value) {
+        var array = new byte[size];
+        for (var i = 0; i < array.length; i++)
+            array[i] = value;
+        return array;
+    }
+
+    @Override
+    public Set<String> GetUnique(List<String> lines, boolean withTrim) {
+        var set = new TreeSet<String>();
+        for (var line : lines)
+            set.add(withTrim ? line.trim() : line);
+        return set;
+    }
+
+    @Override
+    public List<String> GetDouble(Set<String> lines) {
+        var list = new LinkedList<String>();
+        for (var line : lines)
+            list.add(line);
+        for (var line : lines)
+            list.add(line);
+        return list;
+    }
+
+    @Override
+    public Map<String, Integer> GetSystemVariables(LocalDateTime dts, Duration dur,
+                                                   Map<String, Integer> parent) {
+        var map = new LinkedHashMap<>(parent);
+        map.put("year", dts.getYear());
+        map.put("seconds", (int) dur.getSeconds());
+        return map;
     }
 }
