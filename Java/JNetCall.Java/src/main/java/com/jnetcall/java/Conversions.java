@@ -118,20 +118,20 @@ public final class Conversions {
                 set.add(item);
             return set;
         }
-        if (type == ZonedDateTime.class){
-            var txt = (String)value;
+        if (type == ZonedDateTime.class) {
+            var txt = (String) value;
             var date = ZonedDateTime.parse(txt);
             return date;
         }
-        if (type == LocalDateTime.class){
-            var txt = (String)value;
+        if (type == LocalDateTime.class) {
+            var txt = (String) value;
             var date = LocalDateTime.parse(txt);
             return date;
         }
-        if (type == Duration.class){
-            var txt = (String)value;
-            var tmp=txt.split(":");
-            txt = "PT"+tmp[0]+"H"+tmp[1]+"M"+tmp[2]+"S";
+        if (type == Duration.class) {
+            var txt = (String) value;
+            var tmp = txt.split(":");
+            txt = "PT" + tmp[0] + "H" + tmp[1] + "M" + tmp[2] + "S";
             var date = Duration.parse(txt);
             return date;
         }
