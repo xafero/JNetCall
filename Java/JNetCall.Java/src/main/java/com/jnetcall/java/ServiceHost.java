@@ -2,6 +2,7 @@ package com.jnetcall.java;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.*;
 import java.util.Arrays;
@@ -53,7 +54,8 @@ public final class ServiceHost<T> implements AutoCloseable {
             while ((json = br.readLine()) != null) {
                 var call = gson.fromJson(json, MethodCall.class);
                 if (!interfaces.containsKey(call.C)) {
-                    Write(bw, gson, call.C, MethodStatus.ClassNotFound);
+                    var debug = call.C;
+                    Write(bw, gson, debug, MethodStatus.ClassNotFound);
                     continue;
                 }
                 var method = Arrays.stream(methods)
@@ -68,9 +70,8 @@ public final class ServiceHost<T> implements AutoCloseable {
                     var args = call.A;
                     var res = method.invoke(inst, args);
                     Write(bw, gson, res, MethodStatus.Ok);
-                } catch (Exception e) {
-                    var debug = call.C + "::" + call.M;
-                    debug += " => " + e.getMessage();
+                } catch (Throwable e) {
+                    var debug = ExceptionUtils.getStackTrace(e.getCause());
                     Write(bw, gson, debug, MethodStatus.MethodFailed);
                 }
             }
