@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +72,9 @@ public final class ServiceHost<T> implements AutoCloseable {
                     var res = method.invoke(inst, args);
                     Write(bw, gson, res, MethodStatus.Ok);
                 } catch (Throwable e) {
-                    var debug = ExceptionUtils.getStackTrace(e.getCause());
+                    var cause = e instanceof InvocationTargetException
+                            ? e.getCause() : e;
+                    var debug = ExceptionUtils.getStackTrace(cause);
                     Write(bw, gson, debug, MethodStatus.MethodFailed);
                 }
             }

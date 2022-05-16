@@ -1,6 +1,7 @@
 ﻿using System;
 using Example.API;
 using JNetCall.Sharp;
+using Newtonsoft.Json;
 using static JNetCall.Sharp.ServiceEnv;
 
 namespace Example
@@ -32,8 +33,22 @@ namespace Example
             result = client.Divide(value1, value2);
             Console.WriteLine("Divide({0} {1}) = {2}", value1, value2, result);
 
-            var txt = client.ToText(true);
-            Console.WriteLine("ToText(...) = [{0}]", txt);
+            var a = new
+            {
+                y = byte.MaxValue, s = short.MaxValue, i = int.MaxValue, l = long.MaxValue,
+                f = float.MaxValue, d = double.MaxValue, b = true, c = char.MaxValue, t = "Str"
+            };
+            var txt = client.ToSimpleText(a.y, a.s, a.i, a.l, a.f, a.d, a.b, a.c, a.t);
+            Console.WriteLine("SimpleText({0}) = [{1}]", a, txt);
+
+            var b = new
+            {
+                y = new[] { byte.MinValue }, s = new[] { short.MinValue }, i = new[] { int.MinValue },
+                l = new[] { long.MinValue }, f = new[] { float.MinValue }, d = new[] { double.MinValue },
+                b = new[] { false }, c = new[] { char.MinValue }, t = new[] { "Str1" }
+            };
+            txt = client.ToArrayText(b.y, b.s, b.i, b.l, b.f, b.d, b.b, b.c, b.t);
+            Console.WriteLine("ArrayText({0}) = [{1}]", JsonConvert.SerializeObject(b), txt);
 
             Console.WriteLine("\nPress <Enter> to terminate the client.");
             Console.ReadLine();

@@ -75,7 +75,8 @@ namespace JNetCall.Sharp
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException(json, e);
+                var error = $"{json} {_process.StandardError.ReadToEnd()}".Trim();
+                throw new InvalidOperationException(error, e);
             }
         }
 
