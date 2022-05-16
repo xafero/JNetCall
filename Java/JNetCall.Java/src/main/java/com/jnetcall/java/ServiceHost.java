@@ -41,9 +41,9 @@ public final class ServiceHost<T> implements AutoCloseable {
         try (var ir = new InputStreamReader(input);
              var or = new OutputStreamWriter(output);
              var br = new BufferedReader(ir);
-             var bw = new BufferedWriter(or)) {
-            while (br.ready()) {
-                var json = br.readLine();
+             var bw = new PrintWriter(or)) {
+            String json;
+            while ((json = br.readLine()) != null) {
                 var call = gson.fromJson(json, MethodCall.class);
                 if (interfaces.containsKey(call.C)) {
                     var method = Arrays.stream(methods)
@@ -53,8 +53,7 @@ public final class ServiceHost<T> implements AutoCloseable {
                     var res = method.invoke(inst, args);
                     var obj = new MethodResult(res);
                     var text = gson.toJson(obj);
-                    bw.write(text);
-                    bw.newLine();
+                    bw.println(text);
                     bw.flush();
                 }
             }

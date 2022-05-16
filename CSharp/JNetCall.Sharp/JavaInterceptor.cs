@@ -66,9 +66,7 @@ namespace JNetCall.Sharp
             var json = _process.StandardOutput.ReadLine();
             try
             {
-                return string.IsNullOrWhiteSpace(json)
-                    ? default
-                    : JsonConvert.DeserializeObject<T>(json, Settings);
+                return JsonConvert.DeserializeObject<T>(json!, Settings);
             }
             catch (Exception e)
             {
@@ -79,12 +77,18 @@ namespace JNetCall.Sharp
         public void Intercept(IInvocation invocation)
         {
             var method = invocation.Method;
-            Write(new MethodCall
+            var call = new MethodCall
             {
                 C = method.DeclaringType?.Name,
                 M = method.Name,
                 A = invocation.Arguments
-            });
+            };
+            if (call.C == nameof(IDisposable) && call.M == nameof(IDisposable.Dispose))
+            {
+                Dispose();
+                return;
+            }
+            Write(call);
             var input = Read<MethodResult>();
             var raw = input.R;
             invocation.ReturnValue = raw;
