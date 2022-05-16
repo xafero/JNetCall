@@ -32,6 +32,9 @@ namespace Example
             result = client.Divide(value1, value2);
             Console.WriteLine("Divide({0} {1}) = {2}", value1, value2, result);
 
+            var txt = client.ToText(true);
+            Console.WriteLine("ToText(...) = [{0}]", txt);
+
             Console.WriteLine("\nPress <Enter> to terminate the client.");
             Console.ReadLine();
             client.Dispose();
