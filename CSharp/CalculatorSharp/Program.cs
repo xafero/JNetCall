@@ -1,6 +1,7 @@
 ﻿using System;
 using Example.API;
 using JNetCall.Sharp;
+using static JNetCall.Sharp.ServiceEnv;
 
 namespace Example
 {
@@ -8,7 +9,8 @@ namespace Example
     {
         private static void Main()
         {
-            var client = ServiceClient.Create<ICalculator>();
+            const string path = @"..\..\Java\CalculatorJava\target\calculator-java.jar";
+            var client = ServiceClient.Create<ICalculator>(BuildPath(path));
 
             var value1 = 100.00D;
             var value2 = 15.99D;
