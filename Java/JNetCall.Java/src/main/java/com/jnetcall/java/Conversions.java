@@ -1,12 +1,10 @@
 package com.jnetcall.java;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.Base64;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public final class Conversions {
     private static final Base64.Decoder _decoder = Base64.getDecoder();
@@ -45,6 +43,12 @@ public final class Conversions {
         }
         if (type == double.class) {
             return ((Number) value).doubleValue();
+        }
+        if (type == BigDecimal.class) {
+            return BigDecimal.valueOf(((Number) value).doubleValue());
+        }
+        if (type == UUID.class) {
+            return UUID.fromString((String) value);
         }
         if (type == boolean.class) {
             return ((Boolean) value).booleanValue();
@@ -88,6 +92,20 @@ public final class Conversions {
             var array = new double[list.size()];
             for (var i = 0; i < array.length; i++)
                 array[i] = (double) convert(double.class, list.get(i));
+            return array;
+        }
+        if (type == BigDecimal[].class) {
+            var list = (List) value;
+            var array = new BigDecimal[list.size()];
+            for (var i = 0; i < array.length; i++)
+                array[i] = (BigDecimal) convert(BigDecimal.class, list.get(i));
+            return array;
+        }
+        if (type == UUID[].class) {
+            var list = (List) value;
+            var array = new UUID[list.size()];
+            for (var i = 0; i < array.length; i++)
+                array[i] = (UUID) convert(UUID.class, list.get(i));
             return array;
         }
         if (type == boolean[].class) {

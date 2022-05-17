@@ -3,6 +3,7 @@ package org.example.impl;
 import org.example.api.ICalculator;
 import org.example.api.IDataTyped;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -40,7 +41,8 @@ public class CalculatorService implements ICalculator, IDataTyped {
 
     @Override
     public String ToSimpleText(byte y, short s, int i, long l, float f,
-                               double d, boolean b, char c, String t) {
+                               double d, boolean b, char c, String t,
+                               BigDecimal u, UUID g) {
         var bld = new StringBuilder();
         bld.append(" y = " + y);
         bld.append(", s = " + s);
@@ -51,12 +53,15 @@ public class CalculatorService implements ICalculator, IDataTyped {
         bld.append(", b = " + b);
         bld.append(", c = " + c);
         bld.append(", t = " + t);
+        bld.append(", u = " + u);
+        bld.append(", g = " + g);
         return bld.toString();
     }
 
     @Override
     public String ToArrayText(byte[] y, short[] s, int[] i, long[] l, float[] f,
-                              double[] d, boolean[] b, char[] c, String[] t) {
+                              double[] d, boolean[] b, char[] c, String[] t,
+                              BigDecimal[] u, UUID[] g) {
         var bld = new StringBuilder();
         bld.append(" y = " + Arrays.toString(y));
         bld.append(", s = " + Arrays.toString(s));
@@ -67,6 +72,8 @@ public class CalculatorService implements ICalculator, IDataTyped {
         bld.append(", b = " + Arrays.toString(b));
         bld.append(", c = " + Arrays.toString(c));
         bld.append(", t = " + Arrays.toString(t));
+        bld.append(", u = " + Arrays.toString(u));
+        bld.append(", g = " + Arrays.toString(g));
         return bld.toString();
     }
 

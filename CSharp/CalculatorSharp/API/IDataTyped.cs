@@ -6,10 +6,10 @@ namespace Example.API
     public interface IDataTyped : IDisposable
     {
         string ToSimpleText(sbyte y, short s, int i, long l, float f, double d,
-            bool b, char c, string t);
+            bool b, char c, string t, decimal u, Guid g);
 
         string ToArrayText(byte[] y, short[] s, int[] i, long[] l, float[] f, double[] d,
-            bool[] b, char[] c, string[] t);
+            bool[] b, char[] c, string[] t, decimal[] u, Guid[] g);
         
         int GetLineCount(string[] lines);
         

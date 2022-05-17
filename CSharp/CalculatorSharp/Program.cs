@@ -37,18 +37,20 @@ namespace Example
             var a = new
             {
                 y = sbyte.MaxValue, s = short.MaxValue, i = int.MaxValue, l = long.MaxValue,
-                f = float.MaxValue, d = double.MaxValue, b = true, c = char.MaxValue, t = "Str"
+                f = float.MaxValue, d = double.MaxValue, b = true, c = char.MaxValue, t = "Str",
+                u = decimal.MaxValue, g = Guid.NewGuid()
             };
-            var txt = client.ToSimpleText(a.y, a.s, a.i, a.l, a.f, a.d, a.b, a.c, a.t);
+            var txt = client.ToSimpleText(a.y, a.s, a.i, a.l, a.f, a.d, a.b, a.c, a.t, a.u, a.g);
             Console.WriteLine("SimpleText({0}) = {2}           [{1}]", a, txt, Environment.NewLine);
 
             var b = new
             {
                 y = new[] { (byte)42 }, s = new[] { short.MinValue }, i = new[] { int.MinValue },
                 l = new[] { long.MinValue }, f = new[] { float.MinValue }, d = new[] { double.MinValue },
-                b = new[] { false }, c = new[] { 'X' }, t = new[] { "Str1" }
+                b = new[] { false }, c = new[] { 'X' }, t = new[] { "Str1" },
+                u = new[] { decimal.MinValue }, g = new[] { Guid.Empty }
             };
-            txt = client.ToArrayText(b.y, b.s, b.i, b.l, b.f, b.d, b.b, b.c, b.t);
+            txt = client.ToArrayText(b.y, b.s, b.i, b.l, b.f, b.d, b.b, b.c, b.t, b.u, b.g);
             Console.WriteLine("ArrayText({0}) = {2}          [{1}]", SerializeObject(b), txt, Environment.NewLine);
 
             var lines = new List<string> { "Dog  ", "Hot", "Dog ", "Dog", "Hot    ", "Cat", "Cat", "Hot", "Hot" };
