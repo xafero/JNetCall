@@ -3,6 +3,10 @@ package org.example.impl;
 import org.example.api.ICalculator;
 import org.example.api.IDataTyped;
 import org.example.api.IMultiple;
+import org.javatuples.Pair;
+import org.javatuples.Quartet;
+import org.javatuples.Quintet;
+import org.javatuples.Triplet;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -121,5 +125,66 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple {
         map.put("year", dts.getYear());
         map.put("seconds", (int) dur.getSeconds());
         return map;
+    }
+
+    @Override
+    public Pair<Integer, String> GetTuple2T(int a, String b) {
+        return Pair.with(a, b);
+    }
+
+    @Override
+    public Pair<Integer, String> GetTuple2V(Pair<Integer, String> v) {
+        return Pair.with(v.getValue0(), v.getValue1());
+    }
+
+    @Override
+    public Triplet<Integer, String, Boolean> GetTuple3T(int a, String b, boolean c) {
+        return Triplet.with(a, b, c);
+    }
+
+    @Override
+    public Triplet<Integer, String, Boolean> GetTuple3V(Triplet<Integer, String, Boolean> v) {
+        return Triplet.with(v.getValue0(), v.getValue1(), v.getValue2());
+    }
+
+    @Override
+    public Quartet<String, String[], Integer, int[]> GetTuple4T(String a, String[] b, int c, int[] d) {
+        return Quartet.with(a, b, c, d);
+    }
+
+    @Override
+    public Quartet<String, String[], Integer, int[]> GetTuple4V(Quartet<String, String[], Integer, int[]> v) {
+        return Quartet.with(v.getValue0(), v.getValue1(), v.getValue2(), v.getValue3());
+    }
+
+    @Override
+    public Quintet<Integer, Float, Long, String, String> GetTuple5T(int a, float b, long c, String d, String e) {
+        return Quintet.with(a, b, c, d, e);
+    }
+
+    @Override
+    public Quintet<Integer, Float, Long, String, String> GetTuple5V(Quintet<Integer, Float, Long, String, String> v) {
+        return Quintet.with(v.getValue0(), v.getValue1(), v.getValue2(), v.getValue3(), v.getValue4());
+    }
+
+    @Override
+    public WeekDay FindBestDay(int value) {
+        if (value == WeekDay.Wednesday.Value) return WeekDay.Wednesday;
+        if (value == WeekDay.Friday.Value) return WeekDay.Friday;
+        throw new IllegalArgumentException(value + " !");
+    }
+
+    @Override
+    public EnumSet<Days> FindFreeDays() {
+        return EnumSet.of(Days.Saturday, Days.Thursday, Days.Sunday);
+    }
+
+    @Override
+    public String GetTextOf(WeekDay[] taken, EnumSet<Days> days) {
+        var bld = new StringBuilder();
+        bld.append(Arrays.toString(taken));
+        bld.append(" | ");
+        bld.append(Arrays.toString(days.toArray()));
+        return bld.toString();
     }
 }
