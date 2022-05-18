@@ -4,4 +4,5 @@ public class MethodCall {
     public String C;
     public String M;
     public Object[] A;
+    public String[] H;
 }

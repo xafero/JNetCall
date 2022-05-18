@@ -69,7 +69,7 @@ public final class ServiceHost<T> implements AutoCloseable {
                 }
                 try {
                     var types = method.getParameterTypes();
-                    var args = Conversions.convert(types, call.A);
+                    var args = Conversions.convert(types, call.A, call.H);
                     var res = method.invoke(inst, args);
                     Write(bw, gson, res, MethodStatus.Ok);
                 } catch (Throwable e) {

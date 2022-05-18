@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Castle.DynamicProxy;
 using Newtonsoft.Json;
@@ -87,7 +88,8 @@ namespace JNetCall.Sharp
             {
                 C = method.DeclaringType?.Name,
                 M = method.Name,
-                A = invocation.Arguments
+                A = invocation.Arguments,
+                H = invocation.Arguments.Select(Conversions.GetHint).ToArray()
             };
             if (call.C == nameof(IDisposable) && call.M == nameof(IDisposable.Dispose))
             {
