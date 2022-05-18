@@ -73,6 +73,28 @@ namespace Example
             var dict = client.GetSystemVariables(now, dur, env);
             Console.WriteLine("SystemVars({0} {1}) = {2}", now, dur, string.Join("|", dict));
 
+            var t2T = client.GetTuple2T(200, "Greece");
+            var t2V = client.GetTuple2V(t2T);
+            Console.WriteLine("GetTuple2() = {0} {1}", t2T, t2V);
+
+            var t3T = client.GetTuple3T(1, "cat", true);
+            var t3V = client.GetTuple3V(t3T);
+            Console.WriteLine("GetTuple3() = {0} {1}", t3T, t3V);
+
+            var t4T = client.GetTuple4T("perl", new[] { "java", "c#" }, 1, new[] { 2, 3 });
+            var t4V = client.GetTuple4V(t4T);
+            Console.WriteLine("GetTuple4() = {0} {1}", t4T, t4V);
+
+            var t5T = client.GetTuple5T(1, 1.5f, 2L, "dot", "net");
+            var t5V = client.GetTuple5V(t5T);
+            Console.WriteLine("GetTuple5() = {0} {1}", t5T, t5V);
+
+            var bd1 = client.FindBestDay(3);
+            var bd2 = client.FindBestDay(5);
+            var bds = client.FindFreeDays();
+            var bdt = client.GetTextOf(new[] { bd1, bd2 }, bds);
+            Console.WriteLine("GetTextOf() = {0}", bdt);
+
             Console.WriteLine("\nPress <Enter> to terminate the client.");
             Console.ReadLine();
             client.Dispose();

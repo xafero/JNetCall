@@ -2,6 +2,7 @@ package org.example.impl;
 
 import org.example.api.ICalculator;
 import org.example.api.IDataTyped;
+import org.example.api.IMultiple;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-public class CalculatorService implements ICalculator, IDataTyped {
+public class CalculatorService implements ICalculator, IDataTyped, IMultiple {
 
     public double Add(double n1, double n2) {
         double result = n1 + n2;

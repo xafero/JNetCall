@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Example.API
 {
-    public interface IDataTyped : IDisposable
+    public interface IDataTyped : IMultiple
     {
         string ToSimpleText(sbyte y, short s, int i, long l, float f, double d,
             bool b, char c, string t, decimal u, Guid g);
