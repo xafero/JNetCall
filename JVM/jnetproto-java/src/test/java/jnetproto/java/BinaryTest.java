@@ -4,6 +4,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -68,9 +69,9 @@ public final class BinaryTest {
                         {"000000000000000000", "PT0St"},
                         {"0028431CEBE2360A43", "PT256204778H48M5.477St"},
                         // DateTime
-                        {"0000096E88F1FFFFFF", "0001-01-01T00:00:00.0000000d"},
-                        {"004F98346200000000", "2022-03-18T14:33:51.4722797d"},
-                        {"006F33F4FF3A000000", "9999-12-31T22:59:59.9999999d"},
+                        {"0000096E88F1FFFFFF00000000", "0001-01-01T00:00:00.0000000d"},
+                        {"004F983462000000006D104800", "2022-03-18T14:33:51.4722797d"},
+                        {"006F33F4FF3A0000007F969800", "9999-12-31T22:59:59.9999999d"},
                         // Guid
                         {"0000000000000000000000000000000000", "00000000-0000-0000-0000-000000000000g"},
                         {"00F234CA7D8C13DA45BE396595E432F529", "7dca34f2-138c-45da-be39-6595e432f529g"}
@@ -79,6 +80,20 @@ public final class BinaryTest {
 
     @Test(dataProvider = "writeArgs")
     public void shouldWrite(String expected, Object value) throws Exception {
+        var mem = new ByteArrayOutputStream[1];
+        try (var writer = createWriter(mem)) {
+            writer.writeObject(value = getValue(value));
+            var actual = "00" + toHex(mem[0]).substring(2);
+            assertEquals(actual, expected);
+
+            try (var reader = createReader(mem[0])) {
+                var obj = reader.readObject();
+                assertEquals(obj, value);
+            }
+        }
+    }
+
+    private static Object getValue(Object value) {
         var txt = value.toString();
         if (txt.endsWith("m"))
             value = new BigDecimal(txt.replace('m', ' ').trim());
@@ -88,12 +103,7 @@ public final class BinaryTest {
             value = LocalDateTime.parse(txt.replace('d', ' ').trim());
         else if (txt.endsWith("g"))
             value = UUID.fromString(txt.replace('g', ' ').trim());
-        var mem = new ByteArrayOutputStream[1];
-        try (var writer = createWriter(mem)) {
-            writer.writeObject(value);
-            var actual = "00" + toHex(mem[0]).substring(2);
-            assertEquals(actual, expected);
-        }
+        return value;
     }
 
     private static String toHex(ByteArrayOutputStream mem) {
@@ -103,5 +113,10 @@ public final class BinaryTest {
 
     private static IDataWriter createWriter(ByteArrayOutputStream[] mem) {
         return new BinaryWriter(mem[0] = new ByteArrayOutputStream());
+    }
+
+    private static IDataReader createReader(ByteArrayOutputStream mem)
+    {
+        return new BinaryReader(new ByteArrayInputStream(mem.toByteArray()));
     }
 }

@@ -7,14 +7,17 @@ import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public class BinaryWriter implements IDataWriter {
     private final Charset _enc;
+    private final DateTimeFormatter _fmt;
     private final OutputStream _stream;
 
     public BinaryWriter(OutputStream stream) {
         _enc = Charset.forName("UTF8");
+        _fmt = DateTimeFormatter.ofPattern("SSSSSSS");
         _stream = stream;
     }
 
@@ -74,7 +77,9 @@ public class BinaryWriter implements IDataWriter {
 
     @Override
     public void writeTimestamp(LocalDateTime value) throws IOException {
-        writeI64(value.atZone(ZoneOffset.UTC).toEpochSecond());
+        var date = value.atZone(ZoneOffset.UTC);
+        writeI64(date.toEpochSecond());
+        writeI32(Integer.parseInt(date.format(_fmt)));
     }
 
     @Override
