@@ -84,8 +84,9 @@ public class BinaryReader implements IDataReader {
 
     @Override
     public LocalDateTime readTimestamp() throws IOException {
+        var millis = readI64();
         var nano = readI32() * 100;
-        return LocalDateTime.ofEpochSecond(readI64(), nano, ZoneOffset.UTC);
+        return LocalDateTime.ofEpochSecond(millis, nano, ZoneOffset.UTC);
     }
 
     @Override
