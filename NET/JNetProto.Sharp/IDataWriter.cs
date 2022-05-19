@@ -18,6 +18,7 @@ namespace JNetProto.Sharp
         void WriteDuration(TimeSpan value);
         void WriteTimestamp(DateTime value);
         void WriteGuid(Guid value);
+        void WriteArray(Array value);
         void WriteObject(object value);
     }
 }

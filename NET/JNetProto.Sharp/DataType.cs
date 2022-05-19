@@ -18,6 +18,7 @@ namespace JNetProto.Sharp
         UTF8,
         Duration,
         Timestamp,
-        Guid
+        Guid,
+        Array
     }
 }

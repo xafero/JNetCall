@@ -92,11 +92,24 @@ namespace JNetProto.Sharp
             _stream.Write(value.ToByteArray());
         }
 
+        public void WriteArray(Array value)
+        {
+            for (var dim = 0; dim < value.Rank; dim++)
+                WriteI32(value.GetLength(dim));
+            foreach (var item in value)
+                WriteObject(item);
+        }
+
         public void WriteObject(object value)
         {
             var kind = DataTypes.GetKind(value.GetType());
-            _stream.WriteByte((byte)kind);
-            switch (kind)
+            _stream.WriteByte((byte)kind.Kind);
+            if (kind is DataTypes.ArrayDt adt)
+            {
+                _stream.WriteByte((byte)adt.Item.Kind);
+                _stream.WriteByte((byte)adt.Rank);
+            }
+            switch (kind.Kind)
             {
                 case DataType.Bool: WriteBool((bool)value); break;
                 case DataType.U8: WriteU8((byte)value); break;
@@ -112,6 +125,7 @@ namespace JNetProto.Sharp
                 case DataType.Duration: WriteDuration((TimeSpan)value); break;
                 case DataType.Timestamp: WriteTimestamp((DateTime)value); break;
                 case DataType.Guid: WriteGuid((Guid)value); break;
+                case DataType.Array: WriteArray((Array)value); break;
                 default: throw new ArgumentException(kind.ToString());
             }
         }

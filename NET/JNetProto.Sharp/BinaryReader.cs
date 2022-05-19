@@ -98,6 +98,26 @@ namespace JNetProto.Sharp
             return new Guid(ReadBytes(16));
         }
 
+        public Array ReadArray()
+        {
+            var item = (DataType)_stream.ReadByte();
+            var rank = _stream.ReadByte();
+            var lengths = new int[rank];
+            for (var i = 0; i < rank; i++)
+                lengths[i] = ReadI32();
+            var clazz = DataTypes.GetClass(item);
+            var array = Array.CreateInstance(clazz, lengths);
+            var indices = new int[rank];
+            for (var i = 0; i < rank; i++)
+            for (var j = 0; j < lengths[i]; j++)
+            {
+                var obj = ReadObject();
+                indices[i] = j;
+                array.SetValue(obj, indices);
+            }
+            return array;
+        }
+
         public object ReadObject()
         {
             var kind = (DataType)_stream.ReadByte();
@@ -117,6 +137,7 @@ namespace JNetProto.Sharp
                 case DataType.Duration: return ReadDuration();
                 case DataType.Timestamp: return ReadTimestamp();
                 case DataType.Guid: return ReadGuid();
+                case DataType.Array: return ReadArray();
                 default: throw new ArgumentException(kind.ToString());
             }
         }

@@ -18,6 +18,7 @@ namespace JNetProto.Sharp
         TimeSpan ReadDuration();
         DateTime ReadTimestamp();
         Guid ReadGuid();
+        Array ReadArray();
         object ReadObject();
     }
 }

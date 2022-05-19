@@ -26,7 +26,22 @@ namespace JNetProto.Sharp
             }
         }
 
-        public static DataType GetKind(Type type)
+        public interface IDataType { DataType Kind { get; } }
+        public record SingleDt(DataType Kind) : IDataType;
+        public record ArrayDt(DataType Kind, int Rank, IDataType Item) : IDataType;
+
+        public static IDataType GetKind(Type type)
+        {
+            if (type.IsArray)
+            {
+                var rank = type.GetArrayRank();
+                var item = type.GetElementType();
+                return new ArrayDt(DataType.Array, rank, GetKind(item));
+            }
+            return new SingleDt(GetSingleKind(type));
+        }
+
+        private static DataType GetSingleKind(Type type)
         {
             switch (type.FullName)
             {
