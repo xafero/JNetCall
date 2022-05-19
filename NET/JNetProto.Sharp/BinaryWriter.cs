@@ -72,7 +72,9 @@ namespace JNetProto.Sharp
 
         public void WriteTimestamp(DateTime value)
         {
-            WriteI64(new DateTimeOffset(value.ToUniversalTime()).ToUnixTimeSeconds());
+            var date = new DateTimeOffset(value.ToUniversalTime());
+            WriteI64(date.ToUnixTimeSeconds());
+            WriteI32(int.Parse(date.ToString("fffffff")));
         }
 
         public void WriteGuid(Guid value)

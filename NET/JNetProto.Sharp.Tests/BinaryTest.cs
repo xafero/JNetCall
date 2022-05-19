@@ -56,17 +56,29 @@ namespace JNetProto.Sharp.Tests
         [InlineData("000131", "1m")]
         [InlineData("001D3739323238313632353134323634333337353933353433393530333335", "79228162514264337593543950335m")]
         // TimeSpan
-        [InlineData("0028431CEBE2360AC3", "-10675199.02:48:05.4775808t")]
+        [InlineData("0028431CEBE2360AC3", "-10675199.02:48:05.4769664t")]
         [InlineData("000000000000000000", "00:00:00t")]
-        [InlineData("0028431CEBE2360A43", "10675199.02:48:05.4775807t")]
+        [InlineData("0028431CEBE2360A43", "10675199.02:48:05.4769664t")]
         // DateTime
-        [InlineData("0000096E88F1FFFFFF", "0001-01-01T00:00:00.0000000d")]
-        [InlineData("004F98346200000000", "2022-03-18T14:33:51.4722797d")]
-        [InlineData("006F33F4FF3A000000", "9999-12-31T22:59:59.9999999d")]
+        [InlineData("0000096E88F1FFFFFF00000000", "0001-01-01T00:00:00.0000000d")]
+        [InlineData("004F983462000000006D104800", "2022-03-18T14:33:51.4722797d")]
+        [InlineData("006F33F4FF3A0000007F969800", "9999-12-31T22:59:59.9999999d")]
         // Guid
         [InlineData("0000000000000000000000000000000000", "00000000-0000-0000-0000-000000000000g")]
         [InlineData("00F234CA7D8C13DA45BE396595E432F529", "7dca34f2-138c-45da-be39-6595e432f529g")]
         public void ShouldWrite(string expected, object value)
+        {
+            using var writer = CreateWriter(out var mem);
+            writer.WriteObject(value = GetValue(value));
+            var actual = "00" + ToHex(mem).Substring(2);
+            Assert.Equal(expected, actual);
+
+            using var reader = CreateReader(mem);
+            var obj = reader.ReadObject();
+            Assert.Equal(value, obj);
+        }
+
+        private static object GetValue(object value)
         {
             var txt = value.ToString()!;
             if (txt.EndsWith("m"))
@@ -74,13 +86,11 @@ namespace JNetProto.Sharp.Tests
             else if (txt.EndsWith("t"))
                 value = TimeSpan.Parse(txt.Replace('t', ' ').Trim());
             else if (txt.EndsWith("d"))
-                value = DateTime.Parse(txt.Replace('d', ' ').Trim(), styles: AssumeUniversal);
+                value = DateTime.Parse(txt.Replace('d', ' ').Trim(), 
+                    styles: AssumeUniversal).ToUniversalTime();
             else if (txt.EndsWith("g"))
                 value = Guid.Parse(txt.Replace('g', ' ').Trim());
-            using var writer = CreateWriter(out var mem);
-            writer.WriteObject(value);
-            var actual = "00" + ToHex(mem).Substring(2);
-            Assert.Equal(expected, actual);
+            return value;
         }
 
         private static string ToHex(MemoryStream mem)
@@ -92,6 +102,11 @@ namespace JNetProto.Sharp.Tests
         private static IDataWriter CreateWriter(out MemoryStream mem)
         {
             return new BinaryWriter(mem = new MemoryStream());
+        }
+
+        private static IDataReader CreateReader(MemoryStream mem)
+        {
+            return new BinaryReader(new MemoryStream(mem.ToArray()));
         }
     }
 }

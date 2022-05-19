@@ -27,6 +27,21 @@ namespace JNetProto.Sharp
             return bytes;
         }
 
+        public byte ReadU8()
+        {
+            return ReadBytes(1)[0];
+        }
+
+        public sbyte ReadI8()
+        {
+            return (sbyte)ReadBytes(1)[0];
+        }
+
+        public short ReadI16()
+        {
+            return BitConverter.ToInt16(ReadBytes(2));
+        }
+
         public int ReadI32()
         {
             return BitConverter.ToInt32(ReadBytes(4));
@@ -44,22 +59,54 @@ namespace JNetProto.Sharp
 
         public double ReadF64()
         {
-            return BitConverter.ToSingle(ReadBytes(8));
+            return BitConverter.ToDouble(ReadBytes(8));
         }
 
         public decimal ReadF128()
         {
-            return decimal.Parse(ReadString(), _cult);
+            return decimal.Parse(ReadUtf8(), _cult);
         }
 
         public string ReadUtf8()
         {
-            return ReadString();
+            return _enc.GetString(ReadBytes(_stream.ReadByte()));
         }
 
-        private string ReadString()
+        public TimeSpan ReadDuration()
         {
-            return _enc.GetString(ReadBytes(_stream.ReadByte()));
+            return TimeSpan.FromMilliseconds(ReadF64());
+        }
+
+        public DateTime ReadTimestamp()
+        {
+            var date = DateTimeOffset.FromUnixTimeSeconds(ReadI64()).UtcDateTime;
+            return date.AddTicks(ReadI32());
+        }
+
+        public Guid ReadGuid()
+        {
+            return new Guid(ReadBytes(16));
+        }
+
+        public object ReadObject()
+        {
+            var kind = (DataType)_stream.ReadByte();
+            switch (kind)
+            {
+                case DataType.U8: return ReadU8();
+                case DataType.I8: return ReadI8();
+                case DataType.I16: return ReadI16();
+                case DataType.I32: return ReadI32();
+                case DataType.I64: return ReadI64();
+                case DataType.F32: return ReadF32();
+                case DataType.F64: return ReadF64();
+                case DataType.F128: return ReadF128();
+                case DataType.UTF8: return ReadUtf8();
+                case DataType.Duration: return ReadDuration();
+                case DataType.Timestamp: return ReadTimestamp();
+                case DataType.Guid: return ReadGuid();
+                default: throw new ArgumentException(kind.ToString());
+            }
         }
 
         public void Dispose()
