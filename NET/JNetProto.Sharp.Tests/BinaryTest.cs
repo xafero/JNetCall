@@ -9,6 +9,9 @@ namespace JNetProto.Sharp.Tests
     public class BinaryTest
     {
         [Theory]
+        // Bool
+        [InlineData("0001", true)]
+        [InlineData("0000", false)]
         // Byte
         [InlineData("0000", (byte)0)]
         [InlineData("007F", (byte)127)]
@@ -66,6 +69,12 @@ namespace JNetProto.Sharp.Tests
         // Guid
         [InlineData("0000000000000000000000000000000000", "00000000-0000-0000-0000-000000000000g")]
         [InlineData("00F234CA7D8C13DA45BE396595E432F529", "7dca34f2-138c-45da-be39-6595e432f529g")]
+        // Char
+        [InlineData("002000", ' ')]
+        [InlineData("005F00", '_')]
+        // String
+        [InlineData("0000", "")]
+        [InlineData("00015F", "_")]
         public void ShouldWrite(string expected, object value)
         {
             using var writer = CreateWriter(out var mem);

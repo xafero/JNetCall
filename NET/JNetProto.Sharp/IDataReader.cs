@@ -4,6 +4,7 @@ namespace JNetProto.Sharp
 {
     public interface IDataReader : IDisposable
     {
+        bool ReadBool();
         byte ReadU8();
         sbyte ReadI8();
         short ReadI16();
@@ -12,6 +13,7 @@ namespace JNetProto.Sharp
         float ReadF32();
         double ReadF64();
         decimal ReadF128();
+        char ReadChar();
         string ReadUtf8();
         TimeSpan ReadDuration();
         DateTime ReadTimestamp();

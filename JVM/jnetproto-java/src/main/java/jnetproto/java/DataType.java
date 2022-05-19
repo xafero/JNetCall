@@ -3,6 +3,7 @@ package jnetproto.java;
 public enum DataType {
     Unknown,
 
+    Bool,
     U8,
     I8,
     I16,
@@ -11,6 +12,7 @@ public enum DataType {
     F32,
     F64,
     F128,
+    Char,
     UTF8,
     Duration,
     Timestamp,

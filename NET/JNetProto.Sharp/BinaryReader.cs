@@ -27,6 +27,11 @@ namespace JNetProto.Sharp
             return bytes;
         }
 
+        public bool ReadBool()
+        {
+            return ReadU8() == 1;
+        }
+
         public byte ReadU8()
         {
             return ReadBytes(1)[0];
@@ -67,6 +72,11 @@ namespace JNetProto.Sharp
             return decimal.Parse(ReadUtf8(), _cult);
         }
 
+        public char ReadChar()
+        {
+            return (char)ReadI16();
+        }
+
         public string ReadUtf8()
         {
             return _enc.GetString(ReadBytes(_stream.ReadByte()));
@@ -93,6 +103,7 @@ namespace JNetProto.Sharp
             var kind = (DataType)_stream.ReadByte();
             switch (kind)
             {
+                case DataType.Bool: return ReadBool();
                 case DataType.U8: return ReadU8();
                 case DataType.I8: return ReadI8();
                 case DataType.I16: return ReadI16();
@@ -101,6 +112,7 @@ namespace JNetProto.Sharp
                 case DataType.F32: return ReadF32();
                 case DataType.F64: return ReadF64();
                 case DataType.F128: return ReadF128();
+                case DataType.Char: return ReadChar();
                 case DataType.UTF8: return ReadUtf8();
                 case DataType.Duration: return ReadDuration();
                 case DataType.Timestamp: return ReadTimestamp();

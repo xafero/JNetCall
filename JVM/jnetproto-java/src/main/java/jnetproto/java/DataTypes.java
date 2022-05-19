@@ -8,6 +8,7 @@ import java.util.UUID;
 public final class DataTypes {
     public static Class getClass(DataType type) {
         switch (type) {
+            case Bool: return boolean.class;
             case I8: return byte.class;
             case I16: return short.class;
             case I32: return int.class;
@@ -15,6 +16,7 @@ public final class DataTypes {
             case F32: return float.class;
             case F64: return double.class;
             case F128: return BigDecimal.class;
+            case Char: return char.class;
             case UTF8: return String.class;
             case Duration: return Duration.class;
             case Timestamp: return LocalDateTime.class;
@@ -25,6 +27,7 @@ public final class DataTypes {
 
     public static DataType getKind(Class type) {
         switch (type.getName()) {
+            case "java.lang.Boolean": return DataType.Bool;
             case "java.lang.Byte": return DataType.I8;
             case "java.lang.Short": return DataType.I16;
             case "java.lang.Integer": return DataType.I32;
@@ -32,6 +35,7 @@ public final class DataTypes {
             case "java.lang.Float": return DataType.F32;
             case "java.lang.Double": return DataType.F64;
             case "java.math.BigDecimal": return DataType.F128;
+            case "java.lang.Character": return DataType.Char;
             case "java.lang.String": return DataType.UTF8;
             case "java.time.Duration": return DataType.Duration;
             case "java.time.LocalDateTime": return DataType.Timestamp;

@@ -18,6 +18,11 @@ namespace JNetProto.Sharp
             _stream = stream;
         }
 
+        public void WriteBool(bool value)
+        {
+            WriteU8((byte)(value ? 1 : 0));
+        }
+
         public void WriteU8(byte value)
         {
             _stream.Write(new[] { value });
@@ -58,6 +63,11 @@ namespace JNetProto.Sharp
             WriteUtf8(value.ToString(_cult));
         }
 
+        public void WriteChar(char value)
+        {
+            WriteI16((short)value);
+        }
+
         public void WriteUtf8(string value)
         {
             var bytes = _enc.GetBytes(value);
@@ -88,6 +98,7 @@ namespace JNetProto.Sharp
             _stream.WriteByte((byte)kind);
             switch (kind)
             {
+                case DataType.Bool: WriteBool((bool)value); break;
                 case DataType.U8: WriteU8((byte)value); break;
                 case DataType.I8: WriteI8((sbyte)value); break;
                 case DataType.I16: WriteI16((short)value); break;
@@ -96,6 +107,7 @@ namespace JNetProto.Sharp
                 case DataType.F32: WriteF32((float)value); break;
                 case DataType.F64: WriteF64((double)value); break;
                 case DataType.F128: WriteF128((decimal)value); break;
+                case DataType.Char: WriteChar((char)value); break;
                 case DataType.UTF8: WriteUtf8((string)value); break;
                 case DataType.Duration: WriteDuration((TimeSpan)value); break;
                 case DataType.Timestamp: WriteTimestamp((DateTime)value); break;

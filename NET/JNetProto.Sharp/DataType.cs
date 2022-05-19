@@ -5,6 +5,7 @@ namespace JNetProto.Sharp
     {
         Unknown = 0,
 
+        Bool,
         U8,
         I8,
         I16,
@@ -13,6 +14,7 @@ namespace JNetProto.Sharp
         F32,
         F64,
         F128,
+        Char,
         UTF8,
         Duration,
         Timestamp,

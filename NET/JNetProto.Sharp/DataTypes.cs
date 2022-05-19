@@ -8,6 +8,7 @@ namespace JNetProto.Sharp
         {
             switch (type)
             {
+                case DataType.Bool: return typeof(bool);
                 case DataType.U8: return typeof(byte);
                 case DataType.I8: return typeof(sbyte);
                 case DataType.I16: return typeof(short);
@@ -16,6 +17,7 @@ namespace JNetProto.Sharp
                 case DataType.F32: return typeof(float);
                 case DataType.F64: return typeof(double);
                 case DataType.F128: return typeof(decimal);
+                case DataType.Char: return typeof(char);
                 case DataType.UTF8: return typeof(string);
                 case DataType.Duration: return typeof(TimeSpan);
                 case DataType.Timestamp: return typeof(DateTime);
@@ -28,6 +30,7 @@ namespace JNetProto.Sharp
         {
             switch (type.FullName)
             {
+                case "System.Boolean": return DataType.Bool;
                 case "System.Byte": return DataType.U8;
                 case "System.SByte": return DataType.I8;
                 case "System.Int16": return DataType.I16;
@@ -36,6 +39,7 @@ namespace JNetProto.Sharp
                 case "System.Single": return DataType.F32;
                 case "System.Double": return DataType.F64;
                 case "System.Decimal": return DataType.F128;
+                case "System.Char": return DataType.Char;
                 case "System.String": return DataType.UTF8;
                 case "System.TimeSpan": return DataType.Duration;
                 case "System.DateTime": return DataType.Timestamp;
