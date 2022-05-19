@@ -18,6 +18,9 @@ public final class BinaryTest {
     public Object[][] getWriteArgs() {
         return new Object[][]
                 {
+                        // Bool
+                        {"0001", true},
+                        {"0000", false},
                         // Byte
                         {"0000", (byte) 0},
                         {"007F", (byte) 127},
@@ -74,7 +77,13 @@ public final class BinaryTest {
                         {"006F33F4FF3A0000007F969800", "9999-12-31T22:59:59.9999999d"},
                         // Guid
                         {"0000000000000000000000000000000000", "00000000-0000-0000-0000-000000000000g"},
-                        {"00F234CA7D8C13DA45BE396595E432F529", "7dca34f2-138c-45da-be39-6595e432f529g"}
+                        {"00F234CA7D8C13DA45BE396595E432F529", "7dca34f2-138c-45da-be39-6595e432f529g"},
+                        // Char
+                        {"002000", ' '},
+                        {"005F00", '_'},
+                        // String
+                        {"0000", ""},
+                        {"00015F", "_"}
                 };
     }
 

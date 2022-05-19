@@ -22,6 +22,11 @@ public class BinaryWriter implements IDataWriter {
     }
 
     @Override
+    public void writeBool(boolean value) throws IOException {
+        writeU8((byte) (value ? 1 : 0));
+    }
+
+    @Override
     public void writeU8(byte value) throws IOException {
         _stream.write(new byte[]{value});
     }
@@ -63,6 +68,12 @@ public class BinaryWriter implements IDataWriter {
     }
 
     @Override
+    public void writeChar(char value) throws IOException
+    {
+        writeI16((short) value);
+    }
+
+    @Override
     public void writeUtf8(String value) throws IOException
     {
         var bytes = value.getBytes(_enc);
@@ -94,6 +105,7 @@ public class BinaryWriter implements IDataWriter {
         _stream.write(kind.ordinal());
         switch (kind)
         {
+            case Bool: writeBool((boolean)value); break;
             case U8: writeU8((byte)value); break;
             case I8: writeI8((byte)value); break;
             case I16: writeI16((short)value); break;
@@ -102,6 +114,7 @@ public class BinaryWriter implements IDataWriter {
             case F32: writeF32((float)value); break;
             case F64: writeF64((double)value); break;
             case F128: writeF128((BigDecimal)value); break;
+            case Char: writeChar((char)value); break;
             case UTF8: writeUtf8((String)value); break;
             case Duration: writeDuration((Duration) value); break;
             case Timestamp: writeTimestamp((LocalDateTime) value); break;

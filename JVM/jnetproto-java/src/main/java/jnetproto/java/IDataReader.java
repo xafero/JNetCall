@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface IDataReader extends AutoCloseable {
+    boolean readBool() throws IOException;
     byte readU8() throws IOException;
     byte readI8() throws IOException;
     short readI16() throws IOException;
@@ -15,6 +16,7 @@ public interface IDataReader extends AutoCloseable {
     float readF32() throws IOException;
     double readF64() throws IOException;
     BigDecimal readF128() throws IOException;
+    char readChar() throws IOException;
     String readUtf8() throws IOException;
     Duration readDuration() throws IOException;
     LocalDateTime readTimestamp() throws IOException;

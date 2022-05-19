@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface IDataWriter extends AutoCloseable {
+    void writeBool(boolean value) throws IOException;
     void writeU8(byte value) throws IOException;
     void writeI8(byte value) throws IOException;
     void writeI16(short value) throws IOException;
@@ -15,6 +16,7 @@ public interface IDataWriter extends AutoCloseable {
     void writeF32(float value) throws IOException;
     void writeF64(double value) throws IOException;
     void writeF128(BigDecimal value) throws IOException;
+    void writeChar(char value) throws IOException;
     void writeUtf8(String value) throws IOException;
     void writeDuration(Duration value) throws IOException;
     void writeTimestamp(LocalDateTime value) throws IOException;

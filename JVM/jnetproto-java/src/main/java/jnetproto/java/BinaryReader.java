@@ -25,9 +25,14 @@ public class BinaryReader implements IDataReader {
     private byte[] readBytes(int size) throws IOException {
         var bytes = new byte[size];
         var length = _stream.read(bytes);
-        if (length != size)
+        if (length != size && size != 0)
             throw new IllegalArgumentException(length + " ; " + size);
         return bytes;
+    }
+
+    @Override
+    public boolean readBool() throws IOException {
+        return readU8() == 1;
     }
 
     @Override
@@ -71,6 +76,11 @@ public class BinaryReader implements IDataReader {
     }
 
     @Override
+    public char readChar() throws IOException {
+        return (char)readI16();
+    }
+
+    @Override
     public String readUtf8() throws IOException {
         return _enc.decode(ByteBuffer.wrap(readBytes(_stream.read()))).toString();
     }
@@ -99,6 +109,7 @@ public class BinaryReader implements IDataReader {
         var kind = DataType.values()[_stream.read()];
         switch (kind)
         {
+            case Bool: return readBool();
             case U8: return readU8();
             case I8: return readI8();
             case I16: return readI16();
@@ -107,6 +118,7 @@ public class BinaryReader implements IDataReader {
             case F32: return readF32();
             case F64: return readF64();
             case F128: return readF128();
+            case Char: return readChar();
             case UTF8: return readUtf8();
             case Duration: return readDuration();
             case Timestamp: return readTimestamp();
