@@ -72,7 +72,8 @@ public class BinaryWriter implements IDataWriter {
 
     @Override
     public void writeDuration(Duration value) throws IOException {
-        writeF64(value.toMillis());
+        var raw = (double) value.toMillis();
+        writeF64(raw);
     }
 
     @Override

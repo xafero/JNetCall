@@ -79,7 +79,7 @@ public class BinaryReader implements IDataReader {
     public Duration readDuration() throws IOException {
         var ms = readF64();
         var cast = (long) ms;
-        return Duration.ofNanos(cast);
+        return Duration.ofMillis(cast);
     }
 
     @Override
