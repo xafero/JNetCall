@@ -153,9 +153,9 @@ public final class BinaryTest {
         if (txt.endsWith("t")) {
             return Duration.parse(txt.replace('t', ' ').trim());
         }
-        if (txt.endsWith("d")) {
+        if (txt.endsWith("d") && !txt.startsWith("[")) {
             var rawDate = txt.replace('d', ' ').trim();
-            if (!rawDate.contains("T") && !rawDate.startsWith("[")) rawDate += "T00:00:00.0000000";
+            if (!rawDate.contains("T")) rawDate += "T00:00:00.0000000";
             return LocalDateTime.parse(rawDate);
         }
         if (txt.endsWith("g")) {
