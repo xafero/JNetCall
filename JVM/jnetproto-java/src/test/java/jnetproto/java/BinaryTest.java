@@ -123,10 +123,8 @@ public final class BinaryTest {
 
     private static Object getValue(Object value) {
         var txt = value.toString();
-        if (value instanceof Object[] objects)
-        {
-            if (objects[0] instanceof Character c && c == 'M')
-            {
+        if (value instanceof Object[] objects) {
+            if (objects[0] instanceof Character c && c == 'M') {
                 try {
                     var dictType = HashMap.class;
                     var dict = dictType.getDeclaredConstructor().newInstance();
@@ -135,26 +133,33 @@ public final class BinaryTest {
                         var val = objects[i + 1];
                         dict.put(key, val);
                     }
-                    value = dict;
-                } catch (Exception e) { e.printStackTrace(); }
+                    return dict;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        } else if (txt.startsWith("1;")) {
+        }
+        if (txt.startsWith("1;")) {
             var parts = txt.substring(2).split(";");
             var oneArray = Arrays.stream(parts).map(s -> getValue(s)).toArray();
             var array = Array.newInstance(oneArray[0].getClass(), oneArray.length);
             for (var i = 0; i < oneArray.length; i++)
                 Array.set(array, i, oneArray[i]);
-            value = array;
-        } else if (txt.endsWith("m")) {
-            value = new BigDecimal(txt.replace('m', ' ').trim());
-        } else if (txt.endsWith("t")) {
-            value = Duration.parse(txt.replace('t', ' ').trim());
-        } else if (txt.endsWith("d")) {
+            return array;
+        }
+        if (txt.endsWith("m")) {
+            return new BigDecimal(txt.replace('m', ' ').trim());
+        }
+        if (txt.endsWith("t")) {
+            return Duration.parse(txt.replace('t', ' ').trim());
+        }
+        if (txt.endsWith("d")) {
             var rawDate = txt.replace('d', ' ').trim();
-            if (!rawDate.contains("T")) rawDate += "T00:00:00.0000000";
-            value = LocalDateTime.parse(rawDate);
-        } else if (txt.endsWith("g")) {
-            value = UUID.fromString(txt.replace('g', ' ').trim());
+            if (!rawDate.contains("T") && !rawDate.startsWith("[")) rawDate += "T00:00:00.0000000";
+            return LocalDateTime.parse(rawDate);
+        }
+        if (txt.endsWith("g")) {
+            return UUID.fromString(txt.replace('g', ' ').trim());
         }
         return value;
     }
