@@ -34,12 +34,7 @@ public class BinaryReader implements IDataReader {
 
     @Override
     public boolean readBool() throws IOException {
-        return readU8() == 1;
-    }
-
-    @Override
-    public byte readU8() throws IOException {
-        return readBytes(1)[0];
+        return readI8() == 1;
     }
 
     @Override
@@ -135,7 +130,6 @@ public class BinaryReader implements IDataReader {
         switch (kind)
         {
             case Bool: return readBool();
-            case U8: return readU8();
             case I8: return readI8();
             case I16: return readI16();
             case I32: return readI32();

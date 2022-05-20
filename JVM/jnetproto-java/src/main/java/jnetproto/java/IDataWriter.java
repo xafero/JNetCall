@@ -1,7 +1,6 @@
 package jnetproto.java;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -9,7 +8,6 @@ import java.util.UUID;
 
 public interface IDataWriter extends AutoCloseable {
     void writeBool(boolean value) throws IOException;
-    void writeU8(byte value) throws IOException;
     void writeI8(byte value) throws IOException;
     void writeI16(short value) throws IOException;
     void writeI32(int value) throws IOException;

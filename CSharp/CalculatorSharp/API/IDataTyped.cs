@@ -5,7 +5,7 @@ namespace Example.API
 {
     public interface IDataTyped : IMultiple
     {
-        string ToSimpleText(sbyte y, short s, int i, long l, float f, double d,
+        string ToSimpleText(byte y, short s, int i, long l, float f, double d,
             bool b, char c, string t, decimal u, Guid g);
 
         string ToArrayText(byte[] y, short[] s, int[] i, long[] l, float[] f, double[] d,

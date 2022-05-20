@@ -8,7 +8,6 @@ import java.util.UUID;
 
 public interface IDataReader extends AutoCloseable {
     boolean readBool() throws IOException;
-    byte readU8() throws IOException;
     byte readI8() throws IOException;
     short readI16() throws IOException;
     int readI32() throws IOException;

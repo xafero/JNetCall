@@ -10,8 +10,7 @@ namespace JNetProto.Sharp
             switch (type)
             {
                 case DataType.Bool: return typeof(bool);
-                case DataType.U8: return typeof(byte);
-                case DataType.I8: return typeof(sbyte);
+                case DataType.I8: return typeof(byte);
                 case DataType.I16: return typeof(short);
                 case DataType.I32: return typeof(int);
                 case DataType.I64: return typeof(long);
@@ -60,8 +59,7 @@ namespace JNetProto.Sharp
             switch (type.FullName)
             {
                 case "System.Boolean": return DataType.Bool;
-                case "System.Byte": return DataType.U8;
-                case "System.SByte": return DataType.I8;
+                case "System.Byte": return DataType.I8;
                 case "System.Int16": return DataType.I16;
                 case "System.Int32": return DataType.I32;
                 case "System.Int64": return DataType.I64;

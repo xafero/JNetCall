@@ -4,7 +4,6 @@ public enum DataType {
     Unknown,
 
     Bool,
-    U8,
     I8,
     I16,
     I32,

@@ -11,7 +11,7 @@ public final class DataTypes {
     public static Class getClass(DataType type) {
         switch (type) {
             case Bool: return boolean.class;
-            case I8: case U8: return byte.class;
+            case I8: return byte.class;
             case I16: return short.class;
             case I32: return int.class;
             case I64: return long.class;

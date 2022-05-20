@@ -24,12 +24,7 @@ public class BinaryWriter implements IDataWriter {
 
     @Override
     public void writeBool(boolean value) throws IOException {
-        writeU8((byte) (value ? 1 : 0));
-    }
-
-    @Override
-    public void writeU8(byte value) throws IOException {
-        _stream.write(new byte[]{value});
+        writeI8((byte) (value ? 1 : 0));
     }
 
     @Override
@@ -131,7 +126,6 @@ public class BinaryWriter implements IDataWriter {
         switch (kind.Kind())
         {
             case Bool: writeBool((boolean)value); break;
-            case U8: writeU8((byte)value); break;
             case I8: writeI8((byte)value); break;
             case I16: writeI16((short)value); break;
             case I32: writeI32((int)value); break;

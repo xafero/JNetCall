@@ -6,7 +6,6 @@ namespace JNetProto.Sharp
         Unknown = 0,
 
         Bool,
-        U8,
         I8,
         I16,
         I32,

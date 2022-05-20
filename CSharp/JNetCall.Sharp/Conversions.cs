@@ -113,8 +113,7 @@ namespace JNetCall.Sharp
             {
                 case "System.Boolean": return "bool";
                 case "System.Char": return "char";
-                case "System.Byte": return "uint8";
-                case "System.SByte": return "int8";
+                case "System.Byte": return "int8";
                 case "System.Int16": return "int16";
                 case "System.Int32": return "int32";
                 case "System.Int64": return "int64";

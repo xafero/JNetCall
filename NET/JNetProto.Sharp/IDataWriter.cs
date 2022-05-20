@@ -6,8 +6,7 @@ namespace JNetProto.Sharp
     public interface IDataWriter : IDisposable
     {
         void WriteBool(bool value);
-        void WriteU8(byte value);
-        void WriteI8(sbyte value);
+        void WriteI8(byte value);
         void WriteI16(short value);
         void WriteI32(int value);
         void WriteI64(long value);

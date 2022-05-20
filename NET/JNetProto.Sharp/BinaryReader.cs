@@ -31,17 +31,12 @@ namespace JNetProto.Sharp
 
         public bool ReadBool()
         {
-            return ReadU8() == 1;
+            return ReadI8() == 1;
         }
 
-        public byte ReadU8()
+        public byte ReadI8()
         {
-            return ReadBytes(1)[0];
-        }
-
-        public sbyte ReadI8()
-        {
-            return (sbyte)ReadBytes(1)[0];
+            return (byte)ReadBytes(1)[0];
         }
 
         public short ReadI16()
@@ -149,7 +144,6 @@ namespace JNetProto.Sharp
             switch (kind)
             {
                 case DataType.Bool: return ReadBool();
-                case DataType.U8: return ReadU8();
                 case DataType.I8: return ReadI8();
                 case DataType.I16: return ReadI16();
                 case DataType.I32: return ReadI32();

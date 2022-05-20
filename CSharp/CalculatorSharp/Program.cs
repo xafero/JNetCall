@@ -36,7 +36,7 @@ namespace Example
 
             var a = new
             {
-                y = sbyte.MaxValue, s = short.MaxValue, i = int.MaxValue, l = long.MaxValue,
+                y = byte.MaxValue, s = short.MaxValue, i = int.MaxValue, l = long.MaxValue,
                 f = float.MaxValue, d = double.MaxValue, b = true, c = char.MaxValue, t = "Str",
                 u = decimal.MaxValue, g = Guid.NewGuid()
             };

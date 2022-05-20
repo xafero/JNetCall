@@ -21,17 +21,12 @@ namespace JNetProto.Sharp
 
         public void WriteBool(bool value)
         {
-            WriteU8((byte)(value ? 1 : 0));
+            WriteI8((byte)(value ? 1 : 0));
         }
 
-        public void WriteU8(byte value)
+        public void WriteI8(byte value)
         {
             _stream.Write(new[] { value });
-        }
-
-        public void WriteI8(sbyte value)
-        {
-            _stream.Write(new[] { (byte)value });
         }
 
         public void WriteI16(short value)
@@ -137,8 +132,7 @@ namespace JNetProto.Sharp
             switch (kind.Kind)
             {
                 case DataType.Bool: WriteBool((bool)value); break;
-                case DataType.U8: WriteU8((byte)value); break;
-                case DataType.I8: WriteI8((sbyte)value); break;
+                case DataType.I8: WriteI8((byte)value); break;
                 case DataType.I16: WriteI16((short)value); break;
                 case DataType.I32: WriteI32((int)value); break;
                 case DataType.I64: WriteI64((long)value); break;

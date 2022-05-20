@@ -28,7 +28,6 @@ public final class BinaryTest {
                         {"0000", (byte) 0},
                         {"007F", (byte) 127},
                         {"00FF", (byte) 255},
-                        // SByte
                         {"0080", (byte) -128},
                         {"00C0", (byte) -64},
                         {"0000", (byte) 0},
