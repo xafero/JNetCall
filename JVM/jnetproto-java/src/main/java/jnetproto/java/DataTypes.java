@@ -1,10 +1,9 @@
 package jnetproto.java;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 public final class DataTypes {
@@ -30,14 +29,27 @@ public final class DataTypes {
     public interface IDataType { DataType Kind(); }
     public record SingleDt(DataType Kind) implements IDataType { };
     public record ArrayDt(DataType Kind, int Rank, IDataType Item) implements IDataType {};
+    public record MapDt(DataType Kind, IDataType Key, IDataType Val) implements IDataType {};
 
-    public static IDataType getKind(Class type)
+    public static IDataType getKind(Object instance)
     {
+        var type = instance instanceof Class cl ? cl : instance.getClass();
         if (type.isArray())
         {
             var rank = BitConverter.getRank(type);
             var item = type.getComponentType();
             return new ArrayDt(DataType.Array, rank, getKind(item));
+        }
+        if (Map.class.isAssignableFrom(type))
+        {
+            var dict = (Map)instance;
+            Map.Entry f = null;
+            for (var entry : dict.entrySet())
+            {
+                f = (Map.Entry)entry;
+                break;
+            }
+            return new MapDt(DataType.Map, getKind(f.getKey()), getKind(f.getValue()));
         }
         return new SingleDt(getSingleKind(type));
     }

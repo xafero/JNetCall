@@ -113,7 +113,7 @@ public class BinaryWriter implements IDataWriter {
     }
 
     private void writeObject(Object value, boolean skipHeader) throws IOException {
-        var kind = DataTypes.getKind(value.getClass());
+        var kind = DataTypes.getKind(value);
         if (!skipHeader)
         {
             _stream.write(kind.Kind().ordinal());

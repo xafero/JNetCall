@@ -1,7 +1,5 @@
 package jnetproto.java;
 
-import org.apache.commons.lang3.EnumUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
@@ -9,10 +7,8 @@ import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Arrays;
 import java.util.UUID;
 
 public class BinaryReader implements IDataReader {
