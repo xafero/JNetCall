@@ -2,8 +2,10 @@ package jnetproto.java;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.TreeMap;
 import java.util.UUID;
 
 public final class BitConverter {
@@ -87,5 +89,21 @@ public final class BitConverter {
         if (!type.isArray())
             return 0;
         return StringUtils.countMatches(type.getName(), '[');
+    }
+
+    public static byte getByte(DataTypes.IDataType kind) {
+        return (byte) kind.Kind().ordinal();
+    }
+
+    public static DataType toDataType(int read) {
+        return DataType.values()[read];
+    }
+
+    public static <T> T create(Class<T> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

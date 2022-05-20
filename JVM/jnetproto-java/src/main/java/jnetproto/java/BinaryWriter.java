@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import java.util.UUID;
 
 public class BinaryWriter implements IDataWriter {
@@ -108,6 +109,16 @@ public class BinaryWriter implements IDataWriter {
     }
 
     @Override
+    public void writeMap(Map value) throws IOException {
+        writeI32(value.size());
+        for (var item : value.entrySet()) {
+            var entry = (Map.Entry) item;
+            writeObject(entry.getKey(), true);
+            writeObject(entry.getValue(), true);
+        }
+    }
+
+    @Override
     public void writeObject(Object value) throws IOException {
         writeObject(value, false);
     }
@@ -116,11 +127,16 @@ public class BinaryWriter implements IDataWriter {
         var kind = DataTypes.getKind(value);
         if (!skipHeader)
         {
-            _stream.write(kind.Kind().ordinal());
+            _stream.write(BitConverter.getByte(kind));
             if (kind instanceof DataTypes.ArrayDt adt)
             {
-                _stream.write(adt.Item().Kind().ordinal());
+                _stream.write(BitConverter.getByte(adt.Item()));
                 _stream.write((byte)adt.Rank());
+            }
+            else if (kind instanceof DataTypes.MapDt mdt)
+            {
+                _stream.write(BitConverter.getByte(mdt.Key()));
+                _stream.write(BitConverter.getByte(mdt.Val()));
             }
         }
         switch (kind.Kind())
@@ -139,6 +155,7 @@ public class BinaryWriter implements IDataWriter {
             case Timestamp: writeTimestamp((LocalDateTime) value); break;
             case Guid: writeGuid((UUID) value); break;
             case Array: writeArray(value); break;
+            case Map: writeMap((Map) value); break;
             default: throw new IllegalArgumentException(kind.toString());
         }
     }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 public interface IDataWriter extends AutoCloseable {
@@ -21,5 +22,6 @@ public interface IDataWriter extends AutoCloseable {
     void writeTimestamp(LocalDateTime value) throws IOException;
     void writeGuid(UUID value) throws IOException;
     void writeArray(Object value) throws IOException;
+    void writeMap(Map value) throws IOException;
     void writeObject(Object value) throws IOException;
 }

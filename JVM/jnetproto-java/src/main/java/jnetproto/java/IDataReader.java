@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 public interface IDataReader extends AutoCloseable {
@@ -21,5 +22,6 @@ public interface IDataReader extends AutoCloseable {
     LocalDateTime readTimestamp() throws IOException;
     UUID readGuid() throws IOException;
     Object readArray() throws IOException;
+    Map readMap() throws IOException;
     Object readObject() throws IOException;
 }

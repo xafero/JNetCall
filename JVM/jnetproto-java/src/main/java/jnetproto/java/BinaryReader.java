@@ -9,6 +9,8 @@ import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 public class BinaryReader implements IDataReader {
@@ -117,6 +119,20 @@ public class BinaryReader implements IDataReader {
     }
 
     @Override
+    public Map readMap() throws IOException {
+        var keyKind = BitConverter.toDataType(_stream.read());
+        var valKind = BitConverter.toDataType(_stream.read());
+        var size = readI32();
+        var map = BitConverter.create(TreeMap.class);
+        for (var i = 0; i < size; i++) {
+            var key = readObject(keyKind);
+            var val = readObject(valKind);
+            map.put(key, val);
+        }
+        return map;
+    }
+
+    @Override
     public Object readObject() throws IOException {
         var kind = DataType.values()[_stream.read()];
         return readObject(kind);
@@ -139,6 +155,7 @@ public class BinaryReader implements IDataReader {
             case Timestamp: return readTimestamp();
             case Guid: return readGuid();
             case Array: return readArray();
+            case Map: return readMap();
             default: throw new IllegalArgumentException(kind.toString());
         }
     }
