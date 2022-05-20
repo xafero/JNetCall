@@ -97,17 +97,25 @@ namespace JNetProto.Sharp
             for (var dim = 0; dim < value.Rank; dim++)
                 WriteI32(value.GetLength(dim));
             foreach (var item in value)
-                WriteObject(item);
+                WriteObject(item, true);
         }
 
         public void WriteObject(object value)
         {
+            WriteObject(value, false);
+        }
+
+        private void WriteObject(object value, bool skipHeader)
+        {
             var kind = DataTypes.GetKind(value.GetType());
-            _stream.WriteByte((byte)kind.Kind);
-            if (kind is DataTypes.ArrayDt adt)
+            if (!skipHeader)
             {
-                _stream.WriteByte((byte)adt.Item.Kind);
-                _stream.WriteByte((byte)adt.Rank);
+                _stream.WriteByte((byte)kind.Kind);
+                if (kind is DataTypes.ArrayDt adt)
+                {
+                    _stream.WriteByte((byte)adt.Item.Kind);
+                    _stream.WriteByte((byte)adt.Rank);
+                }
             }
             switch (kind.Kind)
             {

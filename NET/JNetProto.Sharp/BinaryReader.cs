@@ -111,7 +111,7 @@ namespace JNetProto.Sharp
             for (var i = 0; i < rank; i++)
             for (var j = 0; j < lengths[i]; j++)
             {
-                var obj = ReadObject();
+                var obj = ReadObject(item);
                 indices[i] = j;
                 array.SetValue(obj, indices);
             }
@@ -121,6 +121,11 @@ namespace JNetProto.Sharp
         public object ReadObject()
         {
             var kind = (DataType)_stream.ReadByte();
+            return ReadObject(kind);
+        }
+
+        private object ReadObject(DataType kind)
+        {
             switch (kind)
             {
                 case DataType.Bool: return ReadBool();
