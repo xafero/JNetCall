@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 
 namespace JNetProto.Sharp
 {
@@ -19,6 +20,7 @@ namespace JNetProto.Sharp
         void WriteTimestamp(DateTime value);
         void WriteGuid(Guid value);
         void WriteArray(Array value);
+        void WriteMap(IDictionary value);
         void WriteObject(object value);
     }
 }

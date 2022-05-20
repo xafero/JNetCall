@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 
 namespace JNetProto.Sharp
 {
@@ -19,6 +20,7 @@ namespace JNetProto.Sharp
         DateTime ReadTimestamp();
         Guid ReadGuid();
         Array ReadArray();
+        IDictionary ReadMap();
         object ReadObject();
     }
 }

@@ -19,6 +19,7 @@ namespace JNetProto.Sharp
         Duration,
         Timestamp,
         Guid,
-        Array
+        Array,
+        Map
     }
 }

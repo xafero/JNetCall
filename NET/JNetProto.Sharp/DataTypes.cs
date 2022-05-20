@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 
 namespace JNetProto.Sharp
 {
@@ -29,14 +30,27 @@ namespace JNetProto.Sharp
         public interface IDataType { DataType Kind { get; } }
         public record SingleDt(DataType Kind) : IDataType;
         public record ArrayDt(DataType Kind, int Rank, IDataType Item) : IDataType;
+        public record MapDt(DataType Kind, IDataType Key, IDataType Val) : IDataType;
 
-        public static IDataType GetKind(Type type)
+        public static IDataType GetKind(object instance)
         {
+            var type = instance as Type ?? instance.GetType();
             if (type.IsArray)
             {
                 var rank = type.GetArrayRank();
                 var item = type.GetElementType();
                 return new ArrayDt(DataType.Array, rank, GetKind(item));
+            }
+            if (type.IsAssignableTo(typeof(IDictionary)))
+            {
+                var dict = (IDictionary)instance;
+                var f = default(DictionaryEntry);
+                foreach (DictionaryEntry entry in dict)
+                {
+                    f = entry;
+                    break;
+                }
+                return new MapDt(DataType.Map, GetKind(f.Key), GetKind(f.Value));
             }
             return new SingleDt(GetSingleKind(type));
         }

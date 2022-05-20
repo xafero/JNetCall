@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -118,6 +120,24 @@ namespace JNetProto.Sharp
             return array;
         }
 
+        public IDictionary ReadMap()
+        {
+            var keyKind = (DataType)_stream.ReadByte();
+            var valKind = (DataType)_stream.ReadByte();
+            var size = ReadI32();
+            var keyClass = DataTypes.GetClass(keyKind);
+            var valClass = DataTypes.GetClass(valKind);
+            var mapClass = typeof(SortedDictionary<,>).MakeGenericType(keyClass, valClass);
+            var map = (IDictionary)Activator.CreateInstance(mapClass)!;
+            for (var i = 0; i < size; i++)
+            {
+                var key = ReadObject(keyKind);
+                var val = ReadObject(valKind);
+                map[key] = val;
+            }
+            return map;
+        }
+
         public object ReadObject()
         {
             var kind = (DataType)_stream.ReadByte();
@@ -143,6 +163,7 @@ namespace JNetProto.Sharp
                 case DataType.Timestamp: return ReadTimestamp();
                 case DataType.Guid: return ReadGuid();
                 case DataType.Array: return ReadArray();
+                case DataType.Map: return ReadMap();
                 default: throw new ArgumentException(kind.ToString());
             }
         }

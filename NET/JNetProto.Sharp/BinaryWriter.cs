@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -101,6 +102,16 @@ namespace JNetProto.Sharp
                 WriteObject(item, true);
         }
 
+        public void WriteMap(IDictionary value)
+        {
+            WriteI32(value.Count);
+            foreach (DictionaryEntry entry in value)
+            {
+                WriteObject(entry.Key, true);
+                WriteObject(entry.Value, true);
+            }
+        }
+
         public void WriteObject(object value)
         {
             WriteObject(value, false);
@@ -108,7 +119,7 @@ namespace JNetProto.Sharp
 
         private void WriteObject(object value, bool skipHeader)
         {
-            var kind = DataTypes.GetKind(value.GetType());
+            var kind = DataTypes.GetKind(value);
             if (!skipHeader)
             {
                 _stream.WriteByte((byte)kind.Kind);
@@ -116,6 +127,11 @@ namespace JNetProto.Sharp
                 {
                     _stream.WriteByte((byte)adt.Item.Kind);
                     _stream.WriteByte((byte)adt.Rank);
+                }
+                else if (kind is DataTypes.MapDt mdt)
+                {
+                    _stream.WriteByte((byte)mdt.Key.Kind);
+                    _stream.WriteByte((byte)mdt.Val.Kind);
                 }
             }
             switch (kind.Kind)
@@ -135,6 +151,7 @@ namespace JNetProto.Sharp
                 case DataType.Timestamp: WriteTimestamp((DateTime)value); break;
                 case DataType.Guid: WriteGuid((Guid)value); break;
                 case DataType.Array: WriteArray((Array)value); break;
+                case DataType.Map: WriteMap((IDictionary)value); break;
                 default: throw new ArgumentException(kind.ToString());
             }
         }

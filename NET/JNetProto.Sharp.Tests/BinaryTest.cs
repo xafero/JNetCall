@@ -1,5 +1,6 @@
 // ReSharper disable StringLiteralTypo
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -91,6 +92,11 @@ namespace JNetProto.Sharp.Tests
         [InlineData("0000", "")]
         [InlineData("00015F", "_")]
         [InlineData("000B010200000000015F", new[] {  "", "_" })]
+        // Map
+        [InlineData("000B0B0200000001660448616E73016C084D61756C77757266", new object[] { 'M', "f", "Hans", "l", "Maulwurf" })]
+        [InlineData("000B0702000000064265726C696EAE4769400748616D62757267E3A5EB3F", new object[] { 'M', "Berlin", 3.645f, "Hamburg", 1.841f })]
+        [InlineData("00020B0200000002064D6F6E646179050653756E646179", new object[] { 'M', (byte)2, "Monday", (byte)5, "Sunday" })]
+        [InlineData("000B0202000000064D6F6E646179020653756E64617905", new object[] { 'M', "Monday", (byte)2, "Sunday", (byte)5 })]
         public void ShouldWrite(string expected, object value)
         {
             using var writer = CreateWriter(out var mem);
@@ -106,7 +112,25 @@ namespace JNetProto.Sharp.Tests
         private static object GetValue(object value)
         {
             var txt = value.ToString()!;
-            if (txt.StartsWith("1;"))
+            if (value is object[] objects)
+            {
+                if (objects[0] is 'M')
+                {
+                    var keyType = objects[1].GetType();
+                    var valType = objects[2].GetType();
+                    var dictType = typeof(Dictionary<,>).MakeGenericType(keyType, valType);
+                    var dict = Activator.CreateInstance(dictType)!;
+                    dynamic dictDyn = dict;
+                    for (var i = 1; i < objects.Length; i += 2)
+                    {
+                        dynamic key = objects[i];
+                        dynamic val = objects[i + 1];
+                        dictDyn[key] = val;
+                    }
+                    value = dict;
+                }
+            }
+            else if (txt.StartsWith("1;"))
             {
                 var oneArray = txt.Substring(2).Split(";").Select(GetValue).ToArray();
                 var array = Array.CreateInstance(oneArray[0].GetType(), oneArray.Length);
