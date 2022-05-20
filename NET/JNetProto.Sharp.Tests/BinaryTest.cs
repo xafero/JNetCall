@@ -1,5 +1,6 @@
 // ReSharper disable StringLiteralTypo
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Xunit;
@@ -67,7 +68,7 @@ namespace JNetProto.Sharp.Tests
         [InlineData("000130", "0m")]
         [InlineData("000131", "1m")]
         [InlineData("001D3739323238313632353134323634333337353933353433393530333335", "79228162514264337593543950335m")]
-        [InlineData("00090102000000033133330434323435", "1;13.3m;42.45m")]
+        [InlineData("000901020000000431332E330534322E3435", "1;13.3m;42.45m")]
         // TimeSpan
         [InlineData("0028431CEBE2360AC3", "-10675199.02:48:05.4769664t")]
         [InlineData("000000000000000000", "00:00:00t")]
@@ -114,7 +115,10 @@ namespace JNetProto.Sharp.Tests
                 value = array;
             }
             else if (txt.EndsWith("m"))
-                value = decimal.Parse(txt.Replace('m', ' ').Trim());
+            {
+                var inv = CultureInfo.InvariantCulture;
+                value = decimal.Parse(txt.Replace('m', ' ').Trim(), inv);
+            }
             else if (txt.EndsWith("t"))
                 value = TimeSpan.Parse(txt.Replace('t', ' ').Trim());
             else if (txt.EndsWith("d"))

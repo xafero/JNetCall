@@ -1,5 +1,7 @@
 package jnetproto.java;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.UUID;
@@ -75,5 +77,15 @@ public final class BitConverter {
                 first[0], first[1], first[2], first[3]});
         var least = raw.order(ByteOrder.BIG_ENDIAN).getLong();
         return new UUID(most, least);
+    }
+
+    public static int getRank(Object value) {
+        return getRank(value.getClass());
+    }
+
+    public static int getRank(Class type) {
+        if (!type.isArray())
+            return 0;
+        return StringUtils.countMatches(type.getName(), '[');
     }
 }

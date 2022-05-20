@@ -2,6 +2,7 @@ package jnetproto.java;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.time.Duration;
@@ -64,7 +65,8 @@ public class BinaryWriter implements IDataWriter {
     @Override
     public void writeF128(BigDecimal value) throws IOException
     {
-        writeUtf8(value.toString());
+        var raw = value.toString();
+        writeUtf8(raw);
     }
 
     @Override
@@ -100,10 +102,33 @@ public class BinaryWriter implements IDataWriter {
     }
 
     @Override
+    public void writeArray(Object value) throws IOException {
+        var rank = BitConverter.getRank(value);
+        for (var dim = 0; dim < rank; dim++)
+            writeI32(Array.getLength(value));
+        for (int i = 0; i < Array.getLength(value); i++) {
+            var item = Array.get(value, i);
+            writeObject(item, true);
+        }
+    }
+
+    @Override
     public void writeObject(Object value) throws IOException {
+        writeObject(value, false);
+    }
+
+    private void writeObject(Object value, boolean skipHeader) throws IOException {
         var kind = DataTypes.getKind(value.getClass());
-        _stream.write(kind.ordinal());
-        switch (kind)
+        if (!skipHeader)
+        {
+            _stream.write(kind.Kind().ordinal());
+            if (kind instanceof DataTypes.ArrayDt adt)
+            {
+                _stream.write(adt.Item().Kind().ordinal());
+                _stream.write((byte)adt.Rank());
+            }
+        }
+        switch (kind.Kind())
         {
             case Bool: writeBool((boolean)value); break;
             case U8: writeU8((byte)value); break;
@@ -119,6 +144,7 @@ public class BinaryWriter implements IDataWriter {
             case Duration: writeDuration((Duration) value); break;
             case Timestamp: writeTimestamp((LocalDateTime) value); break;
             case Guid: writeGuid((UUID) value); break;
+            case Array: writeArray(value); break;
             default: throw new IllegalArgumentException(kind.toString());
         }
     }

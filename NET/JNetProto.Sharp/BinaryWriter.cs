@@ -60,7 +60,8 @@ namespace JNetProto.Sharp
 
         public void WriteF128(decimal value)
         {
-            WriteUtf8(value.ToString(_cult));
+            var raw = value.ToString(_cult);
+            WriteUtf8(raw);
         }
 
         public void WriteChar(char value)

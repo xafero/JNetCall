@@ -16,5 +16,6 @@ public enum DataType {
     UTF8,
     Duration,
     Timestamp,
-    Guid
+    Guid,
+    Array
 }

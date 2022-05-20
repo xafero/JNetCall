@@ -21,5 +21,6 @@ public interface IDataReader extends AutoCloseable {
     Duration readDuration() throws IOException;
     LocalDateTime readTimestamp() throws IOException;
     UUID readGuid() throws IOException;
+    Object readArray() throws IOException;
     Object readObject() throws IOException;
 }
