@@ -26,14 +26,6 @@ public final class Reflect {
         return DataType.values()[read];
     }
 
-    public static <T> T create(Class<T> clazz) {
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static Object invoke(Method method, Object obj, Object[] args) {
         try {
             return method.invoke(obj, args);
@@ -42,8 +34,9 @@ public final class Reflect {
         }
     }
 
-    public static Method getMethod(Class clazz, String name, Class<?>... args) {
+    public static Method getMethod(Object obj, String name, Class<?>... args) {
         try {
+            var clazz = obj.getClass();
             return clazz.getMethod(name, args);
         } catch (Exception e) {
             throw new RuntimeException(e);

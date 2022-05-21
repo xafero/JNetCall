@@ -105,7 +105,7 @@ public class BinaryReader implements IDataReader {
 
     @Override
     public Object readArray() throws IOException {
-        var item = DataType.values()[_stream.read()];
+        var item = Reflect.toDataType(_stream.read());
         var rank = _stream.read();
         var lengths = new int[rank];
         for (var i = 0; i < rank; i++)
@@ -128,7 +128,7 @@ public class BinaryReader implements IDataReader {
         var keyKind = Reflect.toDataType(_stream.read());
         var valKind = Reflect.toDataType(_stream.read());
         var size = readI32();
-        var map = Reflect.create(TreeMap.class);
+        var map = new TreeMap();
         for (var i = 0; i < size; i++) {
             var key = readObject(keyKind);
             var val = readObject(valKind);
@@ -171,22 +171,19 @@ public class BinaryReader implements IDataReader {
 
     @Override
     public Set readSet() throws IOException {
-        var setType = TreeSet.class;
-        return (Set)readIterable(setType);
+        return (Set)readIterable(new TreeSet());
     }
 
     @Override
     public List readList() throws IOException {
-        var listType = ArrayList.class;
-        return (List)readIterable(listType);
+        return (List)readIterable(new ArrayList());
     }
 
-    private Iterable readIterable(Class type) throws IOException
+    private Iterable readIterable(Iterable coll) throws IOException
     {
         var valKind = Reflect.toDataType(_stream.read());
         var size = readI32();
-        var coll = (Iterable) Reflect.create(type);
-        var adder = Reflect.getMethod(type, "add", Object.class);
+        var adder = Reflect.getMethod(coll, "add", Object.class);
         for (var i = 0; i < size; i++)
         {
             var val = readObject(valKind);
@@ -197,7 +194,7 @@ public class BinaryReader implements IDataReader {
 
     @Override
     public Object readObject() throws IOException {
-        var kind = DataType.values()[_stream.read()];
+        var kind = Reflect.toDataType(_stream.read());
         return readObject(kind);
     }
 

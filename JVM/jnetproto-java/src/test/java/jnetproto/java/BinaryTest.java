@@ -148,8 +148,7 @@ public final class BinaryTest {
         var txt = value.toString();
         if (value instanceof Object[] objects) {
             if (objects[0] instanceof Character c && c == 'M') {
-                var dictType = HashMap.class;
-                var dict = Reflect.create(dictType);
+                var dict = new HashMap();
                 for (var i = 1; i < objects.length; i += 2) {
                     var key = objects[i];
                     var val = objects[i + 1];
@@ -171,8 +170,7 @@ public final class BinaryTest {
             }
             else if (objects[0] instanceof Character c && c == 'L')
             {
-                var listType = LinkedList.class;
-                var list = Reflect.create(listType);
+                var list = new LinkedList();
                 for (var i = 1; i < objects.length; i++)
                 {
                     var val = objects[i];
@@ -182,8 +180,7 @@ public final class BinaryTest {
             }
             else if (objects[0] instanceof Character c && c == 'S')
             {
-                var setType = HashSet.class;
-                var set = Reflect.create(setType);
+                var set = new HashSet();
                 for (var i = 1; i < objects.length; i++)
                 {
                     var val = objects[i];
