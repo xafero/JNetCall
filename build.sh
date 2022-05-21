@@ -1,9 +1,9 @@
 #!/bin/sh
 
 cd JVM
-mvn package
+mvn clean package
 cd ..
 
 cd NET
-dotnet test
+dotnet clean test
 cd ..

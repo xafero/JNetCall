@@ -1,9 +1,9 @@
 @echo off
 
 cd JVM
-call mvn package
+call mvn clean package
 cd ..
 
 cd NET
-dotnet test
+dotnet clean test
 cd ..

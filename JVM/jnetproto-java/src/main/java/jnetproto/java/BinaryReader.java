@@ -152,24 +152,47 @@ public class BinaryReader implements IDataReader {
     }
 
     @Override
-    public Set readSet() throws IOException {
-        return null;
-    }
-
-    @Override
-    public List readList() throws IOException {
-        return null;
-    }
-
-    @Override
     public Object[] readBag() throws IOException {
-        return new Object[0];
+        var size = readI8();
+        var args = new Object[size];
+        for (var i = 0; i < size; i++)
+        {
+            var obj = readObject();
+            args[i] = obj;
+        }
+        return args;
     }
 
     @Override
     public byte[] readBinary() throws IOException {
         var size = readI32();
         return readBytes(size);
+    }
+
+    @Override
+    public Set readSet() throws IOException {
+        var setType = TreeSet.class;
+        return (Set)readIterable(setType);
+    }
+
+    @Override
+    public List readList() throws IOException {
+        var listType = ArrayList.class;
+        return (List)readIterable(listType);
+    }
+
+    private Iterable readIterable(Class type) throws IOException
+    {
+        var valKind = Reflect.toDataType(_stream.read());
+        var size = readI32();
+        var coll = (Iterable) Reflect.create(type);
+        var adder = Reflect.getMethod(type, "add", Object.class);
+        for (var i = 0; i < size; i++)
+        {
+            var val = readObject(valKind);
+            Reflect.invoke(adder, coll, new Object[] { val });
+        }
+        return coll;
     }
 
     @Override
@@ -197,6 +220,10 @@ public class BinaryReader implements IDataReader {
             case Array: return readArray();
             case Map: return readMap();
             case Tuple: return readTuple();
+            case Set: return readSet();
+            case List: return readList();
+            case Bag: return readBag();
+            case Binary: return readBinary();
             default: throw new IllegalArgumentException(kind.toString());
         }
     }

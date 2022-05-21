@@ -13,10 +13,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class BinaryWriter implements IDataWriter {
     private final Charset _enc;
@@ -136,23 +135,41 @@ public class BinaryWriter implements IDataWriter {
 
     @Override
     public void writeSet(Set value) throws IOException {
-
+        writeIterable(value, true);
     }
 
     @Override
     public void writeList(List value) throws IOException {
-
+        writeIterable(value, true);
     }
 
     @Override
     public void writeBag(Object[] value) throws IOException {
-
+        writeI8((byte)value.length);
+        for (var item : value)
+            writeObject(item, false);
     }
 
     @Override
     public void writeBinary(byte[] value) throws IOException {
         writeI32(value.length);
         _stream.write(value);
+    }
+
+    private void writeIterable(Iterable raw, boolean skipHeader) throws IOException {
+        int count;
+        Iterable values;
+        if (raw instanceof Collection coll) {
+            count = coll.size();
+            values = raw;
+        } else {
+            var array = StreamSupport.stream(raw.spliterator(), false).toList();
+            count = array.size();
+            values = array;
+        }
+        writeI32(count);
+        for (var entry : values)
+            writeObject(entry, skipHeader);
     }
 
     @Override
@@ -175,6 +192,10 @@ public class BinaryWriter implements IDataWriter {
                 _stream.write(Reflect.getByte(mdt.Key()));
                 _stream.write(Reflect.getByte(mdt.Val()));
             }
+            else if (kind instanceof DataTypes.ListDt ldt)
+            {
+                _stream.write(Reflect.getByte(ldt.Item()));
+            }
         }
         switch (kind.Kind())
         {
@@ -194,6 +215,10 @@ public class BinaryWriter implements IDataWriter {
             case Array: writeArray(value); break;
             case Map: writeMap((Map) value); break;
             case Tuple: writeTuple((Tuple) value); break;
+            case Set: writeSet((Set)value); break;
+            case List: writeList((List)value); break;
+            case Bag: writeBag((Object[])value); break;
+            case Binary: writeBinary((byte[])value); break;
             default: throw new IllegalArgumentException(kind.toString());
         }
     }

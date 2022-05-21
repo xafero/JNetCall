@@ -7,7 +7,9 @@ import org.javatuples.Tuple;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public final class DataTypes {
@@ -34,15 +36,27 @@ public final class DataTypes {
     private record SingleDt(DataType Kind) implements IDataType { };
     public record ArrayDt(DataType Kind, int Rank, IDataType Item) implements IDataType {};
     public record MapDt(DataType Kind, IDataType Key, IDataType Val) implements IDataType {};
+    public record ListDt(DataType Kind, IDataType Item) implements IDataType {};
 
     public static IDataType getKind(Object instance)
     {
         var type = instance instanceof Class cl ? cl : instance.getClass();
         if (type.isArray())
         {
-            var rank = Reflect.getRank(type);
             var item = type.getComponentType();
+            var rank = Reflect.getRank(type);
+            if (rank == 1)
+            {
+                if (item == Object.class)
+                    return new SingleDt(DataType.Bag);
+                if (item == byte.class)
+                    return new SingleDt(DataType.Binary);
+            }
             return new ArrayDt(DataType.Array, rank, getKind(item));
+        }
+        if (Tuple.class.isAssignableFrom(type))
+        {
+            return new SingleDt(DataType.Tuple);
         }
         if (Map.class.isAssignableFrom(type))
         {
@@ -55,9 +69,15 @@ public final class DataTypes {
             }
             return new MapDt(DataType.Map, getKind(f.getKey()), getKind(f.getValue()));
         }
-        if (Tuple.class.isAssignableFrom(type))
+        if (Set.class.isAssignableFrom(type))
         {
-            return new SingleDt(DataType.Tuple);
+            var item = ((Set)instance).iterator().next();
+            return new ListDt(DataType.Set, getKind(item));
+        }
+        if (List.class.isAssignableFrom(type))
+        {
+            var item = ((List)instance).get(0);
+            return new ListDt(DataType.List, getKind(item));
         }
         return new SingleDt(getSingleKind(type));
     }

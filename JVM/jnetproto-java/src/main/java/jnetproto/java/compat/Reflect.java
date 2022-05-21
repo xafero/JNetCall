@@ -41,4 +41,12 @@ public final class Reflect {
             throw new RuntimeException(e);
         }
     }
+
+    public static Method getMethod(Class clazz, String name, Class<?>... args) {
+        try {
+            return clazz.getMethod(name, args);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
