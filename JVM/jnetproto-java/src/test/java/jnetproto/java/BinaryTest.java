@@ -1,5 +1,7 @@
 package jnetproto.java;
 
+import jnetproto.java.compat.Reflect;
+import jnetproto.java.compat.Tuples;
 import org.apache.commons.codec.binary.Hex;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -7,6 +9,7 @@ import org.testng.annotations.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -102,7 +105,16 @@ public final class BinaryTest {
                         {"0F0A0A0200000001660448616E73016C084D61756C77757266", new Object[]{'M', "f", "Hans", "l", "Maulwurf"}},
                         {"0F0A0602000000064265726C696EAE4769400748616D62757267E3A5EB3F", new Object[]{'M', "Berlin", 3.645f, "Hamburg", 1.841f}},
                         {"0F020A0200000002064D6F6E646179050653756E646179", new Object[]{'M', (byte) 2, "Monday", (byte) 5, "Sunday"}},
-                        {"0F0A0202000000064D6F6E646179020653756E64617905", new Object[]{'M', "Monday", (byte) 2, "Sunday", (byte) 5}}
+                        {"0F0A0202000000064D6F6E646179020653756E64617905", new Object[]{'M', "Monday", (byte) 2, "Sunday", (byte) 5}},
+                        // Tuple
+                        {"10010101", new Object[]{'T', true}},
+                        {"100201010402000000", new Object[]{'T', true, 2}},
+                        {"100301010402000000050300000000000000", new Object[]{'T', true, 2, 3L}},
+                        {"1004010104020000000503000000000000000600008040", new Object[]{'T', true, 2, 3L, 4f}},
+                        {"1005010104020000000503000000000000000600008040070000000000001440", new Object[]{'T', true, 2, 3L, 4f, 5d}},
+                        {"1006010104020000000503000000000000000600008040070000000000001440093600", new Object[]{'T', true, 2, 3L, 4f, 5d, '6'}},
+                        {"10070101040200000005030000000000000006000080400700000000000014400936000A0137", new Object[]{'T', true, 2, 3L, 4f, 5d, '6', "7"}},
+                        {"10080101040200000005030000000000000006000080400700000000000014400936000A01370100", new Object[]{'T', true, 2, 3L, 4f, 5d, '6', "7", false}}
                 };
     }
 
@@ -137,6 +149,13 @@ public final class BinaryTest {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+            else if (objects[0] instanceof Character c && c == 'T')
+            {
+                var tupArgs = Arrays.copyOfRange(objects, 1, objects.length);
+                var creates = Arrays.stream(Tuples.class.getMethods());
+                var create = creates.filter(m -> m.getParameterCount() == tupArgs.length);
+                return Reflect.invoke(create.findFirst().get(), null, tupArgs);
             }
         }
         if (txt.startsWith("1;")) {

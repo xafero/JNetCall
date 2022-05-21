@@ -1,5 +1,9 @@
 package jnetproto.java;
 
+import jnetproto.java.compat.Reflect;
+import org.javatuples.Quintet;
+import org.javatuples.Tuple;
+
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -27,7 +31,7 @@ public final class DataTypes {
     }
 
     public interface IDataType { DataType Kind(); }
-    public record SingleDt(DataType Kind) implements IDataType { };
+    private record SingleDt(DataType Kind) implements IDataType { };
     public record ArrayDt(DataType Kind, int Rank, IDataType Item) implements IDataType {};
     public record MapDt(DataType Kind, IDataType Key, IDataType Val) implements IDataType {};
 
@@ -36,7 +40,7 @@ public final class DataTypes {
         var type = instance instanceof Class cl ? cl : instance.getClass();
         if (type.isArray())
         {
-            var rank = BitConverter.getRank(type);
+            var rank = Reflect.getRank(type);
             var item = type.getComponentType();
             return new ArrayDt(DataType.Array, rank, getKind(item));
         }
@@ -50,6 +54,10 @@ public final class DataTypes {
                 break;
             }
             return new MapDt(DataType.Map, getKind(f.getKey()), getKind(f.getValue()));
+        }
+        if (Tuple.class.isAssignableFrom(type))
+        {
+            return new SingleDt(DataType.Tuple);
         }
         return new SingleDt(getSingleKind(type));
     }

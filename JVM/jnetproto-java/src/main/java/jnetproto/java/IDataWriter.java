@@ -1,5 +1,7 @@
 package jnetproto.java;
 
+import org.javatuples.Tuple;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -23,5 +25,6 @@ public interface IDataWriter extends AutoCloseable {
     void writeGuid(UUID value) throws IOException;
     void writeArray(Object value) throws IOException;
     void writeMap(Map value) throws IOException;
+    void writeTuple(Tuple value) throws IOException;
     void writeObject(Object value) throws IOException;
 }

@@ -17,5 +17,6 @@ public enum DataType {
     Timestamp,
     Guid,
     Array,
-    Map
+    Map,
+    Tuple
 }

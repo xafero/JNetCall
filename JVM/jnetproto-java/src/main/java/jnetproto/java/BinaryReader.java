@@ -1,14 +1,21 @@
 package jnetproto.java;
 
+import jnetproto.java.compat.BitConverter;
+import jnetproto.java.compat.Reflect;
+import jnetproto.java.compat.Tuples;
+import org.javatuples.Tuple;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -18,7 +25,7 @@ public class BinaryReader implements IDataReader {
     private final InputStream _stream;
 
     public BinaryReader(InputStream stream) {
-        _enc = Charset.forName("UTF8");
+        _enc = StandardCharsets.UTF_8;
         _stream = stream;
     }
 
@@ -118,18 +125,33 @@ public class BinaryReader implements IDataReader {
         return array;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Map readMap() throws IOException {
-        var keyKind = BitConverter.toDataType(_stream.read());
-        var valKind = BitConverter.toDataType(_stream.read());
+        var keyKind = Reflect.toDataType(_stream.read());
+        var valKind = Reflect.toDataType(_stream.read());
         var size = readI32();
-        var map = BitConverter.create(TreeMap.class);
+        var map = Reflect.create(TreeMap.class);
         for (var i = 0; i < size; i++) {
             var key = readObject(keyKind);
             var val = readObject(valKind);
             map.put(key, val);
         }
         return map;
+    }
+
+    @Override
+    public Tuple readTuple() throws IOException {
+        var size = readI8();
+        var args = new Object[size];
+        for (var i = 0; i < size; i++)
+        {
+            var obj = readObject();
+            args[i] = obj;
+        }
+        var method = Arrays.stream(Tuples.class.getMethods())
+                .filter(m -> m.getName().equals("create") && m.getParameterCount() == args.length);
+        return (Tuple)Reflect.invoke(method.findFirst().orElseThrow(), null, args);
     }
 
     @Override
@@ -156,6 +178,7 @@ public class BinaryReader implements IDataReader {
             case Guid: return readGuid();
             case Array: return readArray();
             case Map: return readMap();
+            case Tuple: return readTuple();
             default: throw new IllegalArgumentException(kind.toString());
         }
     }

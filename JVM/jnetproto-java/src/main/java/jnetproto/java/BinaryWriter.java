@@ -1,5 +1,9 @@
 package jnetproto.java;
 
+import jnetproto.java.compat.BitConverter;
+import jnetproto.java.compat.Reflect;
+import org.javatuples.Tuple;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
@@ -99,7 +103,7 @@ public class BinaryWriter implements IDataWriter {
 
     @Override
     public void writeArray(Object value) throws IOException {
-        var rank = BitConverter.getRank(value);
+        var rank = Reflect.getRank(value);
         for (var dim = 0; dim < rank; dim++)
             writeI32(Array.getLength(value));
         for (int i = 0; i < Array.getLength(value); i++) {
@@ -119,6 +123,16 @@ public class BinaryWriter implements IDataWriter {
     }
 
     @Override
+    public void writeTuple(Tuple value) throws IOException {
+        var array = value.toArray();
+        writeI8((byte)array.length);
+        for (var i = 0; i < array.length; i++)
+        {
+            writeObject(array[i], false);
+        }
+    }
+
+    @Override
     public void writeObject(Object value) throws IOException {
         writeObject(value, false);
     }
@@ -127,16 +141,16 @@ public class BinaryWriter implements IDataWriter {
         var kind = DataTypes.getKind(value);
         if (!skipHeader)
         {
-            _stream.write(BitConverter.getByte(kind));
+            _stream.write(Reflect.getByte(kind));
             if (kind instanceof DataTypes.ArrayDt adt)
             {
-                _stream.write(BitConverter.getByte(adt.Item()));
+                _stream.write(Reflect.getByte(adt.Item()));
                 _stream.write((byte)adt.Rank());
             }
             else if (kind instanceof DataTypes.MapDt mdt)
             {
-                _stream.write(BitConverter.getByte(mdt.Key()));
-                _stream.write(BitConverter.getByte(mdt.Val()));
+                _stream.write(Reflect.getByte(mdt.Key()));
+                _stream.write(Reflect.getByte(mdt.Val()));
             }
         }
         switch (kind.Kind())
@@ -156,6 +170,7 @@ public class BinaryWriter implements IDataWriter {
             case Guid: writeGuid((UUID) value); break;
             case Array: writeArray(value); break;
             case Map: writeMap((Map) value); break;
+            case Tuple: writeTuple((Tuple) value); break;
             default: throw new IllegalArgumentException(kind.toString());
         }
     }

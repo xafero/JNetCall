@@ -1,11 +1,7 @@
-package jnetproto.java;
+package jnetproto.java.compat;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.TreeMap;
 import java.util.UUID;
 
 public final class BitConverter {
@@ -79,31 +75,5 @@ public final class BitConverter {
                 first[0], first[1], first[2], first[3]});
         var least = raw.order(ByteOrder.BIG_ENDIAN).getLong();
         return new UUID(most, least);
-    }
-
-    public static int getRank(Object value) {
-        return getRank(value.getClass());
-    }
-
-    public static int getRank(Class type) {
-        if (!type.isArray())
-            return 0;
-        return StringUtils.countMatches(type.getName(), '[');
-    }
-
-    public static byte getByte(DataTypes.IDataType kind) {
-        return (byte) kind.Kind().ordinal();
-    }
-
-    public static DataType toDataType(int read) {
-        return DataType.values()[read];
-    }
-
-    public static <T> T create(Class<T> clazz) {
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }

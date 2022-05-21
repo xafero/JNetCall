@@ -1,5 +1,7 @@
 package jnetproto.java;
 
+import org.javatuples.Tuple;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -23,5 +25,6 @@ public interface IDataReader extends AutoCloseable {
     UUID readGuid() throws IOException;
     Object readArray() throws IOException;
     Map readMap() throws IOException;
+    Tuple readTuple() throws IOException;
     Object readObject() throws IOException;
 }
