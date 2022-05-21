@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace JNetProto.Sharp
 {
@@ -20,6 +21,7 @@ namespace JNetProto.Sharp
         Guid ReadGuid();
         Array ReadArray();
         IDictionary ReadMap();
+        ITuple ReadTuple();
         object ReadObject();
     }
 }

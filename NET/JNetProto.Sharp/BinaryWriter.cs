@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace JNetProto.Sharp
@@ -107,6 +108,15 @@ namespace JNetProto.Sharp
             }
         }
 
+        public void WriteTuple(ITuple value)
+        {
+            WriteI8((byte)value.Length);
+            for (var i = 0; i < value.Length; i++)
+            {
+                WriteObject(value[i], false);
+            }
+        }
+        
         public void WriteObject(object value)
         {
             WriteObject(value, false);
@@ -146,6 +156,7 @@ namespace JNetProto.Sharp
                 case DataType.Guid: WriteGuid((Guid)value); break;
                 case DataType.Array: WriteArray((Array)value); break;
                 case DataType.Map: WriteMap((IDictionary)value); break;
+                case DataType.Tuple: WriteTuple((ITuple)value); break;
                 default: throw new ArgumentException(kind.ToString());
             }
         }

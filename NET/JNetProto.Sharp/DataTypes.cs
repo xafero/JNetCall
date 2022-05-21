@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace JNetProto.Sharp
 {
@@ -27,10 +29,10 @@ namespace JNetProto.Sharp
         }
 
         public interface IDataType { DataType Kind { get; } }
-        public record SingleDt(DataType Kind) : IDataType;
+        private record SingleDt(DataType Kind) : IDataType;
         public record ArrayDt(DataType Kind, int Rank, IDataType Item) : IDataType;
         public record MapDt(DataType Kind, IDataType Key, IDataType Val) : IDataType;
-
+        
         public static IDataType GetKind(object instance)
         {
             var type = instance as Type ?? instance.GetType();
@@ -51,9 +53,13 @@ namespace JNetProto.Sharp
                 }
                 return new MapDt(DataType.Map, GetKind(f.Key), GetKind(f.Value));
             }
+            if (type.IsAssignableTo(typeof(ITuple)))
+            {
+                return new SingleDt(DataType.Tuple);
+            }
             return new SingleDt(GetSingleKind(type));
         }
-
+        
         private static DataType GetSingleKind(Type type)
         {
             switch (type.FullName)

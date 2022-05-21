@@ -94,6 +94,15 @@ namespace JNetProto.Sharp.Tests
         [InlineData("0F0A0602000000064265726C696EAE4769400748616D62757267E3A5EB3F", new object[] { 'M', "Berlin", 3.645f, "Hamburg", 1.841f })]
         [InlineData("0F020A0200000002064D6F6E646179050653756E646179", new object[] { 'M', (byte)2, "Monday", (byte)5, "Sunday" })]
         [InlineData("0F0A0202000000064D6F6E646179020653756E64617905", new object[] { 'M', "Monday", (byte)2, "Sunday", (byte)5 })]
+        // Tuple
+        [InlineData("10010101", new object[] { 'T', true })]
+        [InlineData("100201010402000000", new object[] { 'T', true, 2 })]
+        [InlineData("100301010402000000050300000000000000", new object[] { 'T', true, 2, 3L })]
+        [InlineData("1004010104020000000503000000000000000600008040", new object[] { 'T', true, 2, 3L, 4f })]
+        [InlineData("1005010104020000000503000000000000000600008040070000000000001440", new object[] { 'T', true, 2, 3L, 4f, 5d })]
+        [InlineData("1006010104020000000503000000000000000600008040070000000000001440093600", new object[] { 'T', true, 2, 3L, 4f, 5d, '6' })]
+        [InlineData("10070101040200000005030000000000000006000080400700000000000014400936000A0137", new object[] { 'T', true, 2, 3L, 4f, 5d, '6', "7" })]
+        [InlineData("10080101040200000005030000000000000006000080400700000000000014400936000A01370100", new object[] { 'T', true, 2, 3L, 4f, 5d, '6', "7", false })]
         public void ShouldWrite(string expected, object value)
         {
             using var writer = CreateWriter(out var mem);
@@ -125,6 +134,15 @@ namespace JNetProto.Sharp.Tests
                         dictDyn[key] = val;
                     }
                     value = dict;
+                }
+                else if (objects[0] is 'T')
+                {
+                    var tupArgs = objects.Skip(1).ToArray();
+                    var types = tupArgs.Select(o => o.GetType()).ToArray();
+                    var creates = typeof(Tuple).GetMethods();
+                    var create = creates.First(m => m.GetParameters().Length == types.Length);
+                    var tuple = create.MakeGenericMethod(types).Invoke(null, tupArgs);
+                    value = tuple;
                 }
             }
             else if (txt.StartsWith("1;"))

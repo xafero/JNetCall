@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace JNetProto.Sharp
@@ -133,6 +136,23 @@ namespace JNetProto.Sharp
             return map;
         }
 
+        public ITuple ReadTuple()
+        {
+            var size = ReadI8();
+            var args = new object[size];
+            var types = new Type[size];
+            for (var i = 0; i < size; i++)
+            {
+                var obj = ReadObject();
+                args[i] = obj;
+                types[i] = obj.GetType();
+            }
+            var method = typeof(Tuple).GetMethods()
+                .First(m => m.Name == nameof(Tuple.Create) && m.GetParameters().Length == types.Length);
+            var tuple = (ITuple)method.MakeGenericMethod(types).Invoke(null, args);
+            return tuple;
+        }
+        
         public object ReadObject()
         {
             var kind = (DataType)_stream.ReadByte();
@@ -158,6 +178,7 @@ namespace JNetProto.Sharp
                 case DataType.Guid: return ReadGuid();
                 case DataType.Array: return ReadArray();
                 case DataType.Map: return ReadMap();
+                case DataType.Tuple: return ReadTuple();
                 default: throw new ArgumentException(kind.ToString());
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace JNetProto.Sharp
 {
@@ -20,6 +21,7 @@ namespace JNetProto.Sharp
         void WriteGuid(Guid value);
         void WriteArray(Array value);
         void WriteMap(IDictionary value);
+        void WriteTuple(ITuple value);
         void WriteObject(object value);
     }
 }
