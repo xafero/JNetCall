@@ -13,9 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 import static org.testng.Assert.assertEquals;
 
@@ -35,8 +33,10 @@ public final class BinaryTest {
                         {"023F", (byte) 63},
                         {"027F", (byte) 127},
                         {"02FF", (byte) 255},
-                        {"0E020102000000F32A", new byte[]{-13, 42}},
-                        {"0E0201020000000DD6", new byte[]{13, -42}},
+                        // Binary
+                        {"1402000000F32A", new byte[] { -13, 42 }},
+                        {"14020000000DD6", new byte[] { 13, -42 }},
+                        {"140A00000001020304050607080900", new byte[] { 1,2,3,4,5,6,7,8,9,0 }},
                         // Short
                         {"030080", (short) -32768},
                         {"0300C0", (short) -16384},
@@ -114,7 +114,19 @@ public final class BinaryTest {
                         {"1005010104020000000503000000000000000600008040070000000000001440", new Object[]{'T', true, 2, 3L, 4f, 5d}},
                         {"1006010104020000000503000000000000000600008040070000000000001440093600", new Object[]{'T', true, 2, 3L, 4f, 5d, '6'}},
                         {"10070101040200000005030000000000000006000080400700000000000014400936000A0137", new Object[]{'T', true, 2, 3L, 4f, 5d, '6', "7"}},
-                        {"10080101040200000005030000000000000006000080400700000000000014400936000A01370100", new Object[]{'T', true, 2, 3L, 4f, 5d, '6', "7", false}}
+                        {"10080101040200000005030000000000000006000080400700000000000014400936000A01370100", new Object[]{'T', true, 2, 3L, 4f, 5d, '6', "7", false}},
+                        // Set
+                        {"1103010000000200", new Object[] { 'S', (short)2 }},
+                        {"11030200000002000300", new Object[] { 'S', (short)2, (short)3 }},
+                        {"11030200000002000300", new Object[] { 'S', (short)2, (short)3, (short)3 }},
+                        // List
+                        {"12060100000000000040", new Object[] { 'L', 2f }},
+                        {"1206020000000000004000004040", new Object[] { 'L', 2f, 3f }},
+                        {"120603000000000000400000404000004040", new Object[] { 'L', 2f, 3f, 3f }},
+                        // Bag
+                        {"13010101", new Object[] { 'B', true }},
+                        {"130201010202", new Object[] { 'B', true, (byte)2 }},
+                        {"130301010202030300", new Object[] { 'B', true, (byte)2, (short)3 }}
                 };
     }
 
@@ -137,18 +149,14 @@ public final class BinaryTest {
         var txt = value.toString();
         if (value instanceof Object[] objects) {
             if (objects[0] instanceof Character c && c == 'M') {
-                try {
-                    var dictType = HashMap.class;
-                    var dict = dictType.getDeclaredConstructor().newInstance();
-                    for (var i = 1; i < objects.length; i += 2) {
-                        var key = objects[i];
-                        var val = objects[i + 1];
-                        dict.put(key, val);
-                    }
-                    return dict;
-                } catch (Exception e) {
-                    e.printStackTrace();
+                var dictType = HashMap.class;
+                var dict = Reflect.create(dictType);
+                for (var i = 1; i < objects.length; i += 2) {
+                    var key = objects[i];
+                    var val = objects[i + 1];
+                    dict.put(key, val);
                 }
+                return dict;
             }
             else if (objects[0] instanceof Character c && c == 'T')
             {
@@ -156,6 +164,33 @@ public final class BinaryTest {
                 var creates = Arrays.stream(Tuples.class.getMethods());
                 var create = creates.filter(m -> m.getParameterCount() == tupArgs.length);
                 return Reflect.invoke(create.findFirst().get(), null, tupArgs);
+            }
+            else if (objects[0] instanceof Character c && c == 'B')
+            {
+                var args = Arrays.copyOfRange(objects, 1, objects.length);
+                return args;
+            }
+            else if (objects[0] instanceof Character c && c == 'L')
+            {
+                var listType = LinkedList.class;
+                var list = Reflect.create(listType);
+                for (var i = 1; i < objects.length; i++)
+                {
+                    var val = objects[i];
+                    list.add(val);
+                }
+                return list;
+            }
+            else if (objects[0] instanceof Character c && c == 'S')
+            {
+                var setType = HashSet.class;
+                var set = Reflect.create(setType);
+                for (var i = 1; i < objects.length; i++)
+                {
+                    var val = objects[i];
+                    set.add(val);
+                }
+                return set;
             }
         }
         if (txt.startsWith("1;")) {

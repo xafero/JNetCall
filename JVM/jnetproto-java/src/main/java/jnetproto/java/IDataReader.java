@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public interface IDataReader extends AutoCloseable {
@@ -26,5 +28,9 @@ public interface IDataReader extends AutoCloseable {
     Object readArray() throws IOException;
     Map readMap() throws IOException;
     Tuple readTuple() throws IOException;
+    Set readSet() throws IOException;
+    List readList() throws IOException;
+    Object[] readBag() throws IOException;
+    byte[] readBinary() throws IOException;
     Object readObject() throws IOException;
 }

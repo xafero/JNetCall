@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public interface IDataWriter extends AutoCloseable {
@@ -26,5 +28,9 @@ public interface IDataWriter extends AutoCloseable {
     void writeArray(Object value) throws IOException;
     void writeMap(Map value) throws IOException;
     void writeTuple(Tuple value) throws IOException;
+    void writeSet(Set value) throws IOException;
+    void writeList(List value) throws IOException;
+    void writeBag(Object[] value) throws IOException;
+    void writeBinary(byte[] value) throws IOException;
     void writeObject(Object value) throws IOException;
 }

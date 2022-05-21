@@ -18,5 +18,9 @@ public enum DataType {
     Guid,
     Array,
     Map,
-    Tuple
+    Tuple,
+    Set,
+    List,
+    Bag,
+    Binary
 }

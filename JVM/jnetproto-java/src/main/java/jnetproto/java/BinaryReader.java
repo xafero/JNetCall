@@ -15,10 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.UUID;
+import java.util.*;
 
 public class BinaryReader implements IDataReader {
     private final Charset _enc;
@@ -152,6 +149,27 @@ public class BinaryReader implements IDataReader {
         var method = Arrays.stream(Tuples.class.getMethods())
                 .filter(m -> m.getName().equals("create") && m.getParameterCount() == args.length);
         return (Tuple)Reflect.invoke(method.findFirst().orElseThrow(), null, args);
+    }
+
+    @Override
+    public Set readSet() throws IOException {
+        return null;
+    }
+
+    @Override
+    public List readList() throws IOException {
+        return null;
+    }
+
+    @Override
+    public Object[] readBag() throws IOException {
+        return new Object[0];
+    }
+
+    @Override
+    public byte[] readBinary() throws IOException {
+        var size = readI32();
+        return readBytes(size);
     }
 
     @Override

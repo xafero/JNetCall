@@ -13,7 +13,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class BinaryWriter implements IDataWriter {
@@ -130,6 +132,27 @@ public class BinaryWriter implements IDataWriter {
         {
             writeObject(array[i], false);
         }
+    }
+
+    @Override
+    public void writeSet(Set value) throws IOException {
+
+    }
+
+    @Override
+    public void writeList(List value) throws IOException {
+
+    }
+
+    @Override
+    public void writeBag(Object[] value) throws IOException {
+
+    }
+
+    @Override
+    public void writeBinary(byte[] value) throws IOException {
+        writeI32(value.length);
+        _stream.write(value);
     }
 
     @Override
