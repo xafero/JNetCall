@@ -5,5 +5,5 @@ mvn clean package
 cd ..
 
 cd NET
-dotnet clean test
+dotnet test
 cd ..
