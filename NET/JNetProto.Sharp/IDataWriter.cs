@@ -22,6 +22,10 @@ namespace JNetProto.Sharp
         void WriteArray(Array value);
         void WriteMap(IDictionary value);
         void WriteTuple(ITuple value);
+        void WriteSet(IEnumerable value);
+        void WriteList(IList value);
+        void WriteBag(object[] value);
+        void WriteBinary(byte[] value);
         void WriteObject(object value);
     }
 }

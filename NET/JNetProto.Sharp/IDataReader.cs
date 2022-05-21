@@ -22,6 +22,10 @@ namespace JNetProto.Sharp
         Array ReadArray();
         IDictionary ReadMap();
         ITuple ReadTuple();
+        IEnumerable ReadSet();
+        IList ReadList();
+        object[] ReadBag();
+        byte[] ReadBinary();
         object ReadObject();
     }
 }

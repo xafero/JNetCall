@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -108,6 +109,58 @@ namespace JNetProto.Sharp
             }
         }
 
+        public void WriteSet(IEnumerable value)
+        {
+            WriteEnumerable(value, true);
+        }
+
+        public void WriteList(IList value)
+        {
+            WriteEnumerable(value, true);
+        }
+
+        public void WriteBag(object[] value)
+        {
+            WriteI8((byte)value.Length);
+            foreach (var item in value)
+                WriteObject(item, false);
+        }
+
+        public void WriteBinary(byte[] value)
+        {
+            WriteI32(value.Length);
+            _stream.Write(value);
+        }
+
+        private void WriteEnumerable(IEnumerable raw, bool skipHeader)
+        {
+            int count;
+            IEnumerable values;
+            if (raw is ICollection coll)
+            {
+                count = coll.Count;
+                values = raw;
+            }
+            else
+            {
+                var t = raw.GetType();
+                if (t.GetProperty(nameof(ICollection.Count))?.GetValue(raw) is int c)
+                {
+                    count = c;
+                    values = raw;
+                }
+                else
+                {
+                    var array = raw.OfType<object>().ToArray();
+                    count = array.Length;
+                    values = array;
+                }
+            }
+            WriteI32(count);
+            foreach (var entry in values)
+                WriteObject(entry, skipHeader);
+        }
+
         public void WriteTuple(ITuple value)
         {
             WriteI8((byte)value.Length);
@@ -138,6 +191,10 @@ namespace JNetProto.Sharp
                     _stream.WriteByte((byte)mdt.Key.Kind);
                     _stream.WriteByte((byte)mdt.Val.Kind);
                 }
+                else if (kind is DataTypes.ListDt ldt)
+                {
+                    _stream.WriteByte((byte)ldt.Item.Kind);
+                }
             }
             switch (kind.Kind)
             {
@@ -157,6 +214,10 @@ namespace JNetProto.Sharp
                 case DataType.Array: WriteArray((Array)value); break;
                 case DataType.Map: WriteMap((IDictionary)value); break;
                 case DataType.Tuple: WriteTuple((ITuple)value); break;
+                case DataType.Set: WriteSet((IEnumerable)value); break;
+                case DataType.List: WriteList((IList)value); break;
+                case DataType.Bag: WriteBag((object[])value); break;
+                case DataType.Binary: WriteBinary((byte[])value); break;
                 default: throw new ArgumentException(kind.ToString());
             }
         }

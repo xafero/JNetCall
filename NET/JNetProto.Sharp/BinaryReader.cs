@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -152,7 +151,53 @@ namespace JNetProto.Sharp
             var tuple = (ITuple)method.MakeGenericMethod(types).Invoke(null, args);
             return tuple;
         }
-        
+
+        public object[] ReadBag()
+        {
+            var size = ReadI8();
+            var args = new object[size];
+            for (var i = 0; i < size; i++)
+            {
+                var obj = ReadObject();
+                args[i] = obj;
+            }
+            return args;
+        }
+
+        public byte[] ReadBinary()
+        {
+            var size = ReadI32();
+            return ReadBytes(size);
+        }
+
+        public IEnumerable ReadSet()
+        {
+            var setType = typeof(SortedSet<>);
+            return ReadEnumerable(setType);
+        }
+
+        public IList ReadList()
+        {
+            var listType = typeof(List<>);
+            return (IList)ReadEnumerable(listType);
+        }
+
+        private IEnumerable ReadEnumerable(Type type)
+        {
+            var valKind = (DataType)_stream.ReadByte();
+            var size = ReadI32();
+            var valClass = DataTypes.GetClass(valKind);
+            var genType = type.MakeGenericType(valClass);
+            var coll = (IEnumerable)Activator.CreateInstance(genType)!;
+            var adder = genType.GetMethod("Add", new[] { valClass })!;
+            for (var i = 0; i < size; i++)
+            {
+                var val = ReadObject(valKind);
+                adder.Invoke(coll, new[] { val });
+            }
+            return coll;
+        }
+
         public object ReadObject()
         {
             var kind = (DataType)_stream.ReadByte();
@@ -179,6 +224,10 @@ namespace JNetProto.Sharp
                 case DataType.Array: return ReadArray();
                 case DataType.Map: return ReadMap();
                 case DataType.Tuple: return ReadTuple();
+                case DataType.Set: return ReadSet();
+                case DataType.List: return ReadList();
+                case DataType.Bag: return ReadBag();
+                case DataType.Binary: return ReadBinary();
                 default: throw new ArgumentException(kind.ToString());
             }
         }

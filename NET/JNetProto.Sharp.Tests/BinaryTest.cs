@@ -23,8 +23,10 @@ namespace JNetProto.Sharp.Tests
         [InlineData("023F", (byte)63)]
         [InlineData("027F", (byte)127)]
         [InlineData("02FF", (byte)255)]
-        [InlineData("0E020102000000F32A", new byte[] { unchecked((byte)-13), 42 })]
-        [InlineData("0E0201020000000DD6", new byte[] { 13, unchecked((byte)-42) })]
+        // Binary
+        [InlineData("1402000000F32A", new byte[] { unchecked((byte)-13), 42 })]
+        [InlineData("14020000000DD6", new byte[] { 13, unchecked((byte)-42) })]
+        [InlineData("140A00000001020304050607080900", new byte[] { 1,2,3,4,5,6,7,8,9,0 })]
         // Short
         [InlineData("030080", (short)-32768)]
         [InlineData("0300C0", (short)-16384)]
@@ -103,6 +105,18 @@ namespace JNetProto.Sharp.Tests
         [InlineData("1006010104020000000503000000000000000600008040070000000000001440093600", new object[] { 'T', true, 2, 3L, 4f, 5d, '6' })]
         [InlineData("10070101040200000005030000000000000006000080400700000000000014400936000A0137", new object[] { 'T', true, 2, 3L, 4f, 5d, '6', "7" })]
         [InlineData("10080101040200000005030000000000000006000080400700000000000014400936000A01370100", new object[] { 'T', true, 2, 3L, 4f, 5d, '6', "7", false })]
+        // Set
+        [InlineData("1103010000000200", new object[] { 'S', (short)2 })]
+        [InlineData("11030200000002000300", new object[] { 'S', (short)2, (short)3 })]
+        [InlineData("11030200000002000300", new object[] { 'S', (short)2, (short)3, (short)3 })]
+        // List
+        [InlineData("12060100000000000040", new object[] { 'L', 2f })]
+        [InlineData("1206020000000000004000004040", new object[] { 'L', 2f, 3f })]
+        [InlineData("120603000000000000400000404000004040", new object[] { 'L', 2f, 3f, 3f })]
+        // Bag
+        [InlineData("13010101", new object[] { 'B', true })]
+        [InlineData("130201010202", new object[] { 'B', true, (byte)2 })]
+        [InlineData("130301010202030300", new object[] { 'B', true, (byte)2, (short)3 })]
         public void ShouldWrite(string expected, object value)
         {
             using var writer = CreateWriter(out var mem);
@@ -143,6 +157,37 @@ namespace JNetProto.Sharp.Tests
                     var create = creates.First(m => m.GetParameters().Length == types.Length);
                     var tuple = create.MakeGenericMethod(types).Invoke(null, tupArgs);
                     value = tuple;
+                }
+                else if (objects[0] is 'B')
+                {
+                    var args = objects.Skip(1).ToArray();
+                    value = args;
+                }
+                else if (objects[0] is 'L')
+                {
+                    var itemType = objects[1].GetType();
+                    var listType = typeof(List<>).MakeGenericType(itemType);
+                    var list = Activator.CreateInstance(listType)!;
+                    dynamic listDyn = list;
+                    for (var i = 1; i < objects.Length; i++)
+                    {
+                        dynamic val = objects[i];
+                        listDyn.Add(val);
+                    }
+                    value = list;
+                }
+                else if (objects[0] is 'S')
+                {
+                    var itemType = objects[1].GetType();
+                    var setType = typeof(HashSet<>).MakeGenericType(itemType);
+                    var set = Activator.CreateInstance(setType)!;
+                    dynamic setDyn = set;
+                    for (var i = 1; i < objects.Length; i++)
+                    {
+                        dynamic val = objects[i];
+                        setDyn.Add(val);
+                    }
+                    value = set;
                 }
             }
             else if (txt.StartsWith("1;"))

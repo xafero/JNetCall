@@ -20,6 +20,10 @@ namespace JNetProto.Sharp
         Guid,
         Array,
         Map,
-        Tuple
+        Tuple,
+        Set,
+        List,
+        Bag,
+        Binary
     }
 }

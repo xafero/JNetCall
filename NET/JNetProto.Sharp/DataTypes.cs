@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Linq;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace JNetProto.Sharp
@@ -32,15 +32,27 @@ namespace JNetProto.Sharp
         private record SingleDt(DataType Kind) : IDataType;
         public record ArrayDt(DataType Kind, int Rank, IDataType Item) : IDataType;
         public record MapDt(DataType Kind, IDataType Key, IDataType Val) : IDataType;
-        
+        public record ListDt(DataType Kind, IDataType Item) : IDataType;
+
         public static IDataType GetKind(object instance)
         {
             var type = instance as Type ?? instance.GetType();
             if (type.IsArray)
             {
-                var rank = type.GetArrayRank();
                 var item = type.GetElementType();
+                var rank = type.GetArrayRank();
+                if (rank == 1)
+                {
+                    if (item == typeof(object))
+                        return new SingleDt(DataType.Bag);
+                    if (item == typeof(byte))
+                        return new SingleDt(DataType.Binary);
+                }
                 return new ArrayDt(DataType.Array, rank, GetKind(item));
+            }
+            if (type.IsAssignableTo(typeof(ITuple)))
+            {
+                return new SingleDt(DataType.Tuple);
             }
             if (type.IsAssignableTo(typeof(IDictionary)))
             {
@@ -53,13 +65,19 @@ namespace JNetProto.Sharp
                 }
                 return new MapDt(DataType.Map, GetKind(f.Key), GetKind(f.Value));
             }
-            if (type.IsAssignableTo(typeof(ITuple)))
+            if (type.GetInterface(typeof(ISet<>).Name) is { } setType)
             {
-                return new SingleDt(DataType.Tuple);
+                var item = setType.GetGenericArguments()[0];
+                return new ListDt(DataType.Set, GetKind(item));
+            }
+            if (type.GetInterface(typeof(IList<>).Name) is { } listType)
+            {
+                var item = listType.GetGenericArguments()[0];
+                return new ListDt(DataType.List, GetKind(item));
             }
             return new SingleDt(GetSingleKind(type));
         }
-        
+
         private static DataType GetSingleKind(Type type)
         {
             switch (type.FullName)
