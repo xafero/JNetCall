@@ -229,6 +229,8 @@ public class BinaryWriter implements IDataWriter {
 
     @Override
     public void close() throws Exception {
+        if (_stream == null)
+            return;
         _stream.close();
     }
 }

@@ -227,6 +227,8 @@ public class BinaryReader implements IDataReader {
     
     @Override
     public void close() throws Exception {
+        if (_stream == null)
+            return;
         _stream.close();
     }
 }
