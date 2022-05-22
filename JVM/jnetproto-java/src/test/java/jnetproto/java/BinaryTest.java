@@ -214,7 +214,7 @@ public final class BinaryTest {
         return value;
     }
 
-    private static String toHex(ByteArrayOutputStream mem) {
+    static String toHex(ByteArrayOutputStream mem) {
         var txt = Hex.encodeHexString(mem.toByteArray());
         return txt.toUpperCase();
     }

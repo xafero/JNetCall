@@ -33,4 +33,5 @@ public interface IDataWriter extends AutoCloseable {
     void writeBag(Object[] value) throws IOException;
     void writeBinary(byte[] value) throws IOException;
     void writeObject(Object value) throws IOException;
+    void flush() throws IOException;
 }

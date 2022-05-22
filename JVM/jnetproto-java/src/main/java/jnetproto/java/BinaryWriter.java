@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class BinaryWriter implements IDataWriter {
@@ -221,6 +220,11 @@ public class BinaryWriter implements IDataWriter {
             case Binary: writeBinary((byte[])value); break;
             default: throw new IllegalArgumentException(kind.toString());
         }
+    }
+
+    @Override
+    public void flush() throws IOException {
+        _stream.flush();
     }
 
     @Override

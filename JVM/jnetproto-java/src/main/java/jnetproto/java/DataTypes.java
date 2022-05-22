@@ -1,7 +1,6 @@
 package jnetproto.java;
 
 import jnetproto.java.compat.Reflect;
-import org.javatuples.Quintet;
 import org.javatuples.Tuple;
 
 import java.math.BigDecimal;
