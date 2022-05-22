@@ -1,5 +1,6 @@
 // ReSharper disable StringLiteralTypo
 using System.IO;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace JNetProto.Sharp.Tests
@@ -7,6 +8,8 @@ namespace JNetProto.Sharp.Tests
     public class ComplexTest
     {
         [Theory]
+        [InlineData("2100000013040A034333330A035365741302042A0000000A016C0E0A010200000001690173", 42, 33, null, "Set")]
+        [InlineData("2000000013040A0243370A03476574130204030000000A016C0E0A010200000001690173", 3, 7, null, "Get")]
         [InlineData("220000001304040A0000000504000000000000000700000000000014400A0774687269667479", 10, 4, 5, "thrifty")]
         [InlineData("1E0000001304040500000005030000000000000007000000000000F03F0A036E6F74", 5, 3, 1, "not")]
         [InlineData("100000001302040A0000000A0774687269667479", 10, null, null, "thrifty")]
@@ -17,8 +20,10 @@ namespace JNetProto.Sharp.Tests
             var s = new ProtoSettings();
 
             var isErr = bigNumber == null && decimals == null;
-            object value = isErr
-                ? new Invalid(number, name)
+            var isCall = bigNumber != null && decimals == null;
+            object value = isCall ? new Call("C" + bigNumber, name,
+                    new object[] { number, "l" }, new[] { "i", "s" })
+                : isErr ? new Invalid(number, name)
                 : new Example(number, bigNumber!.Value, decimals!.Value, name);
 
             using var writer = CreateWriter(out var mem, s);
@@ -27,10 +32,18 @@ namespace JNetProto.Sharp.Tests
             Assert.Equal(hex, actual);
 
             using var reader = CreateReader(mem, s);
-            object obj = isErr
-                ? reader.ReadObject<Invalid>()
+            object obj = isCall ? reader.ReadObject<Call>()
+                : isErr ? reader.ReadObject<Invalid>()
                 : reader.ReadObject<Example>();
-            Assert.Equal(value, obj);
+
+            if (obj is not Call)
+            {
+                Assert.Equal(value, obj);
+                return;
+            }
+            var valueJson = JsonConvert.SerializeObject(value);
+            var objJson = JsonConvert.SerializeObject(obj);
+            Assert.Equal(valueJson, objJson);
         }
 
         private static ProtoConvert CreateWriter(out MemoryStream mem, ProtoSettings s)
@@ -47,5 +60,7 @@ namespace JNetProto.Sharp.Tests
             double Decimals, string Name);
 
         public record Invalid(int What, string Why);
+
+        public readonly record struct Call(string C, string M, object[] A, string[] H);
     }
 }
