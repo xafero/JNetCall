@@ -84,7 +84,10 @@ public final class Reflect {
 
     public static Class<?> toClass(Object a) {
         var kind = DataTypes.getKind(a);
-        var clazz = DataTypes.getClass(kind.Kind());
-        return clazz;
+        try {
+            return DataTypes.getClass(kind.Kind());
+        } catch (Exception e) {
+            return a.getClass();
+        }
     }
 }
