@@ -81,4 +81,10 @@ public final class Reflect {
     }
 
     public record Property(String Name, Method Get, Method Set) { };
+
+    public static Class toClass(Object a) {
+        var kind = DataTypes.getKind(a);
+        var clazz = DataTypes.getClass(kind.Kind());
+        return clazz;
+    }
 }
