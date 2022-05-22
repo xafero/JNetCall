@@ -32,7 +32,7 @@ public final class ServiceHost<T> implements AutoCloseable {
     }
 
     private T createInst() throws Exception {
-        var<T> clazz = this.serviceClass;
+        var clazz = this.serviceClass;
         var svc = clazz.getDeclaredConstructor().newInstance();
         return svc;
     }
@@ -50,7 +50,6 @@ public final class ServiceHost<T> implements AutoCloseable {
         try (var proto = new ProtoConvert(input, output, config);
         	 var ir = new InputStreamReader(input);
              var or = new OutputStreamWriter(output);
-             var br = new BufferedReader(ir);
              var bw = new PrintWriter(or)) {
             MethodCall call;
             while ((call = proto.readObject(MethodCall.class)) != null) {
