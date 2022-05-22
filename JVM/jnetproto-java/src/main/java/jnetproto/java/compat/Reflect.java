@@ -1,5 +1,6 @@
 package jnetproto.java.compat;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,6 +79,14 @@ public final class Reflect {
             props.add(new Property(parmName, getter, setter));
         }
         return props;
+    }
+
+    public static <T> Constructor<T> getConstructor(Class<T> clazz, Class[] types) {
+        try {
+            return clazz.getConstructor(types);
+        } catch (NoSuchMethodException e) {
+            return (Constructor<T>) clazz.getConstructors()[0];
+        }
     }
 
     public record Property(String Name, Method Get, Method Set) { };

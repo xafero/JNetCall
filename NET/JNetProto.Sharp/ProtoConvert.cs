@@ -56,14 +56,16 @@ namespace JNetProto.Sharp
             return SerializeObject(args, s);
         }
 
-        private static T DeserializeObject<T>(object[] args, ProtoSettings s)
+        private static T DeserializeObject<T>(object[] args, ProtoSettings _)
         {
             var type = typeof(T);
             var cTypes = args.Select(a => a.GetType()).ToArray();
             var creator = type.GetConstructor(cTypes);
             if (creator == null)
             {
-                throw new ArgumentException($"No constructor: {type}");
+                creator = type.GetConstructors().FirstOrDefault();
+                if (creator == null)
+                    throw new ArgumentException($"No constructor: {type}");
             }
             return (T)creator.Invoke(args);
         }

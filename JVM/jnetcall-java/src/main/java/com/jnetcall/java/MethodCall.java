@@ -1,8 +1,5 @@
 package com.jnetcall.java;
 
-public class MethodCall {
-    public String C;
-    public String M;
-    public Object[] A;
-    public String[] H;
+public record MethodCall(String C, String M, Object[] A) 
+{
 }

@@ -3,6 +3,7 @@ package org.example;
 import org.example.api.ICalculator;
 import org.example.api.IDataTyped;
 import org.example.api.IMultiple;
+import org.example.api.IStringCache;
 import org.example.impl.CalculatorService;
 
 import com.jnetcall.java.ServiceHosts;
@@ -15,6 +16,7 @@ public class Main {
             host.addServiceEndpoint(ICalculator.class);
             host.addServiceEndpoint(IDataTyped.class);
             host.addServiceEndpoint(IMultiple.class);
+            host.addServiceEndpoint(IStringCache.class);
 
             host.open(System.in, System.out);
         }

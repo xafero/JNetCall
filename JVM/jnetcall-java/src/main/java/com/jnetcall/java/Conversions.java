@@ -18,21 +18,20 @@ import org.javatuples.Triplet;
 public final class Conversions {
     private static final Base64.Decoder _decoder = Base64.getDecoder();
 
-    public static Object[] convert(Class<?>[] types, Object[] values, String[] kinds) {
+    public static Object[] convert(Class<?>[] types, Object[] values) {
         for (var i = 0; i < types.length && i < values.length; i++) {
             var value = values[i];
             if (value == null)
                 continue;
-            var kind = kinds[i];
             var type = types[i];
             if (type.isAssignableFrom(value.getClass()))
                 continue;
-            values[i] = convert(type, value, kind);
+            values[i] = convert(type, value);
         }
         return values;
     }
 
-    private static Object convert(Class<?> type, Object value, String kind) {
+    private static Object convert(Class<?> type, Object value) {
         if (type == String.class) {
             return value.toString();
         }
@@ -69,6 +68,8 @@ public final class Conversions {
         if (type == byte[].class) {
             return _decoder.decode(((String) value));
         }
+
+        /*
         if (type == short[].class) {
             var list = (List<?>) value;
             var array = new short[list.size()];
@@ -170,6 +171,8 @@ public final class Conversions {
             var item4 = convert(kinds[3], map.get("Item4"), kind);
             return Quartet.with(item1, item2, item3, item4);
         }
+        */
+
         if (type == ZonedDateTime.class) {
             var txt = (String) value;
             var date = ZonedDateTime.parse(txt);

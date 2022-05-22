@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 using Castle.DynamicProxy;
 using JNetProto.Sharp;
@@ -48,8 +47,17 @@ namespace JNetCall.Sharp
                 }
             };
             (_process = process).Start();
-            _convert = new ProtoConvert(process.StandardOutput.BaseStream,
-                process.StandardInput.BaseStream, Settings);
+            _convert = WriteSync(process, Settings);
+        }
+
+        private static ProtoConvert WriteSync(Process process, ProtoSettings cfg)
+        {
+            var stdOut = process.StandardOutput.BaseStream;
+            var stdIn = process.StandardInput.BaseStream;
+            var convert = new ProtoConvert(stdOut, stdIn, cfg);
+            stdIn.WriteByte(0xEE);
+            stdIn.Flush();
+            return convert;
         }
 
         private void Stop(int milliseconds = 250)
@@ -68,7 +76,8 @@ namespace JNetCall.Sharp
         {
             try
             {
-                return _convert.ReadObject<T>();
+                var obj = _convert.ReadObject<T>();
+                return obj;
             }
             catch (Exception e)
             {
@@ -85,8 +94,7 @@ namespace JNetCall.Sharp
             {
                 C = method.DeclaringType?.Name,
                 M = method.Name,
-                A = invocation.Arguments,
-                H = invocation.Arguments.Select(Conversions.GetHint).ToArray()
+                A = invocation.Arguments
             };
             if (call.C == nameof(IDisposable) && call.M == nameof(IDisposable.Dispose))
             {
@@ -95,7 +103,8 @@ namespace JNetCall.Sharp
             }
             Write(call);
             var input = Read<MethodResult>();
-            switch (input.S)
+            var status = (MethodStatus)input.S;
+            switch (status)
             {
                 case MethodStatus.Ok:
                     var raw = Conversions.Convert(method.ReturnType, input.R);

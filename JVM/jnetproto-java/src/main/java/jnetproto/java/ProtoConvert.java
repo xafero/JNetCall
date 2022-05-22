@@ -61,7 +61,7 @@ public final class ProtoConvert implements AutoCloseable {
     private static <T> T deserializeObject(Class<T> type, Object[] args, ProtoSettings s)
             throws Exception {
         var cTypes = Arrays.stream(args).map(a -> Reflect.toClass(a)).toArray(Class[]::new);
-        var creator = type.getConstructor(cTypes);
+        var creator = Reflect.getConstructor(type, cTypes);
         if (creator == null) {
             throw new IllegalArgumentException("No constructor: " + type);
         }

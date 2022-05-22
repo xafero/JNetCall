@@ -228,7 +228,7 @@ namespace JNetProto.Sharp
                 case DataType.List: return ReadList();
                 case DataType.Bag: return ReadBag();
                 case DataType.Binary: return ReadBinary();
-                default: throw new ArgumentException(kind.ToString());
+                default: throw new ArgumentException($"{nameof(ReadObject)} {kind}");
             }
         }
 
