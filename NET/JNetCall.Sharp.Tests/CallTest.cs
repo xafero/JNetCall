@@ -5,7 +5,8 @@ namespace JNetCall.Sharp.Tests
 {
     public class CallTest
     {
-        private const string Path = "?";
+        internal readonly string Path =
+            ServiceEnv.BuildPath(@"..\..\JVM\alien-java\target\alien-java.jar");
 
         [Fact]
         public void ShouldCache()

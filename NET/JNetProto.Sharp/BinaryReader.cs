@@ -27,7 +27,7 @@ namespace JNetProto.Sharp
             var bytes = new byte[size];
             var length = _stream.Read(bytes);
             if (length != size)
-                throw new ArgumentException(length + " ; " + size);
+                throw new ArgumentException($"Got {length} B instead of {size}!");
             return bytes;
         }
 

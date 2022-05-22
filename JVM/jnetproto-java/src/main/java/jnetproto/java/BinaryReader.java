@@ -38,7 +38,7 @@ public class BinaryReader implements IDataReader {
         var bytes = new byte[size];
         var length = _stream.read(bytes);
         if (length != size && size != 0)
-            throw new IllegalArgumentException(length + " ; " + size);
+            throw new IllegalArgumentException("Got " + length + " B instead of " + size + "!");
         return bytes;
     }
 

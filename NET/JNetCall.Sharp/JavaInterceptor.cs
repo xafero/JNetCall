@@ -27,7 +27,7 @@ namespace JNetCall.Sharp
         {
             if (!File.Exists(_jar))
             {
-                throw new FileNotFoundException("Java archive is missing!", _jar);
+                throw new FileNotFoundException($"Missing: {_jar}");
             }
             var pwd = Environment.CurrentDirectory;
             var utf = Encoding.UTF8;
