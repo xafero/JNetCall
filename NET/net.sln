@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JNetProto.Sharp", "JNetProt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JNetProto.Sharp.Tests", "JNetProto.Sharp.Tests\JNetProto.Sharp.Tests.csproj", "{94EFFBDE-A8BC-48E1-B8A9-DE4FEA719AD2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alien.Sharp", "Alien.Sharp\Alien.Sharp.csproj", "{A17FB61D-2978-4A95-A01A-00BA5753ADD7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alienator.Sharp", "Alienator.Sharp\Alienator.Sharp.csproj", "{653CAAF5-291C-4B0A-B0F6-2889B79010C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +40,13 @@ Global
 		{94EFFBDE-A8BC-48E1-B8A9-DE4FEA719AD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94EFFBDE-A8BC-48E1-B8A9-DE4FEA719AD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94EFFBDE-A8BC-48E1-B8A9-DE4FEA719AD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A17FB61D-2978-4A95-A01A-00BA5753ADD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A17FB61D-2978-4A95-A01A-00BA5753ADD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A17FB61D-2978-4A95-A01A-00BA5753ADD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A17FB61D-2978-4A95-A01A-00BA5753ADD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{653CAAF5-291C-4B0A-B0F6-2889B79010C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{653CAAF5-291C-4B0A-B0F6-2889B79010C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{653CAAF5-291C-4B0A-B0F6-2889B79010C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{653CAAF5-291C-4B0A-B0F6-2889B79010C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

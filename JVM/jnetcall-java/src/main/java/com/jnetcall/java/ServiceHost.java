@@ -2,7 +2,7 @@ package com.jnetcall.java;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import jnetproto.java.compat.Strings;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -75,7 +75,7 @@ public final class ServiceHost<T> implements AutoCloseable {
                 } catch (Throwable e) {
                     var cause = e instanceof InvocationTargetException
                             ? e.getCause() : e;
-                    var debug = ExceptionUtils.getStackTrace(cause);
+                    var debug = Strings.getStackTrace(cause);
                     Write(bw, gson, debug, MethodStatus.MethodFailed);
                 }
             }

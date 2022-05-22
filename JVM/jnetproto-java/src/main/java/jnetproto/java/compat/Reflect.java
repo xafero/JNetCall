@@ -2,7 +2,6 @@ package jnetproto.java.compat;
 
 import jnetproto.java.DataType;
 import jnetproto.java.DataTypes;
-import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
 
@@ -15,7 +14,7 @@ public final class Reflect {
     public static int getRank(Class type) {
         if (!type.isArray())
             return 0;
-        return StringUtils.countMatches(type.getName(), '[');
+        return Strings.countMatches(type.getName(), '[');
     }
 
     public static byte getByte(DataTypes.IDataType kind) {

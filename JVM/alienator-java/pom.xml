@@ -5,14 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>java-parent</artifactId>
-
-    <packaging>pom</packaging>
+    <artifactId>alienator-java</artifactId>
     <version>1.0</version>
 
-    <modules>
-        <module>JNetCall.Java</module>
-        <module>CalculatorJava</module>
-    </modules>
-    
+    <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <maven.compiler.source>18</maven.compiler.source>
+      <maven.compiler.target>18</maven.compiler.target>
+    </properties>
 </project>
