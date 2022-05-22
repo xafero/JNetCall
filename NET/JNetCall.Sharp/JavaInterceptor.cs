@@ -81,6 +81,7 @@ namespace JNetCall.Sharp
             }
             catch (Exception e)
             {
+                _process.StandardInput.Close();
                 var error = $"{_process.StandardOutput.ReadToEnd()} " +
                             $"{_process.StandardError.ReadToEnd()}".Trim();
                 throw new InvalidOperationException(error, e);
