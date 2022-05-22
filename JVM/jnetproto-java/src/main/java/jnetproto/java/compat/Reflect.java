@@ -1,12 +1,12 @@
 package jnetproto.java.compat;
 
-import jnetproto.java.DataType;
-import jnetproto.java.DataTypes;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import jnetproto.java.DataType;
+import jnetproto.java.DataTypes;
 
 public final class Reflect {
 
@@ -14,7 +14,7 @@ public final class Reflect {
         return getRank(value.getClass());
     }
 
-    public static int getRank(Class type) {
+    public static int getRank(Class<?> type) {
         if (!type.isArray())
             return 0;
         return Strings.countMatches(type.getName(), '[');
@@ -82,7 +82,7 @@ public final class Reflect {
 
     public record Property(String Name, Method Get, Method Set) { };
 
-    public static Class toClass(Object a) {
+    public static Class<?> toClass(Object a) {
         var kind = DataTypes.getKind(a);
         var clazz = DataTypes.getClass(kind.Kind());
         return clazz;

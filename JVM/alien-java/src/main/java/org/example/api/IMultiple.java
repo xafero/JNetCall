@@ -1,11 +1,11 @@
 package org.example.api;
 
+import java.util.EnumSet;
+
 import org.javatuples.Pair;
 import org.javatuples.Quartet;
 import org.javatuples.Quintet;
 import org.javatuples.Triplet;
-
-import java.util.EnumSet;
 
 public interface IMultiple {
 

@@ -1,10 +1,5 @@
 package jnetproto.java;
 
-import jnetproto.java.compat.BitConverter;
-import jnetproto.java.compat.Reflect;
-import jnetproto.java.compat.Tuples;
-import org.javatuples.Tuple;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
@@ -15,7 +10,20 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.UUID;
+
+import org.javatuples.Tuple;
+
+import jnetproto.java.compat.BitConverter;
+import jnetproto.java.compat.Reflect;
+import jnetproto.java.compat.Tuples;
 
 public class BinaryReader implements IDataReader {
     private final Charset _enc;
@@ -170,16 +178,16 @@ public class BinaryReader implements IDataReader {
     }
 
     @Override
-    public Set readSet() throws IOException {
-        return (Set)readIterable(new TreeSet());
+    public Set<?> readSet() throws IOException {
+        return (Set<?>)readIterable(new TreeSet<Object>());
     }
 
     @Override
-    public List readList() throws IOException {
-        return (List)readIterable(new ArrayList());
+    public List<?> readList() throws IOException {
+        return (List<?>)readIterable(new ArrayList<Object>());
     }
 
-    private Iterable readIterable(Iterable coll) throws IOException
+    private Iterable<?> readIterable(Iterable<?> coll) throws IOException
     {
         var valKind = Reflect.toDataType(_stream.read());
         var size = readI32();

@@ -1,10 +1,6 @@
 package jnetproto.java;
 
-import jnetproto.java.compat.Reflect;
-import jnetproto.java.compat.Tuples;
-import org.apache.commons.codec.binary.Hex;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,9 +8,18 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.UUID;
 
-import static org.testng.Assert.assertEquals;
+import org.apache.commons.codec.binary.Hex;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+import jnetproto.java.compat.Reflect;
+import jnetproto.java.compat.Tuples;
 
 public final class BinaryTest {
     @DataProvider(name = "writeArgs")
@@ -148,7 +153,7 @@ public final class BinaryTest {
         var txt = value.toString();
         if (value instanceof Object[] objects) {
             if (objects[0] instanceof Character c && c == 'M') {
-                var dict = new HashMap();
+                var dict = new HashMap<Object, Object>();
                 for (var i = 1; i < objects.length; i += 2) {
                     var key = objects[i];
                     var val = objects[i + 1];
@@ -170,7 +175,7 @@ public final class BinaryTest {
             }
             else if (objects[0] instanceof Character c && c == 'L')
             {
-                var list = new LinkedList();
+                var list = new LinkedList<Object>();
                 for (var i = 1; i < objects.length; i++)
                 {
                     var val = objects[i];
@@ -180,7 +185,7 @@ public final class BinaryTest {
             }
             else if (objects[0] instanceof Character c && c == 'S')
             {
-                var set = new HashSet();
+                var set = new HashSet<Object>();
                 for (var i = 1; i < objects.length; i++)
                 {
                     var val = objects[i];

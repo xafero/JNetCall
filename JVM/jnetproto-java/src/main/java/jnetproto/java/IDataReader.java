@@ -1,7 +1,5 @@
 package jnetproto.java;
 
-import org.javatuples.Tuple;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -10,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import org.javatuples.Tuple;
 
 public interface IDataReader extends AutoCloseable {
     boolean readBool() throws IOException;
@@ -26,10 +26,10 @@ public interface IDataReader extends AutoCloseable {
     LocalDateTime readTimestamp() throws IOException;
     UUID readGuid() throws IOException;
     Object readArray() throws IOException;
-    Map readMap() throws IOException;
+    Map<?,?> readMap() throws IOException;
     Tuple readTuple() throws IOException;
-    Set readSet() throws IOException;
-    List readList() throws IOException;
+    Set<?> readSet() throws IOException;
+    List<?> readList() throws IOException;
     Object[] readBag() throws IOException;
     byte[] readBinary() throws IOException;
     Object readObject() throws IOException;

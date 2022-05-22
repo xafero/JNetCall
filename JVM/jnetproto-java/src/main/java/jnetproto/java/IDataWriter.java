@@ -1,7 +1,5 @@
 package jnetproto.java;
 
-import org.javatuples.Tuple;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -10,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import org.javatuples.Tuple;
 
 public interface IDataWriter extends AutoCloseable {
     void writeBool(boolean value) throws IOException;
@@ -26,10 +26,10 @@ public interface IDataWriter extends AutoCloseable {
     void writeTimestamp(LocalDateTime value) throws IOException;
     void writeGuid(UUID value) throws IOException;
     void writeArray(Object value) throws IOException;
-    void writeMap(Map value) throws IOException;
+    void writeMap(Map<?,?> value) throws IOException;
     void writeTuple(Tuple value) throws IOException;
-    void writeSet(Set value) throws IOException;
-    void writeList(List value) throws IOException;
+    void writeSet(Set<?> value) throws IOException;
+    void writeList(List<?> value) throws IOException;
     void writeBag(Object[] value) throws IOException;
     void writeBinary(byte[] value) throws IOException;
     void writeObject(Object value) throws IOException;

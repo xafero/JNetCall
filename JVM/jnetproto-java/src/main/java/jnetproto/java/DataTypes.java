@@ -1,8 +1,5 @@
 package jnetproto.java;
 
-import jnetproto.java.compat.Reflect;
-import org.javatuples.Tuple;
-
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -11,8 +8,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.javatuples.Tuple;
+
+import jnetproto.java.compat.Reflect;
+
 public final class DataTypes {
-    public static Class getClass(DataType type) {
+    public static Class<?> getClass(DataType type) {
         switch (type) {
             case Bool: return boolean.class;
             case I8: return byte.class;
@@ -39,7 +40,7 @@ public final class DataTypes {
 
     public static IDataType getKind(Object instance)
     {
-        var type = instance instanceof Class cl ? cl : instance.getClass();
+        var type = instance instanceof Class<?> cl ? cl : instance.getClass();
         if (type.isArray())
         {
             var item = type.getComponentType();
@@ -59,29 +60,29 @@ public final class DataTypes {
         }
         if (Map.class.isAssignableFrom(type))
         {
-            var dict = (Map)instance;
-            Map.Entry f = null;
+            var dict = (Map<?,?>)instance;
+            Map.Entry<?,?> f = null;
             for (var entry : dict.entrySet())
             {
-                f = (Map.Entry)entry;
+                f = (Map.Entry<?,?>)entry;
                 break;
             }
             return new MapDt(DataType.Map, getKind(f.getKey()), getKind(f.getValue()));
         }
         if (Set.class.isAssignableFrom(type))
         {
-            var item = ((Set)instance).iterator().next();
+            var item = ((Set<?>)instance).iterator().next();
             return new ListDt(DataType.Set, getKind(item));
         }
         if (List.class.isAssignableFrom(type))
         {
-            var item = ((List)instance).get(0);
+            var item = ((List<?>)instance).get(0);
             return new ListDt(DataType.List, getKind(item));
         }
         return new SingleDt(getSingleKind(type));
     }
 
-    private static DataType getSingleKind(Class type) {
+    private static DataType getSingleKind(Class<?> type) {
         switch (type.getName()) {
             case "boolean": case "java.lang.Boolean": return DataType.Bool;
             case "byte": case "java.lang.Byte": return DataType.I8;

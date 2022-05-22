@@ -1,9 +1,5 @@
 package jnetproto.java;
 
-import jnetproto.java.compat.BitConverter;
-import jnetproto.java.compat.Reflect;
-import org.javatuples.Tuple;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
@@ -13,8 +9,17 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.StreamSupport;
+
+import org.javatuples.Tuple;
+
+import jnetproto.java.compat.BitConverter;
+import jnetproto.java.compat.Reflect;
 
 public class BinaryWriter implements IDataWriter {
     private final Charset _enc;
@@ -113,10 +118,10 @@ public class BinaryWriter implements IDataWriter {
     }
 
     @Override
-    public void writeMap(Map value) throws IOException {
+    public void writeMap(Map<?,?> value) throws IOException {
         writeI32(value.size());
         for (var item : value.entrySet()) {
-            var entry = (Map.Entry) item;
+            var entry = (Map.Entry<?,?>) item;
             writeObject(entry.getKey(), true);
             writeObject(entry.getValue(), true);
         }
@@ -133,12 +138,12 @@ public class BinaryWriter implements IDataWriter {
     }
 
     @Override
-    public void writeSet(Set value) throws IOException {
+    public void writeSet(Set<?> value) throws IOException {
         writeIterable(value, true);
     }
 
     @Override
-    public void writeList(List value) throws IOException {
+    public void writeList(List<?> value) throws IOException {
         writeIterable(value, true);
     }
 
@@ -155,10 +160,10 @@ public class BinaryWriter implements IDataWriter {
         _stream.write(value);
     }
 
-    private void writeIterable(Iterable raw, boolean skipHeader) throws IOException {
+    private void writeIterable(Iterable<?> raw, boolean skipHeader) throws IOException {
         int count;
-        Iterable values;
-        if (raw instanceof Collection coll) {
+        Iterable<?> values;
+        if (raw instanceof Collection<?> coll) {
             count = coll.size();
             values = raw;
         } else {
@@ -212,10 +217,10 @@ public class BinaryWriter implements IDataWriter {
             case Timestamp: writeTimestamp((LocalDateTime) value); break;
             case Guid: writeGuid((UUID) value); break;
             case Array: writeArray(value); break;
-            case Map: writeMap((Map) value); break;
+            case Map: writeMap((Map<?,?>) value); break;
             case Tuple: writeTuple((Tuple) value); break;
-            case Set: writeSet((Set)value); break;
-            case List: writeList((List)value); break;
+            case Set: writeSet((Set<?>)value); break;
+            case List: writeList((List<?>)value); break;
             case Bag: writeBag((Object[])value); break;
             case Binary: writeBinary((byte[])value); break;
             default: throw new IllegalArgumentException(kind.toString());
