@@ -16,6 +16,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>aliens-java</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.xafero</groupId>
             <artifactId>jnetcall-java</artifactId>
             <version>1.0</version>

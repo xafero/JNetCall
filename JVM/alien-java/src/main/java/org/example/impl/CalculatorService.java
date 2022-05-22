@@ -16,12 +16,13 @@ import java.util.UUID;
 import org.example.api.ICalculator;
 import org.example.api.IDataTyped;
 import org.example.api.IMultiple;
+import org.example.api.IStringCache;
 import org.javatuples.Pair;
 import org.javatuples.Quartet;
 import org.javatuples.Quintet;
 import org.javatuples.Triplet;
 
-public class CalculatorService implements ICalculator, IDataTyped, IMultiple {
+public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IStringCache {
 
     public double Add(double n1, double n2) {
         double result = n1 + n2;
@@ -193,5 +194,30 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple {
         bld.append(" | ");
         bld.append(Arrays.toString(days.toArray()));
         return bld.toString();
+    }
+
+    private final Map<Integer, String> cache = new LinkedHashMap<>();
+
+    @Override
+    public void set(int key, String value) {
+        cache.put(key, value);
+    }
+
+    @Override
+    public String get(int key) throws UnsupportedOperationException {
+        var value = cache.get(key);
+        if (value == null)
+            throw new UnsupportedOperationException(key + " ?!");
+        return value;
+    }
+
+    @Override
+    public void delete(int key) {
+        cache.remove(key);
+    }
+
+    @Override
+    public int getSize() {
+        return cache.size();
     }
 }

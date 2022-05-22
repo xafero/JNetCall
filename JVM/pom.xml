@@ -13,6 +13,7 @@
         <module>jnetcall-java</module>
         <module>jnetproto-java</module>
         <module>alien-java</module>
+        <module>aliens-java</module>
         <module>alienator-java</module>
     </modules>
     
