@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Example.API;
 using JNetCall.Sharp;
 using static JNetCall.Sharp.ServiceEnv;
-using static Newtonsoft.Json.JsonConvert;
 
 namespace Example
 {
@@ -51,7 +50,7 @@ namespace Example
                 u = new[] { decimal.MinValue }, g = new[] { Guid.Empty }
             };
             txt = client.ToArrayText(b.y, b.s, b.i, b.l, b.f, b.d, b.b, b.c, b.t, b.u, b.g);
-            Console.WriteLine("ArrayText({0}) = {2}          [{1}]", SerializeObject(b), txt, Environment.NewLine);
+            Console.WriteLine("ArrayText({0}) = {2}          [{1}]", b, txt, Environment.NewLine);
 
             var lines = new List<string> { "Dog  ", "Hot", "Dog ", "Dog", "Hot    ", "Cat", "Cat", "Hot", "Hot" };
             var lineCount = client.GetLineCount(lines.ToArray());

@@ -27,5 +27,6 @@ namespace JNetProto.Sharp
         void WriteBag(object[] value);
         void WriteBinary(byte[] value);
         void WriteObject(object value);
+        void Flush();
     }
 }

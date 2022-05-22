@@ -4,19 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Castle.DynamicProxy;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using JNetProto.Sharp;
 
 namespace JNetCall.Sharp
 {
     internal sealed class JavaInterceptor : IInterceptor, IDisposable
     {
-        private static readonly JsonSerializerSettings Settings = new()
-        {
-            Formatting = Formatting.None,
-            NullValueHandling = NullValueHandling.Ignore,
-            Converters = { new StringEnumConverter() }
-        };
+        private static readonly ProtoSettings Settings = new();
 
         private readonly string _jar;
 
@@ -27,6 +21,7 @@ namespace JNetCall.Sharp
         }
 
         private Process _process;
+        private ProtoConvert _convert;
 
         private void Start()
         {
@@ -53,6 +48,8 @@ namespace JNetCall.Sharp
                 }
             };
             (_process = process).Start();
+            _convert = new ProtoConvert(process.StandardOutput.BaseStream,
+                process.StandardInput.BaseStream, Settings);
         }
 
         private void Stop(int milliseconds = 250)
@@ -63,20 +60,20 @@ namespace JNetCall.Sharp
 
         private void Write(object obj)
         {
-            var json = JsonConvert.SerializeObject(obj, Settings);
-            _process.StandardInput.WriteLine(json);
+            _convert.WriteObject(obj);
+            _convert.Flush();
         }
 
         private T Read<T>()
         {
-            var json = _process.StandardOutput.ReadLine();
             try
             {
-                return JsonConvert.DeserializeObject<T>(json!, Settings);
+                return _convert.ReadObject<T>();
             }
             catch (Exception e)
             {
-                var error = $"{json} {_process.StandardError.ReadToEnd()}".Trim();
+                var error = $"{_process.StandardOutput.ReadToEnd()} " +
+                            $"{_process.StandardError.ReadToEnd()}".Trim();
                 throw new InvalidOperationException(error, e);
             }
         }

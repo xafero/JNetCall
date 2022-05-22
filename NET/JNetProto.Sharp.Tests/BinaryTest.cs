@@ -213,7 +213,7 @@ namespace JNetProto.Sharp.Tests
             return value;
         }
 
-        private static string ToHex(MemoryStream mem)
+        internal static string ToHex(MemoryStream mem)
         {
             var txt = BitConverter.ToString(mem.ToArray());
             return txt.Replace("-", string.Empty);

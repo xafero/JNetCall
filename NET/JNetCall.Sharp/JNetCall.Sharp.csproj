@@ -8,4 +8,8 @@
 		<PackageReference Include="Castle.Core" Version="5.0.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\JNetProto.Sharp\JNetProto.Sharp.csproj" />
+	</ItemGroup>
+
 </Project>

@@ -222,6 +222,11 @@ namespace JNetProto.Sharp
             }
         }
 
+        public void Flush()
+        {
+            _stream.Flush();
+        }
+
         public void Dispose()
         {
             _stream?.Dispose();

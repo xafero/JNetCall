@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json.Linq;
 using Conv = System.Convert;
 
 namespace JNetCall.Sharp
@@ -27,6 +26,13 @@ namespace JNetCall.Sharp
         {
             if (value == null || type.IsInstanceOfType(value))
                 return value;
+
+
+
+
+
+
+            /* 
             if (type == typeof(int))
                 return Conv.ChangeType(value, type);
             if (type == typeof(byte[]))
@@ -69,7 +75,14 @@ namespace JNetCall.Sharp
                     var dictType = typeof(Dictionary<,>).MakeGenericType(keyType, valType);
                     return ((JObject)value).ToObject(dictType);
                 }
-            }
+            }*/
+
+
+
+
+
+
+
             var debug = $"{type} / {value} / {value.GetType()}";
             throw new ArgumentException(debug);
         }
