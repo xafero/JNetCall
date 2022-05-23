@@ -71,7 +71,7 @@ public class BinaryWriter implements IDataWriter {
     public void writeF128(BigDecimal value) throws IOException
     {
         var raw = value.toString();
-        writeUtf8(raw);
+        writeUtf8(raw, false);
     }
 
     @Override
@@ -83,8 +83,15 @@ public class BinaryWriter implements IDataWriter {
     @Override
     public void writeUtf8(String value) throws IOException
     {
+        writeUtf8(value, true);
+    }
+
+    private void writeUtf8(String value, boolean wide) throws IOException {
         var bytes = value.getBytes(_enc);
-        _stream.write((byte)bytes.length);
+        if (wide)
+            writeI16((short) bytes.length);
+        else
+            writeI8((byte) bytes.length);
         _stream.write(bytes);
     }
 

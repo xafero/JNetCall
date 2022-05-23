@@ -16,7 +16,6 @@ namespace JNetProto.Sharp.Tests
         [InlineData("1F0000001304040500000005030000000000000007000000000000F03F0A03006E6F74", 5, 3, 1, "not")]
         [InlineData("110000001302040A0000000A070074687269667479", 10, null, null, "thrifty")]
         [InlineData("0D000000130204050000000A03006E6F74", 5, null, null, "not")]
-        // Result
         public void ShouldWrite(string hex, int number, long? bigNumber,
             double? decimals, string name)
         {

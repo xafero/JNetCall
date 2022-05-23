@@ -21,4 +21,8 @@ public final class Strings {
         error.printStackTrace(printer);
         return bld.getBuffer().toString();
     }
+
+    public static String repeat(int num, String c) {
+        return new String(new char[num]).replace("\0", c);
+    }
 }

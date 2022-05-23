@@ -14,12 +14,14 @@ public final class ComplexTest {
     public Object[][] getWriteArgs() {
         return new Object[][]
                 {
-                        {"2100000013040A034333330A035365741302042A0000000A016C0E0A010200000001690173", 42, 33L, null, "Set"},
-                        {"2000000013040A0243370A03476574130204030000000A016C0E0A010200000001690173", 3, 7L, null, "Get"},
-                        {"220000001304040A0000000504000000000000000700000000000014400A0774687269667479", 10, 4L, 5d, "thrifty"},
-                        {"1E0000001304040500000005030000000000000007000000000000F03F0A036E6F74", 5, 3L, 1d, "not"},
-                        {"100000001302040A0000000A0774687269667479", 10, null, null, "thrifty"},
-                        {"0C000000130204050000000A036E6F74", 5, null, null, "not"}
+                        {"1400000013020A0C007468697320697320676F6F64030800", 3, null, 5d, "this is good"},
+                        {"0C00000013020A040063726170030600", 2, null, 4d, "crap"},
+                        {"2600000013040A03004333330A03005365741302042A0000000A01006C0E0A0102000000010069010073", 42, 33L, null, "Set"},
+                        {"2500000013040A020043370A0300476574130204030000000A01006C0E0A0102000000010069010073", 3, 7L, null, "Get"},
+                        {"230000001304040A0000000504000000000000000700000000000014400A070074687269667479", 10, 4L, 5d, "thrifty"},
+                        {"1F0000001304040500000005030000000000000007000000000000F03F0A03006E6F74", 5, 3L, 1d, "not"},
+                        {"110000001302040A0000000A070074687269667479", 10, null, null, "thrifty"},
+                        {"0D000000130204050000000A03006E6F74", 5, null, null, "not"}
                 };
     }
 
@@ -30,10 +32,12 @@ public final class ComplexTest {
 
         var isErr = bigNumber == null && decimals == null;
         var isCall = bigNumber != null && decimals == null;
+        var isRes = bigNumber == null && decimals != null;
         Object value = isCall ? new Call("C" + bigNumber, name,
                 new Object[] { number, "l" }, new String[] { "i", "s" })
-            : isErr ? new Invalid(number, name)
-            : new Example(number, bigNumber, decimals, name);
+                : isErr ? new Invalid(number, name)
+                : isRes ? new Result(name, (short)(decimals + number))
+                : new Example(number, bigNumber, decimals, name);
         
         var mem = new ByteArrayOutputStream[1];
         try (var writer = createWriter(mem, s)) {
@@ -44,8 +48,9 @@ public final class ComplexTest {
             try (var reader = createReader(mem[0], s)) {
                 Object obj = isCall ? reader.readObject(Call.class)
                         : isErr ? reader.readObject(Invalid.class)
+                        : isRes ? reader.readObject(Result.class)
                         : reader.readObject(Example.class);
-                
+
                 if (!(obj instanceof Call))
                 {
                     assertEquals(value, obj);
@@ -71,5 +76,7 @@ public final class ComplexTest {
 
     public record Example(int Number, long BigNumber, double Decimals, String Name) { }
     public record Invalid(int What, String Why) { }
+
     public record Call(String C, String M, Object[] A, String[] H) { }
+    public record Result(Object R, short S) { }
 }

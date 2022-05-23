@@ -79,7 +79,7 @@ public class BinaryReader implements IDataReader {
 
     @Override
     public BigDecimal readF128() throws IOException {
-        return new BigDecimal(readUtf8());
+        return new BigDecimal(readUtf8(false));
     }
 
     @Override
@@ -89,7 +89,12 @@ public class BinaryReader implements IDataReader {
 
     @Override
     public String readUtf8() throws IOException {
-        return _enc.decode(ByteBuffer.wrap(readBytes(_stream.read()))).toString();
+        return readUtf8(true);
+    }
+
+    private String readUtf8(boolean wide) throws IOException {
+        var size = wide ? readI16() : readI8();
+        return _enc.decode(ByteBuffer.wrap(readBytes(size))).toString();
     }
 
     @Override
