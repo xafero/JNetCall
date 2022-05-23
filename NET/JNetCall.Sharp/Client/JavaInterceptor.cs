@@ -3,10 +3,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Castle.DynamicProxy;
-using JNetProto.Sharp;
+using JNetCall.Sharp.API;
+using JNetCall.Sharp.Tools;
 using JNetProto.Sharp.Beans;
 
-namespace JNetCall.Sharp
+namespace JNetCall.Sharp.Client
 {
     internal sealed class JavaInterceptor : IInterceptor, IDisposable
     {

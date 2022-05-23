@@ -1,4 +1,4 @@
-package com.jnetcall.java;
+package jnetcall.java.server;
 
 public final class ServiceHosts {
 

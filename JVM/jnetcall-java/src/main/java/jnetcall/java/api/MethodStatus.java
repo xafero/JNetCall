@@ -1,4 +1,4 @@
-package com.jnetcall.java;
+package jnetcall.java.api;
 
 public enum MethodStatus {
     Unknown(0),

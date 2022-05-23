@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Example.API;
-using JNetCall.Sharp;
-using static JNetCall.Sharp.ServiceEnv;
+using JNetCall.Sharp.Client;
+using static JNetCall.Sharp.Client.ServiceEnv;
 
 namespace Example
 {

@@ -1,4 +1,5 @@
 using Example.API;
+using JNetCall.Sharp.Client;
 using Xunit;
 
 namespace JNetCall.Sharp.Tests

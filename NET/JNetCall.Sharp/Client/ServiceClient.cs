@@ -1,7 +1,7 @@
 using System;
 using Castle.DynamicProxy;
 
-namespace JNetCall.Sharp
+namespace JNetCall.Sharp.Client
 {
     public static class ServiceClient
     {

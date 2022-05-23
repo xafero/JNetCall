@@ -1,4 +1,4 @@
-namespace JNetCall.Sharp
+namespace JNetCall.Sharp.API
 {
     public enum MethodStatus : short
     {
