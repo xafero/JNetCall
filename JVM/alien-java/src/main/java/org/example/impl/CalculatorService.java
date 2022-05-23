@@ -212,4 +212,8 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
     public int getSize() {
         return cache.size();
     }
+
+    @Override
+    public void close() throws Exception {
+    }
 }

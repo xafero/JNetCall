@@ -26,6 +26,12 @@
             <version>7.5</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>aliens-java</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

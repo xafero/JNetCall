@@ -1,17 +1,21 @@
 package jnetcall.java.server;
 
-import java.io.*;
+import jnetcall.java.api.MethodCall;
+import jnetcall.java.api.MethodResult;
+import jnetcall.java.api.MethodStatus;
+import jnetcall.java.tools.Conversions;
+import jnetproto.java.beans.ProtoConvert;
+import jnetproto.java.beans.ProtoSettings;
+import jnetproto.java.compat.Strings;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import jnetcall.java.api.*;
-import jnetcall.java.tools.*;
-import jnetproto.java.api.*;
-import jnetproto.java.beans.*;
-import jnetproto.java.compat.*;
 
 public final class ServiceHost<T> implements AutoCloseable {
     private final Class<T> serviceClass;

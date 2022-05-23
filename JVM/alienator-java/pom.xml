@@ -13,4 +13,18 @@
       <maven.compiler.source>18</maven.compiler.source>
       <maven.compiler.target>18</maven.compiler.target>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>aliens-java</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.xafero</groupId>
+            <artifactId>jnetcall-java</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+
 </project>

@@ -1,7 +1,6 @@
 package jnetproto.java.compat;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 
 public final class Strings {
 
@@ -24,5 +23,9 @@ public final class Strings {
 
     public static String repeat(int num, String c) {
         return new String(new char[num]).replace("\0", c);
+    }
+
+    public static String readToEnd(InputStream stream) throws IOException {
+        return new String(stream.readAllBytes());
     }
 }
