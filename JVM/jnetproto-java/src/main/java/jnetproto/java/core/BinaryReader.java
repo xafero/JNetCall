@@ -177,6 +177,11 @@ public class BinaryReader implements IDataReader {
     }
 
     @Override
+    public Object readNull() {
+        return null;
+    }
+
+    @Override
     public Set<?> readSet() throws IOException {
         return (Set<?>)readIterable(new TreeSet<Object>());
     }
@@ -228,7 +233,8 @@ public class BinaryReader implements IDataReader {
             case List: return readList();
             case Bag: return readBag();
             case Binary: return readBinary();
-            default: throw new IllegalArgumentException(kind.toString());
+            case Null: return readNull();
+            default: throw new IllegalArgumentException("readObject " + kind);
         }
     }
     

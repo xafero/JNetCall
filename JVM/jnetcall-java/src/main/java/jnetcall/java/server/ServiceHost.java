@@ -95,7 +95,8 @@ public final class ServiceHost<T> implements AutoCloseable {
     }
 
     private boolean checkMethod(Method m, String callName) {
-        return m.getName().equalsIgnoreCase(callName);
+        var cName = callName.replace("_", "");
+        return m.getName().equalsIgnoreCase(cName);
     }
 
     @Override

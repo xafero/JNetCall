@@ -180,6 +180,11 @@ namespace JNetProto.Sharp.Core
             return ReadBytes(size);
         }
 
+        public object ReadNull()
+        {
+            return null;
+        }
+
         public IEnumerable ReadSet()
         {
             var setType = typeof(SortedSet<>);
@@ -238,6 +243,7 @@ namespace JNetProto.Sharp.Core
                 case DataType.List: return ReadList();
                 case DataType.Bag: return ReadBag();
                 case DataType.Binary: return ReadBinary();
+                case DataType.Null: return ReadNull();
                 default: throw new ArgumentException($"{nameof(ReadObject)} {kind}");
             }
         }

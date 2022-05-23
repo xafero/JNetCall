@@ -13,7 +13,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -92,8 +91,10 @@ public final class NetInterceptor implements InvocationHandler, AutoCloseable {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        var call = new MethodCall(method.getDeclaringClass().getSimpleName(),
-                method.getName(), args);
+        var contract = method.getDeclaringClass().getSimpleName();
+        var action = method.getName();
+        var safeArgs = args == null ? new Object[0] : args;
+        var call = new MethodCall(contract, action, safeArgs);
         if (call.C().equals("AutoCloseable") && call.M().equals("close")) {
             close();
             return null;

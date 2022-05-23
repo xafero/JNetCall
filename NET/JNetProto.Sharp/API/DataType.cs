@@ -24,6 +24,7 @@ namespace JNetProto.Sharp.API
         Set,
         List,
         Bag,
-        Binary
+        Binary,
+        Null
     }
 }

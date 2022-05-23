@@ -1,7 +1,25 @@
-﻿
+﻿using System;
+using Example.API;
+using Example.Impl;
+using JNetCall.Sharp.Server;
 
-using System;
+namespace Example
+{
+    internal static class Program
+    {
+        private static void Main()
+        {
+            using (var host = ServiceHosts.Create<CalculatorService>())
+            {
+                host.AddServiceEndpoint<ICalculator>();
+                host.AddServiceEndpoint<IDataTyped>();
+                host.AddServiceEndpoint<IMultiple>();
+                host.AddServiceEndpoint<IStringCache>();
 
-Console.WriteLine("Hello, World!");
-
-
+                var @in = Console.OpenStandardInput();
+                var @out = Console.OpenStandardOutput();
+                host.Open(@in, @out);
+            }
+        }
+    }
+}

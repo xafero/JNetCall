@@ -10,8 +10,10 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         final String path = "..\\..\\..\\NET\\Alien.Sharp\\bin\\Debug\\net6.0\\Alien.Sharp.exe";
-        var client = ServiceClient.create(ICalculator.class, buildPath(path));
 
+        var client = ServiceClient.create(ICalculator.class, buildPath(path));
+        System.out.println(" *** " + client.getName() + " on JVM *** ");
+        
         var value1 = 100.00D;
         var value2 = 15.99D;
         var result = client.add(value1, value2);

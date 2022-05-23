@@ -206,6 +206,11 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
     }
 
     @Override
+    public String getName() {
+        return "Java";
+    }
+
+    @Override
     public void close() throws Exception {
     }
 }

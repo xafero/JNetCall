@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using JNetProto.Sharp.API;
+using JNetProto.Sharp.Compat;
 using JNetProto.Sharp.Core;
 using Stream = System.IO.Stream;
 using MemoryStream = System.IO.MemoryStream;
@@ -62,7 +63,7 @@ namespace JNetProto.Sharp.Beans
         private static T DeserializeObject<T>(object[] args, ProtoSettings _)
         {
             var type = typeof(T);
-            var cTypes = args.Select(a => a.GetType()).ToArray();
+            var cTypes = args.Select(Reflect.ToType).ToArray();
             var creator = type.GetConstructor(cTypes);
             if (creator == null)
             {

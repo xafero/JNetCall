@@ -26,6 +26,7 @@ namespace JNetProto.Sharp.API
         IList ReadList();
         object[] ReadBag();
         byte[] ReadBinary();
+        object ReadNull();
         object ReadObject();
     }
 }

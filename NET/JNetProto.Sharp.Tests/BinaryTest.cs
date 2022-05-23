@@ -125,6 +125,8 @@ namespace JNetProto.Sharp.Tests
         [InlineData("13010101", new object[] { 'B', true })]
         [InlineData("130201010202", new object[] { 'B', true, (byte)2 })]
         [InlineData("130301010202030300", new object[] { 'B', true, (byte)2, (short)3 })]
+        // Null
+        [InlineData("15", null)]
         public void ShouldWrite(string expected, object value)
         {
             using var writer = CreateWriter(out var mem);
@@ -139,7 +141,7 @@ namespace JNetProto.Sharp.Tests
 
         private static object GetValue(object value)
         {
-            var txt = value.ToString()!;
+            var txt = value?.ToString() ?? string.Empty;
             if (value is object[] objects)
             {
                 if (objects[0] is 'M')

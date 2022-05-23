@@ -25,6 +25,7 @@ namespace JNetProto.Sharp.Core
                 case DataType.Duration: return typeof(TimeSpan);
                 case DataType.Timestamp: return typeof(DateTime);
                 case DataType.Guid: return typeof(Guid);
+                case DataType.Null: return typeof(object);
                 default: throw new ArgumentException(type.ToString());
             }
         }
@@ -37,6 +38,10 @@ namespace JNetProto.Sharp.Core
 
         public static IDataType GetKind(object instance)
         {
+            if (instance == null)
+            {
+                return new SingleDt(DataType.Null);
+            }
             var type = instance as Type ?? instance.GetType();
             if (type.IsArray)
             {

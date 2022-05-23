@@ -22,5 +22,6 @@ public enum DataType {
     Set,
     List,
     Bag,
-    Binary
+    Binary,
+    Null
 }

@@ -16,22 +16,22 @@ namespace JNetCall.Sharp.Tests
             using var client = ServiceClient.Create<IStringCache>(Path);
 
             client.Set(42, input[0]);
-            Assert.Equal(-1, client.Size);
+            Assert.Equal(1, client.Size);
             Assert.Equal(input[0], client.Get(42));
 
             client.Delete(42);
-            Assert.Equal(-1, client.Size);
+            Assert.Equal(0, client.Size);
 
             client.Set(43, input[1]);
             client.Set(44, input[2]);
-            Assert.Equal(-1, client.Size);
+            Assert.Equal(2, client.Size);
 
             Assert.Equal(input[1], client.Get(43));
             Assert.Equal(input[2], client.Get(44));
 
             client.Delete(43);
             client.Delete(44);
-            Assert.Equal(-1, client.Size);
+            Assert.Equal(0, client.Size);
         }
     }
 }

@@ -178,6 +178,10 @@ namespace JNetProto.Sharp.Core
                 WriteObject(value[i], false);
             }
         }
+
+        public void WriteNull()
+        {
+        }
         
         public void WriteObject(object value)
         {
@@ -227,6 +231,7 @@ namespace JNetProto.Sharp.Core
                 case DataType.List: WriteList((IList)value); break;
                 case DataType.Bag: WriteBag((object[])value); break;
                 case DataType.Binary: WriteBinary((byte[])value); break;
+                case DataType.Null: WriteNull(); break;
                 default: throw new ArgumentException(kind.ToString());
             }
         }

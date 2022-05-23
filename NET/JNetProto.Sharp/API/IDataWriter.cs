@@ -26,6 +26,7 @@ namespace JNetProto.Sharp.API
         void WriteList(IList value);
         void WriteBag(object[] value);
         void WriteBinary(byte[] value);
+        void WriteNull();
         void WriteObject(object value);
         void Flush();
     }

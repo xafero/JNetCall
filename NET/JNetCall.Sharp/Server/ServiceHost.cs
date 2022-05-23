@@ -23,7 +23,12 @@ namespace JNetCall.Sharp.Server
             _config = new ProtoSettings();
         }
 
-        public void AddServiceEndpoint(Type interfaceClass)
+        public void AddServiceEndpoint<TSvc>()
+        {
+            AddServiceEndpoint(typeof(TSvc));
+        }
+
+        private void AddServiceEndpoint(Type interfaceClass)
         {
             var name = interfaceClass.Name;
             _interfaces.Add(name, interfaceClass);
@@ -101,7 +106,8 @@ namespace JNetCall.Sharp.Server
 
         private static bool CheckMethod(MemberInfo m, string callName)
         {
-            return m.Name.Equals(callName, Cmp);
+            var mName = m.Name.Replace("_", string.Empty);
+            return mName.Equals(callName, Cmp);
         }
 
         public void Dispose()

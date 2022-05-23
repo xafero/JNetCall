@@ -180,6 +180,10 @@ public class BinaryWriter implements IDataWriter {
     }
 
     @Override
+    public void writeNull() {
+    }
+
+    @Override
     public void writeObject(Object value) throws IOException {
         writeObject(value, false);
     }
@@ -226,6 +230,7 @@ public class BinaryWriter implements IDataWriter {
             case List: writeList((List<?>)value); break;
             case Bag: writeBag((Object[])value); break;
             case Binary: writeBinary((byte[])value); break;
+            case Null: writeNull(); break;
             default: throw new IllegalArgumentException(kind.toString());
         }
     }

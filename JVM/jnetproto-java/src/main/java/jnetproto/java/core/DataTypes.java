@@ -28,6 +28,7 @@ public final class DataTypes {
             case Duration: return Duration.class;
             case Timestamp: return LocalDateTime.class;
             case Guid: return UUID.class;
+            case Null: return Object.class;
             default: throw new IllegalArgumentException(type.toString());
         }
     }
@@ -40,6 +41,10 @@ public final class DataTypes {
 
     public static IDataType getKind(Object instance)
     {
+        if (instance == null)
+        {
+            return new SingleDt(DataType.Null);
+        }
         var type = instance instanceof Class<?> cl ? cl : instance.getClass();
         if (type.isArray())
         {

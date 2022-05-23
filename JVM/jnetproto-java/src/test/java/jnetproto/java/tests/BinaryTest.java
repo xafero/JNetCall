@@ -135,7 +135,9 @@ public final class BinaryTest {
                         // Bag
                         {"13010101", new Object[]{'B', true}},
                         {"130201010202", new Object[]{'B', true, (byte) 2}},
-                        {"130301010202030300", new Object[]{'B', true, (byte) 2, (short) 3}}
+                        {"130301010202030300", new Object[]{'B', true, (byte) 2, (short) 3}},
+                        // Null
+                        {"15", null}
                 };
     }
 
@@ -155,7 +157,7 @@ public final class BinaryTest {
     }
 
     private static Object getValue(Object value) {
-        var txt = value.toString();
+        var txt = value == null ? "" : value.toString();
         if (value instanceof Object[] objects) {
             if (objects[0] instanceof Character c && c == 'M') {
                 var dict = new HashMap<Object, Object>();

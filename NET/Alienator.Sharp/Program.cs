@@ -10,8 +10,10 @@ namespace Example
     {
         private static void Main()
         {
-            const string path = @"..\..\Java\CalculatorJava\target\calculator-java.jar";
+            const string path = @"..\..\JVM\alien-java\target\alien-java.jar";
+
             var client = ServiceClient.Create<ICalculator>(BuildPath(path));
+            Console.WriteLine(" *** " + client.Name + " on NET *** ");
 
             var value1 = 100.00D;
             var value2 = 15.99D;
