@@ -44,9 +44,12 @@ public final class ServiceHost<T> implements AutoCloseable {
             throws IOException {
         var convert = new ProtoConvert(in, out, cfg);
         final int marker = 0xEE;
-        while (in.read() != marker);
+        // Send flag
         out.write(marker);
         out.flush();
+        // Receive flag
+        while (in.read() != marker);
+        // Ready!
         return convert;
     }
 

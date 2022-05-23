@@ -55,8 +55,13 @@ namespace JNetCall.Sharp
             var stdOut = process.StandardOutput.BaseStream;
             var stdIn = process.StandardInput.BaseStream;
             var convert = new ProtoConvert(stdOut, stdIn, cfg);
-            stdIn.WriteByte(0xEE);
+            const int marker = 0xEE;
+            // Send flag
+            stdIn.WriteByte(marker);
             stdIn.Flush();
+            // Receive flag
+            while (stdOut.ReadByte() != marker) { }
+            // Ready!
             return convert;
         }
 

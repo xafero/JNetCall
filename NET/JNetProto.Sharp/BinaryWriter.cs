@@ -59,7 +59,7 @@ namespace JNetProto.Sharp
         public void WriteF128(decimal value)
         {
             var raw = value.ToString(_cult);
-            WriteUtf8(raw);
+            WriteUtf8(raw, wide: false);
         }
 
         public void WriteChar(char value)
@@ -69,8 +69,16 @@ namespace JNetProto.Sharp
 
         public void WriteUtf8(string value)
         {
+            WriteUtf8(value, wide: true);
+        }
+
+        private void WriteUtf8(string value, bool wide)
+        {
             var bytes = _enc.GetBytes(value);
-            _stream.WriteByte((byte)bytes.Length);
+            if (wide)
+                WriteI16((short)bytes.Length);
+            else
+                WriteI8((byte)bytes.Length);
             _stream.Write(bytes);
         }
 

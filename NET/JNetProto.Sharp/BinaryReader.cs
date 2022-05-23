@@ -27,7 +27,10 @@ namespace JNetProto.Sharp
             var bytes = new byte[size];
             var length = _stream.Read(bytes);
             if (length != size)
-                throw new ArgumentException($"Got {length} B instead of {size}!");
+            {
+                var hex = BitConverter.ToString(bytes).Replace("-", "");
+                throw new ArgumentException($"Got {length} B instead of {size}! {hex}");
+            }
             return bytes;
         }
 
@@ -38,7 +41,7 @@ namespace JNetProto.Sharp
 
         public byte ReadI8()
         {
-            return (byte)ReadBytes(1)[0];
+            return ReadBytes(1)[0];
         }
 
         public short ReadI16()
@@ -68,7 +71,7 @@ namespace JNetProto.Sharp
 
         public decimal ReadF128()
         {
-            return decimal.Parse(ReadUtf8(), _cult);
+            return decimal.Parse(ReadUtf8(wide: false), _cult);
         }
 
         public char ReadChar()
@@ -78,7 +81,13 @@ namespace JNetProto.Sharp
 
         public string ReadUtf8()
         {
-            return _enc.GetString(ReadBytes(_stream.ReadByte()));
+            return ReadUtf8(wide: true);
+        }
+
+        private string ReadUtf8(bool wide)
+        {
+            var size = wide ? ReadI16() : ReadI8();
+            return _enc.GetString(ReadBytes(size));
         }
 
         public TimeSpan ReadDuration()
