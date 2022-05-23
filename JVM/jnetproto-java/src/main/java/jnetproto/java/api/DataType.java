@@ -1,4 +1,4 @@
-package jnetproto.java;
+package jnetproto.java.api;
 
 public enum DataType {
     Unknown,

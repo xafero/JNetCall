@@ -1,13 +1,15 @@
-package jnetproto.java;
+package jnetproto.java.tests;
 
-import static org.testng.Assert.assertEquals;
+import com.google.gson.GsonBuilder;
+import jnetproto.java.beans.ProtoConvert;
+import jnetproto.java.beans.ProtoSettings;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import com.google.gson.GsonBuilder;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
 public final class ComplexTest {
     @DataProvider(name = "writeArgs")

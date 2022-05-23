@@ -1,4 +1,8 @@
-package jnetproto.java;
+package jnetproto.java.core;
+
+import jnetproto.java.api.DataType;
+import jnetproto.java.compat.Reflect;
+import org.javatuples.Tuple;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -7,10 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import org.javatuples.Tuple;
-
-import jnetproto.java.compat.Reflect;
 
 public final class DataTypes {
     public static Class<?> getClass(DataType type) {

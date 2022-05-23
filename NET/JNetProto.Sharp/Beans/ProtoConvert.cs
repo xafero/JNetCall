@@ -1,8 +1,11 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
+using JNetProto.Sharp.API;
+using JNetProto.Sharp.Core;
+using Stream = System.IO.Stream;
+using MemoryStream = System.IO.MemoryStream;
 
-namespace JNetProto.Sharp
+namespace JNetProto.Sharp.Beans
 {
     public sealed class ProtoConvert : IDisposable
     {

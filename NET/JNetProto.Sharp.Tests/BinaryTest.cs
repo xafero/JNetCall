@@ -4,8 +4,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using JNetProto.Sharp.API;
 using Xunit;
 using static System.Globalization.DateTimeStyles;
+using BinaryReader = JNetProto.Sharp.Core.BinaryReader;
+using BinaryWriter = JNetProto.Sharp.Core.BinaryWriter;
 
 namespace JNetProto.Sharp.Tests
 {

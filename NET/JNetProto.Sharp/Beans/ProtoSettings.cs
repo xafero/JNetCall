@@ -1,4 +1,4 @@
-﻿namespace JNetProto.Sharp
+﻿namespace JNetProto.Sharp.Beans
 {
     public sealed class ProtoSettings
     {

@@ -1,13 +1,6 @@
 package jnetproto.java.compat;
 
-import org.javatuples.Octet;
-import org.javatuples.Pair;
-import org.javatuples.Quartet;
-import org.javatuples.Quintet;
-import org.javatuples.Septet;
-import org.javatuples.Sextet;
-import org.javatuples.Triplet;
-import org.javatuples.Unit;
+import org.javatuples.*;
 
 public final class Tuples {
 

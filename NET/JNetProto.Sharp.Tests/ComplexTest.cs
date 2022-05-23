@@ -1,5 +1,6 @@
 // ReSharper disable StringLiteralTypo
 using System.IO;
+using JNetProto.Sharp.Beans;
 using Newtonsoft.Json;
 using Xunit;
 

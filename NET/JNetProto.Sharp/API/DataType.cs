@@ -1,5 +1,5 @@
 ﻿// ReSharper disable InconsistentNaming
-namespace JNetProto.Sharp
+namespace JNetProto.Sharp.API
 {
     public enum DataType
     {

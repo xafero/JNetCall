@@ -1,4 +1,9 @@
-package jnetproto.java;
+package jnetproto.java.core;
+
+import jnetproto.java.api.IDataWriter;
+import jnetproto.java.compat.BitConverter;
+import jnetproto.java.compat.Reflect;
+import org.javatuples.Tuple;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -9,17 +14,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.StreamSupport;
-
-import org.javatuples.Tuple;
-
-import jnetproto.java.compat.BitConverter;
-import jnetproto.java.compat.Reflect;
 
 public class BinaryWriter implements IDataWriter {
     private final Charset _enc;

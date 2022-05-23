@@ -1,13 +1,13 @@
-package jnetproto.java;
+package jnetproto.java.beans;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
-
+import jnetproto.java.api.IDataReader;
+import jnetproto.java.api.IDataWriter;
 import jnetproto.java.compat.Reflect;
+import jnetproto.java.core.BinaryReader;
+import jnetproto.java.core.BinaryWriter;
+
+import java.io.*;
+import java.util.Arrays;
 
 public final class ProtoConvert implements AutoCloseable {
     private final IDataReader _reader;

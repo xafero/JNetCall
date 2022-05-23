@@ -5,8 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using JNetProto.Sharp.API;
 
-namespace JNetProto.Sharp
+namespace JNetProto.Sharp.Core
 {
     public class BinaryWriter : IDataWriter
     {

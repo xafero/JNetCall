@@ -2,8 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using JNetProto.Sharp.API;
 
-namespace JNetProto.Sharp
+namespace JNetProto.Sharp.Core
 {
     public static class DataTypes
     {

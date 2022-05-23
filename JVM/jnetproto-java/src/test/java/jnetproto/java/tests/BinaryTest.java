@@ -1,6 +1,15 @@
-package jnetproto.java;
+package jnetproto.java.tests;
 
-import static org.testng.Assert.assertEquals;
+import jnetproto.java.api.IDataReader;
+import jnetproto.java.api.IDataWriter;
+import jnetproto.java.compat.Reflect;
+import jnetproto.java.compat.Strings;
+import jnetproto.java.compat.Tuples;
+import jnetproto.java.core.BinaryReader;
+import jnetproto.java.core.BinaryWriter;
+import org.apache.commons.codec.binary.Hex;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,19 +17,9 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.UUID;
+import java.util.*;
 
-import jnetproto.java.compat.Strings;
-import org.apache.commons.codec.binary.Hex;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-
-import jnetproto.java.compat.Reflect;
-import jnetproto.java.compat.Tuples;
+import static org.testng.Assert.assertEquals;
 
 public final class BinaryTest {
     @DataProvider(name = "writeArgs")

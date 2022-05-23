@@ -1,13 +1,13 @@
 package jnetproto.java.compat;
 
+import jnetproto.java.api.DataType;
+import jnetproto.java.core.DataTypes;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import jnetproto.java.DataType;
-import jnetproto.java.DataTypes;
 
 public final class Reflect {
 

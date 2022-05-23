@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
 
-namespace JNetProto.Sharp
+namespace JNetProto.Sharp.API
 {
     public interface IDataWriter : IDisposable
     {
