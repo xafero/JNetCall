@@ -1,12 +1,11 @@
 package org.example;
 
+import jnetcall.java.server.ServiceHosts;
 import org.example.api.ICalculator;
 import org.example.api.IDataTyped;
 import org.example.api.IMultiple;
 import org.example.api.IStringCache;
 import org.example.impl.CalculatorService;
-
-import com.jnetcall.java.ServiceHosts;
 
 public class Main {
 

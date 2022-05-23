@@ -1,9 +1,9 @@
 package org.example.api;
 
-public interface ICalculator
+public interface ICalculator extends AutoCloseable
 {
-    double Add(double n1, double n2);
-    double Subtract(double n1, double n2);
-    double Multiply(double n1, double n2);
-    double Divide(double n1, double n2);
+    double add(double n1, double n2);
+    double subtract(double n1, double n2);
+    double multiply(double n1, double n2);
+    double divide(double n1, double n2);
 }

@@ -1,18 +1,5 @@
 package org.example.impl;
 
-import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.UUID;
-
 import org.example.api.ICalculator;
 import org.example.api.IDataTyped;
 import org.example.api.IMultiple;
@@ -22,24 +9,29 @@ import org.javatuples.Quartet;
 import org.javatuples.Quintet;
 import org.javatuples.Triplet;
 
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.util.*;
+
 public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IStringCache {
 
-    public double Add(double n1, double n2) {
+    public double add(double n1, double n2) {
         double result = n1 + n2;
         return result;
     }
 
-    public double Subtract(double n1, double n2) {
+    public double subtract(double n1, double n2) {
         double result = n1 - n2;
         return result;
     }
 
-    public double Multiply(double n1, double n2) {
+    public double multiply(double n1, double n2) {
         double result = n1 * n2;
         return result;
     }
 
-    public double Divide(double n1, double n2) {
+    public double divide(double n1, double n2) {
         double result = n1 / n2;
         return result;
     }
