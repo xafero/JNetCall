@@ -21,7 +21,7 @@ import static java.lang.ProcessBuilder.Redirect;
 public final class NetInterceptor implements InvocationHandler, AutoCloseable {
     private static final ProtoSettings settings = new ProtoSettings();
 
-    private final String _exe;
+    private String _exe;
 
     public NetInterceptor(String exe) {
         try {
@@ -36,6 +36,9 @@ public final class NetInterceptor implements InvocationHandler, AutoCloseable {
     private ProtoConvert _convert;
 
     private void start() throws IOException {
+        if (!(new File(_exe)).exists() && _exe.endsWith(".exe")) {
+            _exe = _exe.substring(0, _exe.length() - 4);
+        }
         if (!(new File(_exe)).exists()) {
             throw new FileNotFoundException("Missing: " + _exe);
         }
