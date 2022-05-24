@@ -1,13 +1,17 @@
 @echo off
 
 echo.
+cd NET
+dotnet build
+cd ..
+
+echo.
 cd JVM
 call mvn clean package
 cd ..
 
 echo.
 cd NET
-dotnet build
 dotnet test
 cd ..
 

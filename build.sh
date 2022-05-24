@@ -1,13 +1,17 @@
 #!/bin/sh
 
 echo ""
+cd NET
+dotnet build
+cd ..
+
+echo ""
 cd JVM
 mvn clean package
 cd ..
 
 echo ""
 cd NET
-dotnet build
 dotnet test
 cd ..
 
