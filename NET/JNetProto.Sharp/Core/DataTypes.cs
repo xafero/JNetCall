@@ -32,6 +32,7 @@ namespace JNetProto.Sharp.Core
 
         public interface IDataType { DataType Kind { get; } }
         private record SingleDt(DataType Kind) : IDataType;
+        public record EnumDt(DataType Kind, Type Type) : IDataType;
         public record ArrayDt(DataType Kind, int Rank, IDataType Item) : IDataType;
         public record MapDt(DataType Kind, IDataType Key, IDataType Val) : IDataType;
         public record ListDt(DataType Kind, IDataType Item) : IDataType;
@@ -43,6 +44,11 @@ namespace JNetProto.Sharp.Core
                 return new SingleDt(DataType.Null);
             }
             var type = instance as Type ?? instance.GetType();
+            if (type.IsEnum)
+            {
+                var item = type.GetEnumUnderlyingType();
+                return new EnumDt(GetKind(item).Kind, item);
+            }
             if (type.IsArray)
             {
                 var item = type.GetElementType();

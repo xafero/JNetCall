@@ -1,8 +1,10 @@
 // ReSharper disable StringLiteralTypo
+using System;
 using System.IO;
 using JNetProto.Sharp.Beans;
 using Newtonsoft.Json;
 using Xunit;
+using static JNetProto.Sharp.Tests.BinaryTest;
 
 namespace JNetProto.Sharp.Tests
 {
@@ -20,27 +22,35 @@ namespace JNetProto.Sharp.Tests
         public void ShouldWrite(string hex, int number, long? bigNumber,
             double? decimals, string name)
         {
-            var s = new ProtoSettings();
-
             var isErr = bigNumber == null && decimals == null;
             var isCall = bigNumber != null && decimals == null;
             var isRes = bigNumber == null && decimals != null;
+
             object value = isCall ? new Call("C" + bigNumber, name,
                     new object[] { number, "l" }, new[] { "i", "s" })
                 : isErr ? new Invalid(number, name)
                 : isRes ? new Result(name, (short)(decimals + number))
                 : new Example(number, bigNumber!.Value, decimals!.Value, name);
 
+            Func<ProtoConvert, object> creator = isCall ? r => r.ReadObject<Call>()
+                : isErr ? r => r.ReadObject<Invalid>()
+                : isRes ? r => r.ReadObject<Result>()
+                : r => r.ReadObject<Example>();
+
+            TestWrite(hex, value, creator);
+        }
+
+        internal static void TestWrite(string hex, object value, Func<ProtoConvert, object> creator)
+        {
+            var s = new ProtoSettings();
+
             using var writer = CreateWriter(out var mem, s);
             writer.WriteObject(value);
-            var actual = BinaryTest.ToHex(mem);
+            var actual = ToHex(mem);
             Assert.Equal(hex, actual);
 
             using var reader = CreateReader(mem, s);
-            object obj = isCall ? reader.ReadObject<Call>()
-                : isErr ? reader.ReadObject<Invalid>()
-                : isRes ? reader.ReadObject<Result>()
-                : reader.ReadObject<Example>();
+            var obj = creator(reader);
 
             if (obj is not Call)
             {
