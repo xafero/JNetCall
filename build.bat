@@ -1,9 +1,21 @@
 @echo off
 
+echo.
 cd JVM
 call mvn clean package
 cd ..
 
+echo.
 cd NET
 dotnet test
+cd ..
+
+echo.
+cd JVM
+echo "" | java -jar alienator-java\target\alienator-java.jar
+cd ..
+
+echo.
+cd NET
+echo "" | Alienator.Sharp\bin\Debug\net6.0\Alienator.Sharp.exe
 cd ..
