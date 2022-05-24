@@ -7,6 +7,7 @@ cd ..
 
 echo.
 cd NET
+dotnet build
 dotnet test
 cd ..
 
