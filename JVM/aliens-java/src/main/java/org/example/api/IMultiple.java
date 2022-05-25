@@ -1,5 +1,7 @@
 package org.example.api;
 
+import com.xafero.javaenums.BitFlag;
+import com.xafero.javaenums.flags.IntFlag;
 import org.javatuples.Pair;
 import org.javatuples.Quartet;
 import org.javatuples.Quintet;
@@ -35,7 +37,7 @@ public interface IMultiple {
         public final int Value; WeekDay(int n) { Value = n; }
     }
 
-    enum Days {
+    enum Days implements IntFlag {
         None(0),
         Sunday(1),
         Monday(2),
@@ -46,5 +48,10 @@ public interface IMultiple {
         Saturday(64);
 
         public final int Value; Days(int n) { Value = n; }
+
+        @Override
+        public Integer asNumber() {
+            return Value;
+        }
     }
 }

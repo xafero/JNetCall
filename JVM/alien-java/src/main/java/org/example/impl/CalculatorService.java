@@ -1,5 +1,6 @@
 package org.example.impl;
 
+import com.xafero.javaenums.BitFlag;
 import org.example.api.ICalculator;
 import org.example.api.IDataTyped;
 import org.example.api.IMultiple;
@@ -168,11 +169,11 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
 
     @Override
     public BitFlag<Days> FindFreeDays() {
-        return BitFlag.of(Days.Saturday, Days.Thursday, Days.Sunday);
+        return BitFlag.of32(Days.class, Days.Saturday, Days.Thursday, Days.Sunday);
     }
 
     @Override
-    public String GetTextOf(WeekDay[] taken, EnumSet<Days> days) {
+    public String GetTextOf(WeekDay[] taken, BitFlag<Days> days) {
         var bld = new StringBuilder();
         bld.append(Arrays.toString(taken));
         bld.append(" | ");

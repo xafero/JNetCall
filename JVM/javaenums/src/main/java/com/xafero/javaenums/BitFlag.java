@@ -7,6 +7,7 @@ import com.xafero.javaenums.flags.IntFlag;
 import com.xafero.javaenums.flags.LongFlag;
 import com.xafero.javaenums.flags.ShortFlag;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public abstract class BitFlag<T extends Enum & IFlag> {
@@ -25,6 +26,11 @@ public abstract class BitFlag<T extends Enum & IFlag> {
     @Override
     public String toString() {
         return _items.toString();
+    }
+
+    public T[] toArray() {
+        var array = (T[]) Array.newInstance(_enumType, _items.size());
+        return _items.toArray(array);
     }
 
     @Override

@@ -3,10 +3,10 @@ package jnetcall.java.client;
 import jnetcall.java.api.MethodCall;
 import jnetcall.java.api.MethodResult;
 import jnetcall.java.api.MethodStatus;
-import jnetcall.java.tools.Conversions;
 import jnetproto.java.beans.ProtoConvert;
 import jnetproto.java.beans.ProtoSettings;
 import jnetproto.java.compat.Strings;
+import jnetproto.java.tools.Conversions;
 
 import java.io.File;
 import java.io.FileNotFoundException;

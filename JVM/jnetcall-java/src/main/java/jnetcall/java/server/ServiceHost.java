@@ -3,10 +3,10 @@ package jnetcall.java.server;
 import jnetcall.java.api.MethodCall;
 import jnetcall.java.api.MethodResult;
 import jnetcall.java.api.MethodStatus;
-import jnetcall.java.tools.Conversions;
 import jnetproto.java.beans.ProtoConvert;
 import jnetproto.java.beans.ProtoSettings;
 import jnetproto.java.compat.Strings;
+import jnetproto.java.tools.Conversions;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,8 +80,7 @@ public final class ServiceHost<T> implements AutoCloseable {
                     continue;
                 }
                 try {
-                    var types = method.getParameterTypes();
-                    var args = Conversions.convert(types, call.A());
+                    var args = Conversions.convertFor(call.A(), method);
                     var res = method.invoke(inst, args);
                     Write(proto, res, MethodStatus.Ok);
                 } catch (Throwable e) {
