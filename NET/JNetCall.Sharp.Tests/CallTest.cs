@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Example.API;
 using JNetCall.Sharp.Client;
@@ -75,30 +75,31 @@ namespace JNetCall.Sharp.Tests
             var dur = TimeSpan.FromSeconds(94);
             var env = new Dictionary<string, int> { { "Caller", nameof(Program).Length } };
             var dict = client.GetSystemVariables(now, dur, env);
-            Assert.Equal("?", string.Join("|", dict));
+            Assert.Equal("[Caller, 7]|[seconds, 94]|[year, 2022]", string.Join("|", dict));
 
             var lines = new List<string> { "Dog  ", "Hot", "Dog ", "Dog", "Hot    ", "Cat", "Cat", "Hot", "Hot" };
             var lineCount = client.GetLineCount(lines.ToArray());
             var set = client.GetUnique(lines, withTrim: true);
-            Assert.Equal(string.Join("|", lines), string.Join("|", set));
-            Assert.Equal(-1, lineCount);
+            Assert.Equal("Cat|Dog|Hot", string.Join("|", set));
+            Assert.Equal(9, lineCount);
 
             var list = client.GetDouble(set);
-            Assert.Equal(string.Join("|", set), string.Join("|", list));
+            Assert.Equal("Cat|Dog|Hot|Cat|Dog|Hot", string.Join("|", list));
 
             var fs = client.AllocateBytes(3, 42);
-            Assert.Equal("?", string.Join("|", fs));
+            Assert.Equal("42|42|42", string.Join("|", fs));
 
             var bs = client.GetFileSize(@"Z:\Nothing\Good\No fun with that file.txt");
-            Assert.Equal(-1, bs);
+            Assert.Equal(41, bs);
 
             var a = new
             {
                 y = byte.MaxValue, s = short.MaxValue, i = int.MaxValue, l = long.MaxValue, f = float.MaxValue,
-                d = double.MaxValue, b = true, c = char.MaxValue, t = "Str", u = decimal.MaxValue, g = Guid.NewGuid()
+                d = double.MaxValue, b = true, c = char.MaxValue, t = "Str", u = decimal.MaxValue, 
+                g = Guid.Parse("27edb110-afef-4ce3-b8c1-3fcb2ec3fabe")
             };
-            var txt = client.ToSimpleText(a.y, a.s, a.i, a.l, a.f, a.d, a.b, a.c, a.t, a.u, a.g);
-            Assert.Equal("?", txt);
+            var txt = client.ToSimpleText(a.y, a.s, a.i, a.l, a.f, a.d, a.b, a.c, a.t, a.u, a.g).Replace(" ", "").Trim();
+            Assert.Equal("y=-1,s=32767,i=2147483647,l=9223372036854775807,f=3.4028235E38,d=1.7976931348623157E308,b=true,c=￿,t=Str,u=79228162514264337593543950335,g=27edb110-afef-4ce3-b8c1-3fcb2ec3fabe", txt);
 
             var b = new
             {
@@ -106,8 +107,8 @@ namespace JNetCall.Sharp.Tests
                 f = new[] { float.MinValue }, d = new[] { double.MinValue }, b = new[] { false }, c = new[] { 'X' },
                 t = new[] { "Str1" }, u = new[] { decimal.MinValue }, g = new[] { Guid.Empty }
             };
-            txt = client.ToArrayText(b.y, b.s, b.i, b.l, b.f, b.d, b.b, b.c, b.t, b.u, b.g);
-            Assert.Equal("?", txt);
+            txt = client.ToArrayText(b.y, b.s, b.i, b.l, b.f, b.d, b.b, b.c, b.t, b.u, b.g).Replace(" ", "").Trim();
+            Assert.Equal("y=[42],s=[-32768],i=[-2147483648],l=[-9223372036854775808],f=[-3.4028235E38],d=[-1.7976931348623157E308],b=[false],c=[X],t=[Str1],u=[-79228162514264337593543950335],g=[00000000-0000-0000-0000-000000000000]", txt);
         }
 
         [Fact]

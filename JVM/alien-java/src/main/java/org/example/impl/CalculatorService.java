@@ -12,7 +12,7 @@ import org.javatuples.Triplet;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IStringCache {
@@ -112,7 +112,7 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
     }
 
     @Override
-    public Map<String, Integer> GetSystemVariables(ZonedDateTime dts, Duration dur,
+    public Map<String, Integer> GetSystemVariables(LocalDateTime dts, Duration dur,
                                                    Map<String, Integer> parent) {
         var map = new LinkedHashMap<>(parent);
         map.put("year", dts.getYear());

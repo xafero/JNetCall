@@ -2,7 +2,7 @@ package org.example.api;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +26,6 @@ public interface IDataTyped {
 
     List<String> GetDouble(Set<String> lines);
 
-    Map<String, Integer> GetSystemVariables(ZonedDateTime dts, Duration dur,
+    Map<String, Integer> GetSystemVariables(LocalDateTime dts, Duration dur,
                                             Map<String, Integer> parent);
 }
