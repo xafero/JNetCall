@@ -44,19 +44,13 @@ namespace JNetProto.Sharp.Beans
             _writer?.Dispose();
         }
 
-        private static object Patch(object obj)
-        {
-            // TODO: Complex sub structure?
-            return obj;
-        }
-
         private static byte[] SerializeObject(object obj, ProtoSettings s)
         {
             var type = obj.GetType();
             var props = type.GetProperties();
             var args = new object[props.Length];
             for (var i = 0; i < args.Length; i++)
-                args[i] = Patch(props[i].GetValue(obj));
+                args[i] = props[i].GetValue(obj);
             return SerializeObject(args, s);
         }
 

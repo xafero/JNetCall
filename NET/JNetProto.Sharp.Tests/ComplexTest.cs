@@ -52,7 +52,7 @@ namespace JNetProto.Sharp.Tests
             using var reader = CreateReader(mem, s);
             var obj = creator(reader);
 
-            if (obj is not Call)
+            if (obj is not Call && obj is not EnumTest.Texted)
             {
                 Assert.Equal(value, obj);
                 return;

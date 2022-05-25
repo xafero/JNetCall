@@ -208,10 +208,10 @@ namespace JNetProto.Sharp.Core
                 {
                     _stream.WriteByte((byte)ldt.Item.Kind);
                 }
-                else if (kind is DataTypes.EnumDt edt)
-                {
-                    value = Convert.ChangeType(value, edt.Type);
-                }
+            }
+            if (kind is DataTypes.EnumDt edt)
+            {
+                value = Convert.ChangeType(value, edt.Type);
             }
             switch (kind.Kind)
             {
