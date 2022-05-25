@@ -41,20 +41,14 @@ public final class ProtoConvert implements AutoCloseable {
         _writer.close();
     }
 
-    private static Object patch(Object obj) {
-        // TODO: Complex sub structure?
-        return obj;
-    }
-
     private static byte[] serializeObject(Object obj, ProtoSettings s)
             throws Exception {
         var type = obj.getClass();
         var props = Reflect.getProperties(type);
         var args = new Object[props.size()];
-        for (var i = 0; i < args.length; i++)
-        {
+        for (var i = 0; i < args.length; i++) {
             var getter = props.get(i).Get();
-            args[i] = patch(Reflect.invoke(getter, obj, new Object[0]));
+            args[i] = Reflect.invoke(getter, obj, new Object[0]);
         }
         return serializeObject(args, s);
     }
