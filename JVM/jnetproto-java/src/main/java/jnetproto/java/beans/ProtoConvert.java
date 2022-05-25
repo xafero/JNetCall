@@ -5,6 +5,7 @@ import jnetproto.java.api.IDataWriter;
 import jnetproto.java.compat.Reflect;
 import jnetproto.java.core.BinaryReader;
 import jnetproto.java.core.BinaryWriter;
+import jnetproto.java.tools.Conversions;
 
 import java.io.*;
 import java.util.Arrays;
@@ -63,8 +64,9 @@ public final class ProtoConvert implements AutoCloseable {
         var cTypes = Arrays.stream(args).map(a -> Reflect.toClass(a)).toArray(Class[]::new);
         var creator = Reflect.getConstructor(type, cTypes);
         if (creator == null) {
-            throw new IllegalArgumentException("No constructor: " + type);
+            throw new IllegalArgumentException("No constructor for " + type);
         }
+        args = Conversions.convertFor(args, creator);
         return creator.newInstance(args);
     }
 

@@ -21,6 +21,11 @@
             <version>3.0</version>
         </dependency>
         <dependency>
+            <groupId>com.xafero.utils</groupId>
+            <artifactId>javaenums</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>7.5</version>

@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.function.Function;
 
 import static org.testng.Assert.assertEquals;
 
@@ -30,17 +31,33 @@ public final class ComplexTest {
     @Test(dataProvider = "writeArgs")
     public void ShouldWrite(String hex, int number, Long bigNumber, Double decimals, String name)
             throws Exception {
-        var s = new ProtoSettings();
-
         var isErr = bigNumber == null && decimals == null;
         var isCall = bigNumber != null && decimals == null;
         var isRes = bigNumber == null && decimals != null;
+
         Object value = isCall ? new Call("C" + bigNumber, name,
-                new Object[] { number, "l" }, new String[] { "i", "s" })
+                new Object[]{number, "l"}, new String[]{"i", "s"})
                 : isErr ? new Invalid(number, name)
-                : isRes ? new Result(name, (short)(decimals + number))
+                : isRes ? new Result(name, (short) (decimals + number))
                 : new Example(number, bigNumber, decimals, name);
-        
+
+        Function<ProtoConvert, Object> creator = r -> {
+            try {
+                return isCall ? r.readObject(Call.class)
+                        : isErr ? r.readObject(Invalid.class)
+                        : isRes ? r.readObject(Result.class)
+                        : r.readObject(Example.class);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        };
+        testWrite(hex, value, creator);
+    }
+
+    static void testWrite(String hex, Object value, Function<ProtoConvert, Object> creator)
+            throws Exception {
+        var s = new ProtoSettings();
+
         var mem = new ByteArrayOutputStream[1];
         try (var writer = createWriter(mem, s)) {
             writer.writeObject(value);
@@ -48,10 +65,7 @@ public final class ComplexTest {
             assertEquals(actual, hex);
 
             try (var reader = createReader(mem[0], s)) {
-                Object obj = isCall ? reader.readObject(Call.class)
-                        : isErr ? reader.readObject(Invalid.class)
-                        : isRes ? reader.readObject(Result.class)
-                        : reader.readObject(Example.class);
+                Object obj = creator.apply(reader);
 
                 if (!(obj instanceof Call))
                 {

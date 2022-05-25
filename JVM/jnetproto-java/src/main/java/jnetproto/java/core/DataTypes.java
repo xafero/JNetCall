@@ -1,5 +1,6 @@
 package jnetproto.java.core;
 
+import com.xafero.javaenums.Enums;
 import jnetproto.java.api.DataType;
 import jnetproto.java.compat.Reflect;
 import org.javatuples.Tuple;
@@ -34,10 +35,11 @@ public final class DataTypes {
     }
 
     public interface IDataType { DataType Kind(); }
-    private record SingleDt(DataType Kind) implements IDataType { };
-    public record ArrayDt(DataType Kind, int Rank, IDataType Item) implements IDataType {};
-    public record MapDt(DataType Kind, IDataType Key, IDataType Val) implements IDataType {};
-    public record ListDt(DataType Kind, IDataType Item) implements IDataType {};
+    private record SingleDt(DataType Kind) implements IDataType { }
+    public record EnumDt(DataType Kind, Class<?> Type) implements IDataType { }
+    public record ArrayDt(DataType Kind, int Rank, IDataType Item) implements IDataType {}
+    public record MapDt(DataType Kind, IDataType Key, IDataType Val) implements IDataType {}
+    public record ListDt(DataType Kind, IDataType Item) implements IDataType {}
 
     public static IDataType getKind(Object instance)
     {
@@ -46,6 +48,11 @@ public final class DataTypes {
             return new SingleDt(DataType.Null);
         }
         var type = instance instanceof Class<?> cl ? cl : instance.getClass();
+        if (Enums.isEnum(type))
+        {
+            var item = Enums.getEnumUnderlyingType(instance);
+            return new EnumDt(getKind(item).Kind(), item);
+        }
         if (type.isArray())
         {
             var item = type.getComponentType();

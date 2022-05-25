@@ -167,8 +167,8 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
     }
 
     @Override
-    public EnumSet<Days> FindFreeDays() {
-        return EnumSet.of(Days.Saturday, Days.Thursday, Days.Sunday);
+    public BitFlag<Days> FindFreeDays() {
+        return BitFlag.of(Days.Saturday, Days.Thursday, Days.Sunday);
     }
 
     @Override

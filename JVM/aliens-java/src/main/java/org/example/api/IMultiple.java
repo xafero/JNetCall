@@ -1,7 +1,5 @@
 package org.example.api;
 
-import java.util.EnumSet;
-
 import org.javatuples.Pair;
 import org.javatuples.Quartet;
 import org.javatuples.Quintet;
@@ -22,8 +20,8 @@ public interface IMultiple {
     Quintet<Integer, Float, Long, String, String> GetTuple5V(Quintet<Integer, Float, Long, String, String> v);
 
     WeekDay FindBestDay(int value);
-    EnumSet<Days> FindFreeDays();
-    String GetTextOf(WeekDay[] taken, EnumSet<Days> days);
+    BitFlag<Days> FindFreeDays();
+    String GetTextOf(WeekDay[] taken, BitFlag<Days> days);
 
     enum WeekDay {
         Monday(1),

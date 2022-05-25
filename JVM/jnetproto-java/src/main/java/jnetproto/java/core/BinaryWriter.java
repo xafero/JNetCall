@@ -1,5 +1,6 @@
 package jnetproto.java.core;
 
+import com.xafero.javaenums.Enums;
 import jnetproto.java.api.IDataWriter;
 import jnetproto.java.compat.BitConverter;
 import jnetproto.java.compat.Reflect;
@@ -206,6 +207,10 @@ public class BinaryWriter implements IDataWriter {
             else if (kind instanceof DataTypes.ListDt ldt)
             {
                 _stream.write(Reflect.getByte(ldt.Item()));
+            }
+            else if (kind instanceof DataTypes.EnumDt edt)
+            {
+                value = Enums.castToNumber(value, edt.Type());
             }
         }
         switch (kind.Kind())
