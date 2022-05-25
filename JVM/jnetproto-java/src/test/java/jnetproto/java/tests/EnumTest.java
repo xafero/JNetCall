@@ -36,9 +36,9 @@ public final class EnumTest {
     public Object[][] getWriteArgs2() {
         return new Object[][]
                 {
-                        {"2D00000013030E04010200000001000000020000000E0A01020000000100680100770E040102000000C800000064000000", new Season[]{Season.Summer, Season.Autumn}, new String[]{"h", "w"}, new ErrorCode[]{ErrorCode.OutlierReading, ErrorCode.ConnectionLost}},
-                        {"2200000013030E040101000000010000000E0A01010000000100680E040101000000C8000000", new Season[]{Season.Summer}, new String[]{"h"}, new ErrorCode[]{ErrorCode.OutlierReading}},
-                        {"1700000013030E0401000000000E0A01000000000E040100000000", new Season[0], new String[0], new ErrorCode[0]}
+                        {"2900000013030E04010200000001000000020000000E0A01020000000100680100770E030102000000C8006400", new Season[]{Season.Summer, Season.Autumn}, new String[]{"h", "w"}, new ErrorCode[]{ErrorCode.OutlierReading, ErrorCode.ConnectionLost}},
+                        {"2000000013030E040101000000010000000E0A01010000000100680E030101000000C800", new Season[]{Season.Summer}, new String[]{"h"}, new ErrorCode[]{ErrorCode.OutlierReading}},
+                        {"1700000013030E0401000000000E0A01000000000E030100000000", new Season[0], new String[0], new ErrorCode[0]}
                 };
     }
 

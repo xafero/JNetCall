@@ -208,10 +208,10 @@ public class BinaryWriter implements IDataWriter {
             {
                 _stream.write(Reflect.getByte(ldt.Item()));
             }
-            else if (kind instanceof DataTypes.EnumDt edt)
-            {
-                value = Enums.castToNumber(value, edt.Type());
-            }
+        }
+        if (kind instanceof DataTypes.EnumDt edt)
+        {
+            value = Enums.castToNumber(value, edt.Type());
         }
         switch (kind.Kind())
         {
