@@ -8,8 +8,8 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 public final class EnumTest {
-    @DataProvider(name = "writeArgs")
-    public Object[][] getWriteArgs() {
+    @DataProvider(name = "writeArgs1")
+    public Object[][] getWriteArgs1() {
         return new Object[][]
                 {
                         {"13000000130404000000000A0100730300000415000000", Season.Spring, "s", ErrorCode.None, new Days[]{Days.Monday, Days.Wednesday, Days.Friday}},
@@ -19,8 +19,8 @@ public final class EnumTest {
                 };
     }
 
-    @Test(dataProvider = "writeArgs")
-    public void shouldWrite(String hex, Season what, String why, ErrorCode code, Days[] days)
+    @Test(dataProvider = "writeArgs1")
+    public void shouldWrite1(String hex, Season what, String why, ErrorCode code, Days[] days)
             throws Exception {
         var bitty = new Bitty(what, why, Enums.notNull(ErrorCode.class, code), BitFlag.of32(Days.class, days));
         ComplexTest.testWrite(hex, bitty, r -> {
@@ -32,7 +32,33 @@ public final class EnumTest {
         });
     }
 
+    @DataProvider(name = "writeArgs2")
+    public Object[][] getWriteArgs2() {
+        return new Object[][]
+                {
+                        {"2D00000013030E04010200000001000000020000000E0A01020000000100680100770E040102000000C800000064000000", new Season[]{Season.Summer, Season.Autumn}, new String[]{"h", "w"}, new ErrorCode[]{ErrorCode.OutlierReading, ErrorCode.ConnectionLost}},
+                        {"2200000013030E040101000000010000000E0A01010000000100680E040101000000C8000000", new Season[]{Season.Summer}, new String[]{"h"}, new ErrorCode[]{ErrorCode.OutlierReading}},
+                        {"1700000013030E0401000000000E0A01000000000E040100000000", new Season[0], new String[0], new ErrorCode[0]}
+                };
+    }
+
+    @Test(dataProvider = "writeArgs2")
+    public void shouldWrite2(String hex, Season[] whats, String[] whys, ErrorCode[] codes)
+            throws Exception {
+        var texted = new Texted(whats, whys, codes);
+        ComplexTest.testWrite(hex, texted, r -> {
+            try {
+                return r.readObject(Texted.class);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
     public record Bitty(Season What, String Why, ErrorCode Code, BitFlag<Days> Days) {
+    }
+
+    public record Texted(Season[] Whats, String[] Whys, ErrorCode[] Codes) {
     }
 
     public enum Season {
