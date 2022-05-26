@@ -10,7 +10,7 @@ But now I needed the ability to call current Java 18 code from C# 10 on .NET 6, 
 * Call C# from Java
 
 ## How to build
-If you are on Microsoft Windows, use build.bat, 
+If you are on Microsoft Windows, use "build.bat", 
 otherwise "build.sh".
 
 ## License
