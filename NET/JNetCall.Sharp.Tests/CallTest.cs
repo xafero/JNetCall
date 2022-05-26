@@ -60,10 +60,14 @@ namespace JNetCall.Sharp.Tests
             Assert.Equal(t5T, t5V.ToTuple());
 
             var bd1 = client.FindBestDay(3);
+            Assert.Equal("Wednesday", bd1.ToString());
             var bd2 = client.FindBestDay(5);
+            Assert.Equal("Friday", bd2.ToString());
             var bds = client.FindFreeDays();
+            Assert.Equal("Sunday, Thursday, Saturday", bds.ToString());
+
             var bdt = client.GetTextOf(new[] { bd1, bd2 }, bds);
-            Assert.Equal("?", bdt);
+            Assert.Equal("[Wednesday, Friday] | [Sunday, Thursday, Saturday]", bdt);
         }
 
         [Fact]
