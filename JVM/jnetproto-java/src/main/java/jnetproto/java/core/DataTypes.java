@@ -50,7 +50,7 @@ public final class DataTypes {
         var type = instance instanceof Class<?> cl ? cl : instance.getClass();
         if (Enums.isEnum(type))
         {
-            var item = Enums.getEnumUnderlyingType(instance);
+            var item = Enums.getEnumUnderlyingType(type);
             return new EnumDt(getKind(item).Kind(), item);
         }
         if (type.isArray())

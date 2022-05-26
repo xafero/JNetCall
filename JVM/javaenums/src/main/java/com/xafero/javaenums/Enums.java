@@ -67,10 +67,10 @@ public final class Enums {
         return tmp.ordinal();
     }
 
-    public static Class getEnumUnderlyingType(Object instance) {
-        return instance instanceof ByteEnum ? byte.class
-                : instance instanceof ShortEnum ? short.class
-                : instance instanceof LongEnum ? long.class
+    public static Class getEnumUnderlyingType(Class clazz) {
+        return ByteEnum.class.isAssignableFrom(clazz) ? byte.class
+                : ShortEnum.class.isAssignableFrom(clazz) ? short.class
+                : LongEnum.class.isAssignableFrom(clazz) ? long.class
                 : int.class;
     }
 
