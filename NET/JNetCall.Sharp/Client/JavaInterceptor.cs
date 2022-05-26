@@ -4,8 +4,8 @@ using System.IO;
 using System.Text;
 using Castle.DynamicProxy;
 using JNetCall.Sharp.API;
-using JNetCall.Sharp.Tools;
 using JNetProto.Sharp.Beans;
+using JNetProto.Sharp.Tools;
 
 namespace JNetCall.Sharp.Client
 {

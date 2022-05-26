@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace JNetCall.Sharp.Tools
+namespace JNetProto.Sharp.Tools
 {
     public static class Conversions
     {
@@ -26,7 +26,6 @@ namespace JNetCall.Sharp.Tools
                 var conv = Activator.CreateInstance(type, values);
                 return conv;
             }
-            // TODO !
             return arg;
         }
     }
