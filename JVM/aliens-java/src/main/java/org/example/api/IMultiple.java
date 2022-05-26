@@ -2,6 +2,7 @@ package org.example.api;
 
 import com.xafero.javaenums.BitFlag;
 import com.xafero.javaenums.flags.IntFlag;
+import com.xafero.javaenums.units.IntEnum;
 import org.javatuples.Pair;
 import org.javatuples.Quartet;
 import org.javatuples.Quintet;
@@ -25,7 +26,7 @@ public interface IMultiple {
     BitFlag<Days> FindFreeDays();
     String GetTextOf(WeekDay[] taken, BitFlag<Days> days);
 
-    enum WeekDay {
+    enum WeekDay implements IntEnum {
         Monday(1),
         Tuesday(2),
         Wednesday(3),
@@ -35,6 +36,11 @@ public interface IMultiple {
         Sunday(7);
 
         public final int Value; WeekDay(int n) { Value = n; }
+
+        @Override
+        public Integer asNumber() {
+            return Value;
+        }
     }
 
     enum Days implements IntFlag {
