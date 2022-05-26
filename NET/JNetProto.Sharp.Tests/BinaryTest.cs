@@ -189,7 +189,7 @@ namespace JNetProto.Sharp.Tests
                 else if (objects[0] is 'S')
                 {
                     var itemType = objects[1].GetType();
-                    var setType = typeof(HashSet<>).MakeGenericType(itemType);
+                    var setType = typeof(SortedSet<>).MakeGenericType(itemType);
                     var set = Activator.CreateInstance(setType)!;
                     dynamic setDyn = set;
                     for (var i = 1; i < objects.Length; i++)

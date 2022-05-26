@@ -16,7 +16,7 @@ public abstract class BitFlag<T extends Enum & IFlag> {
 
     protected BitFlag(Class<T> enumType, Collection<T> items) {
         _enumType = enumType;
-        _items = new HashSet<>(items);
+        _items = new TreeSet<>(items);
     }
 
     public Class<T> getEnumType() {

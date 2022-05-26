@@ -192,7 +192,7 @@ public final class BinaryTest {
             }
             else if (objects[0] instanceof Character c && c == 'S')
             {
-                var set = new HashSet<Object>();
+                var set = new TreeSet<Object>();
                 for (var i = 1; i < objects.length; i++)
                 {
                     var val = objects[i];
