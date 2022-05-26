@@ -67,7 +67,7 @@ public final class ComplexTest {
             try (var reader = createReader(mem[0], s)) {
                 Object obj = creator.apply(reader);
 
-                if (!(obj instanceof Call))
+                if (!(obj instanceof Call) && !(obj instanceof EnumTest.Texted))
                 {
                     assertEquals(value, obj);
                     return;
