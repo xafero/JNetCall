@@ -110,7 +110,7 @@ namespace Example.Impl
         {
             var map = new Dictionary<string, int>(parent);
             map.Add("year", dts.Year);
-            map.Add("seconds", dur.Seconds);
+            map.Add("seconds", (int) dur.TotalSeconds);
             return map;
         }
 

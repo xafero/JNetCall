@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public interface IDataTyped {
+public interface IDataTyped extends AutoCloseable {
 
     String ToSimpleText(byte y, short s, int i, long l, float f, double d,
                         boolean b, char c, String t, BigDecimal u, UUID g);

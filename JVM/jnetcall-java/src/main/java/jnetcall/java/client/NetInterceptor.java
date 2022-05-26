@@ -109,7 +109,8 @@ public final class NetInterceptor implements InvocationHandler, AutoCloseable {
                 .findFirst().orElse(MethodStatus.Unknown);
         switch (status) {
             case Ok:
-                var raw = Conversions.convert(method.getReturnType(), input.R());
+                var retType = method.getGenericReturnType();
+                var raw = Conversions.convert(retType, input.R());
                 return raw;
             default:
                 throw new UnsupportedOperationException("[" + input.S() + "] " + input.R());

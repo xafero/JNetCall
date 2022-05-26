@@ -8,7 +8,7 @@ import org.javatuples.Quartet;
 import org.javatuples.Quintet;
 import org.javatuples.Triplet;
 
-public interface IMultiple {
+public interface IMultiple extends AutoCloseable {
 
     Pair<Integer, String> GetTuple2T(int a, String b);
     Pair<Integer, String> GetTuple2V(Pair<Integer, String> v);
