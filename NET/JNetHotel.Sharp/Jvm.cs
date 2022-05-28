@@ -145,8 +145,7 @@ namespace JNetHotel.Sharp
             if (_jvm == IntPtr.Zero)
                 return;
             DetachCurrentThread();
-            if (!AppDomain.CurrentDomain.FriendlyName.StartsWith("ReSharper"))
-                DestroyJavaVm();
+            // TODO Just hangs: DestroyJavaVm();
             _jvm = IntPtr.Zero;
             GC.SuppressFinalize(this);
         }
