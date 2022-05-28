@@ -9,7 +9,7 @@ namespace Example
     {
         private static void Main()
         {
-            const string path = @"..\..\JVM\alien-java\target\alien-java.jar";
+            const string path = @"..\..\JVM\alien2-java\target\alien2-java.jar";
 
             var client = ServiceClient.CreateNative<ICalculator>(BuildPath(path));
             Console.WriteLine(" *** " + client.Name + " on NET *** ");
