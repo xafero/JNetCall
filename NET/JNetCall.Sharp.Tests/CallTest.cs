@@ -1,23 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using Example.API;
-using JNetCall.Sharp.Client;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Xunit;
-using static JNetCall.Sharp.Client.ServiceEnv;
 
 namespace JNetCall.Sharp.Tests
 {
-    public class CallTest
+    public abstract class CallTest
     {
-        internal readonly string Path
-            = BuildPath(@"..\..\JVM\alien-java\target\alien-java.jar");
+        protected abstract T Create<T>() where T : class, IDisposable;
 
         [Fact]
         public void ShouldCallCache()
         {
             var input = new[] { "life", "on", "mars" };
-            using var client = ServiceClient.Create<IStringCache>(Path);
+            using var client = Create<IStringCache>();
 
             client.Set(42, input[0]);
             Assert.Equal(1, client.Size);
@@ -41,7 +38,7 @@ namespace JNetCall.Sharp.Tests
         [Fact]
         public void ShouldCallMultiple()
         {
-            using var client = ServiceClient.Create<IMultiple>(Path);
+            using var client = Create<IMultiple>();
 
             var t2T = client.GetTuple2T(200, "Greece");
             var t2V = client.GetTuple2V(t2T);
@@ -73,7 +70,7 @@ namespace JNetCall.Sharp.Tests
         [Fact]
         public void ShouldCallDataTyped()
         {
-            using var client = ServiceClient.Create<IDataTyped>(Path);
+            using var client = Create<IDataTyped>();
 
             var now = DateTime.Now;
             var dur = TimeSpan.FromSeconds(94);
@@ -118,7 +115,7 @@ namespace JNetCall.Sharp.Tests
         [Fact]
         public void ShouldCallCalculator()
         {
-            using var client = ServiceClient.Create<ICalculator>(Path);
+            using var client = Create<ICalculator>();
             Assert.Equal("Java", client.Name);
 
             var value1 = 100.00D;

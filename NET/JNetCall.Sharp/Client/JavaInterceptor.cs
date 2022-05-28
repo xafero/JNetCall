@@ -1,35 +1,26 @@
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Text;
 using Castle.DynamicProxy;
-using JNetCall.Sharp.API;
 using JNetProto.Sharp.Beans;
-using JNetProto.Sharp.Tools;
 
 namespace JNetCall.Sharp.Client
 {
-    internal sealed class JavaInterceptor : IInterceptor, IDisposable
+    internal sealed class JavaInterceptor : AbstractInterceptor
     {
-        private static readonly ProtoSettings Settings = new();
-
-        private readonly string _jar;
-
-        public JavaInterceptor(string jar)
+        public JavaInterceptor(string jar) : base(jar)
         {
-            _jar = jar;
-            Start();
         }
 
         private Process _process;
         private ProtoConvert _convert;
 
-        private void Start()
+        protected override void Prepare()
         {
-            if (!File.Exists(_jar))
-            {
-                throw new FileNotFoundException($"Missing: {_jar}");
-            }
+        }
+
+        protected override void Start()
+        {
             var pwd = Environment.CurrentDirectory;
             var utf = Encoding.UTF8;
             var process = new Process
@@ -37,7 +28,7 @@ namespace JNetCall.Sharp.Client
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "java",
-                    ArgumentList = { "-jar", _jar },
+                    ArgumentList = { "-jar", Jar },
                     WorkingDirectory = pwd,
                     UseShellExecute = false,
                     StandardInputEncoding = utf,
@@ -62,72 +53,32 @@ namespace JNetCall.Sharp.Client
             stdIn.WriteByte(marker);
             stdIn.Flush();
             // Receive flag
-            while (stdOut.ReadByte() != marker) { }
+            while (stdOut.ReadByte() != marker)
+            {
+            }
             // Ready!
             return convert;
         }
 
-        private void Stop(int milliseconds = 250)
+        protected override void Stop(int milliseconds = 250)
         {
             _process?.WaitForExit(milliseconds);
             _process?.Kill(true);
-        }
 
-        private void Write(object obj)
-        {
-            _convert.WriteObject(obj);
-            _convert.Flush();
-        }
-
-        private T Read<T>()
-        {
-            try
-            {
-                var obj = _convert.ReadObject<T>();
-                return obj;
-            }
-            catch (Exception e)
-            {
-                _process.StandardInput.Close();
-                var error = $"{_process.StandardOutput.ReadToEnd()} " +
-                            $"{_process.StandardError.ReadToEnd()}".Trim();
-                throw new InvalidOperationException(error, e);
-            }
-        }
-
-        public void Intercept(IInvocation invocation)
-        {
-            var method = invocation.Method;
-            var call = new MethodCall
-            {
-                C = method.DeclaringType?.Name,
-                M = method.Name,
-                A = invocation.Arguments
-            };
-            if (call.C == nameof(IDisposable) && call.M == nameof(IDisposable.Dispose))
-            {
-                Dispose();
-                return;
-            }
-            Write(call);
-            var input = Read<MethodResult>();
-            var status = (MethodStatus)input.S;
-            switch (status)
-            {
-                case MethodStatus.Ok:
-                    var raw = Conversions.Convert(method.ReturnType, input.R);
-                    invocation.ReturnValue = raw;
-                    break;
-                default:
-                    throw new InvalidOperationException($"[{input.S}] {input.R}");
-            }
-        }
-
-        public void Dispose()
-        {
-            Stop();
             _process?.Close();
             _process?.Dispose();
+        }
+
+        protected override string GetErrorDetails()
+        {
+            _process.StandardInput.Close();
+            return $"{_process.StandardOutput.ReadToEnd()} " +
+                   $"{_process.StandardError.ReadToEnd()}".Trim();
+        }
+
+        public override void Intercept(IInvocation invocation)
+        {
+            InterceptBase(invocation, _convert);
         }
     }
 }

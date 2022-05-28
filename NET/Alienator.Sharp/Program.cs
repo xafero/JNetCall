@@ -11,7 +11,7 @@ namespace Example
         {
             const string path = @"..\..\JVM\alien-java\target\alien-java.jar";
 
-            var client = ServiceClient.Create<ICalculator>(BuildPath(path));
+            var client = ServiceClient.CreateNative<ICalculator>(BuildPath(path));
             Console.WriteLine(" *** " + client.Name + " on NET *** ");
 
             var value1 = 100.00D;

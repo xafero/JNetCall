@@ -13,7 +13,9 @@
         <module>javaenums</module>
         <module>jnetcall-java</module>
         <module>jnetproto-java</module>
-        <module>alien-java</module>
+        <module>alien0-java</module>
+        <module>alien1-java</module>
+        <module>alien2-java</module>
         <module>aliens-java</module>
         <module>alienator-java</module>
     </modules>
