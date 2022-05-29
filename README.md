@@ -17,5 +17,9 @@ But now I needed the ability to call current Java 18 code from C# 10 on .NET 6, 
 If you are on Microsoft Windows, use "build.bat", 
 otherwise "build.sh".
 
+## Environments tested
+* OpenJDK 18 and .NET 6 on Ubuntu 22.04
+* Oracle's JDK 18 and .NET 6 on Windows 11
+
 ## License
 Everything is licensed under GNU Affero General Public License (AGPL).
