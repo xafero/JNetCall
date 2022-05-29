@@ -7,7 +7,8 @@ But now I needed the ability to call current Java 18 code from C# 10 on .NET 6, 
 
 ## Summary
 * Call Java from C#
-(see NET/Alienator.Sharp/Program.cs)
+(see NET/Alienator.Sharp/Program.cs) 
+(Main or Native)
 
 * Call C# from Java
 (see JVM/alienator-java/src/main/java/org/example/Main.java)
