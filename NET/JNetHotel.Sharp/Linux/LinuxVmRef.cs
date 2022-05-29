@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using JNetHotel.Sharp.API;
 using JNetHotel.Sharp.Data;
@@ -31,7 +33,23 @@ namespace JNetHotel.Sharp.Linux
 
         public void LoadLib()
         {
-            throw new NotImplementedException(DllName);
+            var javaBinLink = new FileInfo("/usr/bin/java");
+            var javaBinPath = javaBinLink.ResolveLinkTarget(true)?.FullName;
+            if (!File.Exists(javaBinPath))
+                throw new InvalidOperationException("Could not locate Java binary!");
+            var javaRootPath = Path.GetFullPath(Path.Combine(javaBinPath, "..", ".."));
+            if (!Directory.Exists(javaRootPath))
+                throw new InvalidOperationException("Could not locate Java root!");
+            var javaSoPath = Directory.GetFiles(javaRootPath, "libjvm.so", SearchOption.AllDirectories)
+                .FirstOrDefault();
+            if (!File.Exists(javaSoPath))
+                throw new InvalidOperationException("Could not locate JVM library!");
+            UnixLoadLibrary(javaSoPath, RTLD_NOW);
         }
+
+        private const int RTLD_NOW = 0x002;
+
+        [DllImport("libdl.so.2", EntryPoint = "dlopen")]
+        public static extern IntPtr UnixLoadLibrary(string fileName, int flags);
     }
 }
