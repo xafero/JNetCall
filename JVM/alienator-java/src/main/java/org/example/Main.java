@@ -9,9 +9,9 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        final String path = "..\\..\\..\\NET\\Alien.Sharp\\bin\\Debug\\net6.0\\Alien.Sharp.exe";
+        final String path = "..\\..\\..\\NET\\Alien1.Sharp\\bin\\Debug\\net6.0\\Alien1.Sharp.exe";
 
-        var client = ServiceClient.create(ICalculator.class, buildPath(path));
+        var client = ServiceClient.createMain(ICalculator.class, buildPath(path));
         System.out.println(" *** " + client.getName() + " on JVM *** ");
         
         var value1 = 100.00D;

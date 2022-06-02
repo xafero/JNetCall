@@ -1,47 +1,30 @@
 package jnetcall.java.client;
 
-import jnetcall.java.api.MethodCall;
-import jnetcall.java.api.MethodResult;
-import jnetcall.java.api.MethodStatus;
 import jnetproto.java.beans.ProtoConvert;
 import jnetproto.java.beans.ProtoSettings;
 import jnetproto.java.compat.Strings;
-import jnetproto.java.tools.Conversions;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.ProcessBuilder.Redirect;
 
-public final class NetInterceptor implements InvocationHandler, AutoCloseable {
-    private static final ProtoSettings settings = new ProtoSettings();
-
-    private String _exe;
+public final class NetInterceptor extends AbstractInterceptor {
 
     public NetInterceptor(String exe) {
-        try {
-            _exe = exe;
-            start();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        super(exe);
     }
 
     private Process _process;
     private ProtoConvert _convert;
 
-    private void start() throws IOException {
-        if (!(new File(_exe)).exists() && _exe.endsWith(".exe")) {
-            _exe = _exe.substring(0, _exe.length() - 4);
-        }
-        if (!(new File(_exe)).exists()) {
-            throw new FileNotFoundException("Missing: " + _exe);
-        }
+    @Override
+    protected void prepare() {
+    }
+
+    @Override
+    protected void start() throws IOException {
         var pwd = ServiceEnv.getCurrentDir();
         _process = new ProcessBuilder(_exe)
                 .directory(pwd)
@@ -66,60 +49,23 @@ public final class NetInterceptor implements InvocationHandler, AutoCloseable {
         return convert;
     }
 
-    private void stop() throws InterruptedException {
-        stop(250);
-    }
-
-    private void stop(int milliseconds) throws InterruptedException {
+    @Override
+    protected void stop(int milliseconds) throws InterruptedException {
         _process.waitFor(milliseconds, TimeUnit.MILLISECONDS);
         _process.destroyForcibly();
+
+        _process.destroy();
     }
 
-    private void write(Object obj) throws Exception {
-        _convert.writeObject(obj);
-        _convert.flush();
-    }
-
-    private <T> T read(Class<T> clazz) throws IOException {
-        try {
-            var obj = _convert.readObject(clazz);
-            return obj;
-        } catch (Exception e) {
-            _process.getOutputStream().close();
-            var error = (Strings.readToEnd(_process.getInputStream()) + " " +
-                    Strings.readToEnd(_process.getErrorStream())).trim();
-            throw new UnsupportedOperationException(error, e);
-        }
+    @Override
+    protected String getErrorDetails() throws IOException {
+        _process.getOutputStream().close();
+        return (Strings.readToEnd(_process.getInputStream()) + " " +
+                Strings.readToEnd(_process.getErrorStream())).trim();
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        var contract = method.getDeclaringClass().getSimpleName();
-        var action = method.getName();
-        var safeArgs = args == null ? new Object[0] : args;
-        var call = new MethodCall(contract, action, safeArgs);
-        if (call.C().equals("AutoCloseable") && call.M().equals("close")) {
-            close();
-            return null;
-        }
-        write(call);
-        var input = read(MethodResult.class);
-        var status = Arrays.stream(MethodStatus.values())
-                .filter(m -> m.getValue() == input.S())
-                .findFirst().orElse(MethodStatus.Unknown);
-        switch (status) {
-            case Ok:
-                var retType = method.getGenericReturnType();
-                var raw = Conversions.convert(retType, input.R());
-                return raw;
-            default:
-                throw new UnsupportedOperationException("[" + input.S() + "] " + input.R());
-        }
-    }
-
-    @Override
-    public void close() throws Exception {
-        stop();
-        _process.destroy();
+        return invokeBase(method, args, _convert);
     }
 }

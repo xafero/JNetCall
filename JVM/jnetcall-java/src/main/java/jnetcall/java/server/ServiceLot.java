@@ -15,11 +15,6 @@ public final class ServiceLot<T> extends AbstractHost<T> implements AutoCloseabl
         super(serviceClass);
     }
 
-    @Override
-    public void close() throws Exception {
-        super.close();
-    }
-
     public void build() throws Exception {
         _instance = createInst();
         _methods = _instance.getClass().getMethods();

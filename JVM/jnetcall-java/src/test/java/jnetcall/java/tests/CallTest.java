@@ -1,6 +1,5 @@
 package jnetcall.java.tests;
 
-import jnetcall.java.client.ServiceClient;
 import jnetproto.java.compat.Primitives;
 import org.example.api.ICalculator;
 import org.example.api.IDataTyped;
@@ -16,17 +15,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
-import static jnetcall.java.client.ServiceEnv.buildPath;
 import static org.testng.Assert.assertEquals;
 
-public class CallTest {
-    final String Path =
-            buildPath("..\\..\\..\\NET\\Alien.Sharp\\bin\\Debug\\net6.0\\Alien.Sharp.exe");
+public abstract class CallTest {
+
+    protected abstract <T extends AutoCloseable> T create(Class<T> clazz);
 
     @Test
     public void shouldCallCache() throws Exception {
         var input = new String[]{"life", "on", "mars"};
-        try (var client = ServiceClient.create(IStringCache.class, Path)) {
+        try (var client = create(IStringCache.class)) {
 
             client.set(42, input[0]);
             assertEquals(1, client.getSize());
@@ -50,7 +48,7 @@ public class CallTest {
 
     @Test
     public void shouldCallMultiple() throws Exception {
-        try (var client = ServiceClient.create(IMultiple.class, Path)) {
+        try (var client = create(IMultiple.class)) {
 
             var t2T = client.GetTuple2T(200, "Greece");
             var t2V = client.GetTuple2V(t2T);
@@ -85,7 +83,7 @@ public class CallTest {
 
     @Test
     public void shouldCallDataTyped() throws Exception {
-        try (var client = ServiceClient.create(IDataTyped.class, Path)) {
+        try (var client = create(IDataTyped.class)) {
 
             var now = LocalDateTime.now();
             var dur = Duration.ofSeconds(94);
@@ -134,7 +132,7 @@ public class CallTest {
 
     @Test
     public void shouldCallCalculator() throws Exception {
-        try (var client = ServiceClient.create(ICalculator.class, Path)) {
+        try (var client = create(ICalculator.class)) {
 
             assertEquals("C#", client.getName());
 

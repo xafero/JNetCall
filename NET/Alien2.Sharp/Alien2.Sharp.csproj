@@ -1,13 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
 	<RootNamespace>Example</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Aliens.Sharp\Aliens.Sharp.csproj" />
+    <ProjectReference Include="..\Alien0.Sharp\Alien0.Sharp.csproj" />
     <ProjectReference Include="..\JNetCall.Sharp\JNetCall.Sharp.csproj" />
   </ItemGroup>
 

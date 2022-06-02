@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Example.API;
-using JNetProto.Sharp.Compat;
 using static Example.API.IMultiple;
 
 namespace Example.Impl
@@ -55,17 +54,17 @@ namespace Example.Impl
             double[] d, bool[] b, char[] c, string[] t, decimal[] u, Guid[] g)
         {
             var bld = new StringBuilder();
-            bld.Append(" y = " + Arrays.ToString(y));
-            bld.Append(", s = " + Arrays.ToString(s));
-            bld.Append(", i = " + Arrays.ToString(i));
-            bld.Append(", l = " + Arrays.ToString(l));
-            bld.Append(", f = " + Arrays.ToString(f));
-            bld.Append(", d = " + Arrays.ToString(d));
-            bld.Append(", b = " + Arrays.ToString(b));
-            bld.Append(", c = " + Arrays.ToString(c));
-            bld.Append(", t = " + Arrays.ToString(t));
-            bld.Append(", u = " + Arrays.ToString(u));
-            bld.Append(", g = " + Arrays.ToString(g));
+            bld.Append(" y = " + ToString(y));
+            bld.Append(", s = " + ToString(s));
+            bld.Append(", i = " + ToString(i));
+            bld.Append(", l = " + ToString(l));
+            bld.Append(", f = " + ToString(f));
+            bld.Append(", d = " + ToString(d));
+            bld.Append(", b = " + ToString(b));
+            bld.Append(", c = " + ToString(c));
+            bld.Append(", t = " + ToString(t));
+            bld.Append(", u = " + ToString(u));
+            bld.Append(", g = " + ToString(g));
             return bld.ToString();
         }
 
@@ -169,7 +168,7 @@ namespace Example.Impl
         public string GetTextOf(WeekDay[] taken, Days days)
         {
             var bld = new StringBuilder();
-            bld.Append(Arrays.ToString(taken));
+            bld.Append(ToString(taken));
             bld.Append(" | ");
             bld.Append(days);
             return bld.ToString();
@@ -202,5 +201,8 @@ namespace Example.Impl
         public void Dispose()
         {
         }
+
+        public static string ToString<T>(IEnumerable<T> items) 
+            => $"[{string.Join(", ", items)}]";
     }
 }

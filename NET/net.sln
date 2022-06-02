@@ -1,31 +1,32 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32505.173
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JNetCall.Sharp", "JNetCall.Sharp\JNetCall.Sharp.csproj", "{8BE437C6-D067-4353-977B-E3C856540CAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JNetCall.Sharp", "JNetCall.Sharp\JNetCall.Sharp.csproj", "{8BE437C6-D067-4353-977B-E3C856540CAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JNetCall.Sharp.Tests", "JNetCall.Sharp.Tests\JNetCall.Sharp.Tests.csproj", "{822787C7-B126-4985-A004-131FFBACBA0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JNetCall.Sharp.Tests", "JNetCall.Sharp.Tests\JNetCall.Sharp.Tests.csproj", "{822787C7-B126-4985-A004-131FFBACBA0A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JNetProto.Sharp", "JNetProto.Sharp\JNetProto.Sharp.csproj", "{D8DABB94-4044-4B17-9EAC-18D28177DC74}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JNetProto.Sharp", "JNetProto.Sharp\JNetProto.Sharp.csproj", "{D8DABB94-4044-4B17-9EAC-18D28177DC74}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JNetProto.Sharp.Tests", "JNetProto.Sharp.Tests\JNetProto.Sharp.Tests.csproj", "{94EFFBDE-A8BC-48E1-B8A9-DE4FEA719AD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JNetProto.Sharp.Tests", "JNetProto.Sharp.Tests\JNetProto.Sharp.Tests.csproj", "{94EFFBDE-A8BC-48E1-B8A9-DE4FEA719AD2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alien.Sharp", "Alien.Sharp\Alien.Sharp.csproj", "{A17FB61D-2978-4A95-A01A-00BA5753ADD7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alienator.Sharp", "Alienator.Sharp\Alienator.Sharp.csproj", "{653CAAF5-291C-4B0A-B0F6-2889B79010C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alienator.Sharp", "Alienator.Sharp\Alienator.Sharp.csproj", "{653CAAF5-291C-4B0A-B0F6-2889B79010C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aliens.Sharp", "Aliens.Sharp\Aliens.Sharp.csproj", "{5A66A212-D416-44D9-B3C3-9D0F9FCB2954}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aliens.Sharp", "Aliens.Sharp\Aliens.Sharp.csproj", "{5A66A212-D416-44D9-B3C3-9D0F9FCB2954}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JNetHotel.Sharp", "JNetHotel.Sharp\JNetHotel.Sharp.csproj", "{6432333E-3B1B-4C04-A8C8-EF12E2522E91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JNetHotel.Sharp", "JNetHotel.Sharp\JNetHotel.Sharp.csproj", "{6432333E-3B1B-4C04-A8C8-EF12E2522E91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alien0.Sharp", "Alien0.Sharp\Alien0.Sharp.csproj", "{BC3A0DDB-A3E1-4FE3-B205-2DD00502EA11}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alien1.Sharp", "Alien1.Sharp\Alien1.Sharp.csproj", "{E273B8F4-514D-4EFF-ADAF-F8356C74001B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alien2.Sharp", "Alien2.Sharp\Alien2.Sharp.csproj", "{691ADC78-5EAE-4611-B484-9E06C6C80D9F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{8BE437C6-D067-4353-977B-E3C856540CAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -44,10 +45,6 @@ Global
 		{94EFFBDE-A8BC-48E1-B8A9-DE4FEA719AD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94EFFBDE-A8BC-48E1-B8A9-DE4FEA719AD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94EFFBDE-A8BC-48E1-B8A9-DE4FEA719AD2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A17FB61D-2978-4A95-A01A-00BA5753ADD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A17FB61D-2978-4A95-A01A-00BA5753ADD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A17FB61D-2978-4A95-A01A-00BA5753ADD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A17FB61D-2978-4A95-A01A-00BA5753ADD7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{653CAAF5-291C-4B0A-B0F6-2889B79010C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{653CAAF5-291C-4B0A-B0F6-2889B79010C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{653CAAF5-291C-4B0A-B0F6-2889B79010C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -60,5 +57,23 @@ Global
 		{6432333E-3B1B-4C04-A8C8-EF12E2522E91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6432333E-3B1B-4C04-A8C8-EF12E2522E91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6432333E-3B1B-4C04-A8C8-EF12E2522E91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC3A0DDB-A3E1-4FE3-B205-2DD00502EA11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC3A0DDB-A3E1-4FE3-B205-2DD00502EA11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC3A0DDB-A3E1-4FE3-B205-2DD00502EA11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC3A0DDB-A3E1-4FE3-B205-2DD00502EA11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E273B8F4-514D-4EFF-ADAF-F8356C74001B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E273B8F4-514D-4EFF-ADAF-F8356C74001B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E273B8F4-514D-4EFF-ADAF-F8356C74001B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E273B8F4-514D-4EFF-ADAF-F8356C74001B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{691ADC78-5EAE-4611-B484-9E06C6C80D9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{691ADC78-5EAE-4611-B484-9E06C6C80D9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{691ADC78-5EAE-4611-B484-9E06C6C80D9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{691ADC78-5EAE-4611-B484-9E06C6C80D9F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0738275A-EDC3-4D8A-A7A8-58D7CDC6B787}
 	EndGlobalSection
 EndGlobal

@@ -37,9 +37,4 @@ public final class ServiceHost<T> extends AbstractHost<T> implements AutoCloseab
             }
         }
     }
-
-    @Override
-    public void close() throws Exception {
-        super.close();
-    }
 }
