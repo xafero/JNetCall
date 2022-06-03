@@ -11,6 +11,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>javaenums</module>
+        <module>jnethotel-java</module>
         <module>jnetcall-java</module>
         <module>jnetproto-java</module>
         <module>alien0-java</module>
