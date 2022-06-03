@@ -1,6 +1,10 @@
 package jnetcall.java.client;
 
+import com.sun.jna.Function;
 import jnetcall.java.api.MethodResult;
+import jnethotel.java.Clr;
+import jnethotel.java.Natives;
+import jnethotel.java.api.ICoreClr;
 import jnetproto.java.beans.ProtoConvert;
 import jnetproto.java.compat.ByteArrayStream;
 
@@ -14,35 +18,49 @@ public final class ClrInterceptor extends AbstractInterceptor {
     }
 
     private static final Object Sync = new Object();
-    private static AutoCloseable _vm;
+    private static Clr _vm;
+    private static Function _caller;
 
-    private static AutoCloseable setupClr(String exe) {
+    private static Clr setupClr(String exe) throws Exception {
         synchronized (Sync) {
             if (_vm != null)
                 return _vm;
 
-            throw new UnsupportedOperationException("TODO!");
+            var vmRef = Natives.getVmRef();
+            vmRef.loadLib();
+            var clr = new Clr(vmRef);
+            _caller = getCallCallback(clr.getCore(), exe);
+            return clr;
         }
     }
 
     @Override
     protected void prepare() {
         synchronized (Sync) {
-            _vm = setupClr(_exe);
+            try {
+                _vm = setupClr(_exe);
+            } catch (Exception e) {
+                throw new RuntimeException(_exe, e);
+            }
         }
     }
 
     @Override
     protected void start() {
-        initBoot();
     }
 
-    private static void initBoot() {
-        throw new UnsupportedOperationException("TODO!");
+    private static Function getCallCallback(ICoreClr coreClr, String dll)
+            throws Exception {
+        final var bootType = "X.Boot";
+        final var bootMethod = "Call";
+        final var bootDelegate = "JNetCall.Sharp.API.CallDelegate, JNetCall.Sharp";
+        return Clr.getCallback(coreClr, dll, bootType, bootMethod, bootDelegate);
     }
 
-    private static byte[] sendAndGetArray(byte[] input) {
-        throw new UnsupportedOperationException("TODO!");
+    private byte[] sendAndGetArray(byte[] input)
+    {
+        var output = _vm.callStaticByteArrayMethod(_caller, input);
+        return output;
     }
 
     @Override
