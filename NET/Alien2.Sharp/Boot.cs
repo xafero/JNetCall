@@ -1,3 +1,4 @@
+// ReSharper disable UnusedMember.Global
 // ReSharper disable CheckNamespace
 using Example.API;
 using Example.Impl;

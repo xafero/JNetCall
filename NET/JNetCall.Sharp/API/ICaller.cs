@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
+using System.Runtime.InteropServices;
 
 namespace JNetCall.Sharp.API
 {
@@ -11,4 +7,10 @@ namespace JNetCall.Sharp.API
     {
         bool TryCall(byte[] @in, Stream output);
     }
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void BootDelegate();
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate byte[] CallDelegate(byte[] input);
 }
