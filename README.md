@@ -11,7 +11,8 @@ But now I needed the ability to call current Java 18 code from C# 10 on .NET 6, 
 (Main or Native)
 
 * Call C# from Java
-(see JVM/alienator-java/src/main/java/org/example/Main.java)
+(see JVM/alienator-java/src/main/java/org/example/Main.java) 
+(Main or Native)
 
 ## How to build
 If you are on Microsoft Windows, use "build.bat", 
