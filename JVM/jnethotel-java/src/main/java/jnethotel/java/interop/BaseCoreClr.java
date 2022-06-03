@@ -68,9 +68,6 @@ public abstract class BaseCoreClr<TString, TBuffer, TByRef> implements ICoreClr 
         }
 
         var hostfxr_path = toString(buffer);
-
-        System.out.printf("Resolved hostfxr to: %s %n", hostfxr_path);
-
         hostfxr_library = Native.load(hostfxr_path, getHostFxrClass());
         return true;
     }
@@ -83,8 +80,6 @@ public abstract class BaseCoreClr<TString, TBuffer, TByRef> implements ICoreClr 
         }
 
         var runtime_config_path_file = new File(runtime_config_path).getAbsoluteFile();
-        System.out.printf("Resolved the runtime.config.json to: %s %n", runtime_config_path_file.toString());
-
         var load_assembly_and_get_function_pointer_fn = get_load_assembly_and_get_function_pointer_fn(runtime_config_path_file.toString());
 
         if (load_assembly_and_get_function_pointer_fn == Pointer.NULL) {
@@ -96,12 +91,7 @@ public abstract class BaseCoreClr<TString, TBuffer, TByRef> implements ICoreClr 
 
         var assembly_path_file = new File(assembly_path).getAbsoluteFile();
 
-        System.out.printf("Resolved the .net library to: %s %n", assembly_path_file.toString());
-        System.out.printf("Loading type: %s %n", type_name);
-        System.out.printf("Locating method: %s %n", method_name);
-        System.out.printf("Matching delegate: %s %n", delegate_type_name);
-
-        var rc = (int) load_assembly_and_get_function_pointer_fn.invokeInt(new Object[]{
+        var rc = load_assembly_and_get_function_pointer_fn.invokeInt(new Object[]{
                 wrap(assembly_path_file.toString()),
                 wrap(type_name),
                 wrap(method_name),
