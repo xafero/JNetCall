@@ -113,7 +113,7 @@ public abstract class BaseCoreClr<TString, TBuffer, TByRef> implements ICoreClr 
         managed_fn = ptr_managed_fn.getValue();
 
         if (rc != 0 || managed_fn == Pointer.NULL) {
-            var message = String.format("load_assembly_and_get_function_pointer failed with: {}", rc);
+            var message = String.format("load_assembly_and_get_function_pointer failed with: %s", rc);
             throw new Exception(message);
         }
 

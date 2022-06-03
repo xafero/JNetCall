@@ -1,5 +1,6 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable CheckNamespace
+using System;
 using Example.API;
 using Example.Impl;
 using JNetCall.Sharp.Server;
@@ -8,7 +9,7 @@ namespace X
 {
     public static class Boot
     {
-        public static void Init()
+        static Boot()
         {
             var host = ServiceLots.Create<CalculatorService>();
 
@@ -19,5 +20,7 @@ namespace X
 
             host.Build();
         }
+
+        public static IntPtr Call(IntPtr input) => ServiceLots.Call(input);
     }
 }

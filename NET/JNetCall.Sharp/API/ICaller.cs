@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace JNetCall.Sharp.API
@@ -8,9 +9,8 @@ namespace JNetCall.Sharp.API
         bool TryCall(byte[] @in, Stream output);
     }
 
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void BootDelegate();
+    // ReSharper disable UnusedMember.Global
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate byte[] CallDelegate(byte[] input);
+    public delegate IntPtr CallDelegate(IntPtr input);
 }
