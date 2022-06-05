@@ -21,6 +21,7 @@ otherwise "build.sh".
 ## Environments tested
 * OpenJDK 18 and .NET 6 on Ubuntu 22.04
 * Oracle's JDK 18 and .NET 6 on Windows 11
+* Temurin's JDK 18 and .NET 6 on MacOS 12.3
 
 ## License
 Everything is licensed under GNU Affero General Public License (AGPL).
