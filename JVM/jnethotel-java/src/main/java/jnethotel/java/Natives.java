@@ -3,6 +3,7 @@ package jnethotel.java;
 import com.sun.jna.Platform;
 import jnethotel.java.api.IVmRef;
 import jnethotel.java.linux.LinuxVmRef;
+import jnethotel.java.bsd.BsdVmRef;
 import jnethotel.java.mac.MacVmRef;
 import jnethotel.java.windows.WinVmRef;
 
@@ -15,6 +16,8 @@ public final class Natives {
             return new WinVmRef();
         if (isMac())
             return new MacVmRef();
+        if (isBSD())
+            return new BsdVmRef();
 
         var desc = System.getProperty("os.name") + " " + System.getProperty("os.version");
         throw new UnsupportedOperationException(desc.trim());
@@ -28,5 +31,11 @@ public final class Natives {
         return Platform.isLinux();
     }
 
-    private static boolean isMac() { return Platform.isMac(); }
+    private static boolean isMac() { 
+        return Platform.isMac(); 
+    }
+
+    private static boolean isBSD() {
+        return Platform.isFreeBSD();
+    }
 }
