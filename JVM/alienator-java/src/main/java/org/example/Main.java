@@ -1,6 +1,6 @@
 package org.example;
 
-import jnetcall.java.client.ServiceClient;
+import jnetcall.java.client.InProcClient;
 import org.example.api.ICalculator;
 
 import static jnetcall.java.client.ServiceEnv.buildPath;
@@ -11,7 +11,7 @@ public class Main {
 
         final String path = "..\\..\\..\\NET\\Alien2.Sharp\\bin\\Debug\\net6.0\\Alien2.Sharp.dll";
 
-        var client = ServiceClient.createNative(ICalculator.class, buildPath(path));
+        var client = InProcClient.create(ICalculator.class, buildPath(path));
         System.out.println(" *** " + client.getName() + " on JVM *** ");
         
         var value1 = 100.00D;

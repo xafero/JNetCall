@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+	  <RootNamespace>JNetCall.Sharp</RootNamespace>
+    
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JNetCall.Sharp.Common\JNetCall.Sharp.Common.csproj" />
+    <ProjectReference Include="..\JNetHotel.Sharp\JNetHotel.Sharp.csproj" />
+  </ItemGroup>
+
+</Project>

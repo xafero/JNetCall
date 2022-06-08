@@ -20,7 +20,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Aliens.Sharp\Aliens.Sharp.csproj" />
-    <ProjectReference Include="..\JNetCall.Sharp\JNetCall.Sharp.csproj" />
+    <ProjectReference Include="..\JNetCall.Sharp.InProc\JNetCall.Sharp.InProc.csproj" />
+    <ProjectReference Include="..\JNetCall.Sharp.StdIO\JNetCall.Sharp.StdIO.csproj" />
   </ItemGroup>
 
 </Project>

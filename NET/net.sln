@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32505.173
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JNetCall.Sharp", "JNetCall.Sharp\JNetCall.Sharp.csproj", "{8BE437C6-D067-4353-977B-E3C856540CAD}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JNetCall.Sharp.Tests", "JNetCall.Sharp.Tests\JNetCall.Sharp.Tests.csproj", "{822787C7-B126-4985-A004-131FFBACBA0A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JNetProto.Sharp", "JNetProto.Sharp\JNetProto.Sharp.csproj", "{D8DABB94-4044-4B17-9EAC-18D28177DC74}"
@@ -23,16 +21,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alien1.Sharp", "Alien1.Shar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alien2.Sharp", "Alien2.Sharp\Alien2.Sharp.csproj", "{691ADC78-5EAE-4611-B484-9E06C6C80D9F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JNetCall.Sharp.Common", "JNetCall.Sharp.Common\JNetCall.Sharp.Common.csproj", "{0D4E2D55-2FBA-4240-AD82-6AF306E4DDC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JNetCall.Sharp.StdIO", "JNetCall.Sharp.StdIO\JNetCall.Sharp.StdIO.csproj", "{02D7FC8F-D45D-492B-9968-55BBFF974216}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JNetCall.Sharp.InProc", "JNetCall.Sharp.InProc\JNetCall.Sharp.InProc.csproj", "{19260F11-BC46-4FE9-8089-4876319B996C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8BE437C6-D067-4353-977B-E3C856540CAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8BE437C6-D067-4353-977B-E3C856540CAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8BE437C6-D067-4353-977B-E3C856540CAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8BE437C6-D067-4353-977B-E3C856540CAD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{822787C7-B126-4985-A004-131FFBACBA0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{822787C7-B126-4985-A004-131FFBACBA0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{822787C7-B126-4985-A004-131FFBACBA0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -69,6 +69,18 @@ Global
 		{691ADC78-5EAE-4611-B484-9E06C6C80D9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{691ADC78-5EAE-4611-B484-9E06C6C80D9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{691ADC78-5EAE-4611-B484-9E06C6C80D9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D4E2D55-2FBA-4240-AD82-6AF306E4DDC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D4E2D55-2FBA-4240-AD82-6AF306E4DDC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D4E2D55-2FBA-4240-AD82-6AF306E4DDC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D4E2D55-2FBA-4240-AD82-6AF306E4DDC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02D7FC8F-D45D-492B-9968-55BBFF974216}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02D7FC8F-D45D-492B-9968-55BBFF974216}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02D7FC8F-D45D-492B-9968-55BBFF974216}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02D7FC8F-D45D-492B-9968-55BBFF974216}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19260F11-BC46-4FE9-8089-4876319B996C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19260F11-BC46-4FE9-8089-4876319B996C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19260F11-BC46-4FE9-8089-4876319B996C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19260F11-BC46-4FE9-8089-4876319B996C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

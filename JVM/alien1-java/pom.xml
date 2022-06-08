@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>com.xafero</groupId>
-            <artifactId>jnetcall-java</artifactId>
+            <artifactId>jnetcall-java-stdio</artifactId>
             <version>1.0</version>
         </dependency>
     </dependencies>

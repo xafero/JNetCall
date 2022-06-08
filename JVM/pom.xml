@@ -12,7 +12,10 @@
     <modules>
         <module>javaenums</module>
         <module>jnethotel-java</module>
-        <module>jnetcall-java</module>
+        <module>jnetcall-java-common</module>
+        <module>jnetcall-java-inproc</module>
+        <module>jnetcall-java-stdio</module>
+        <module>jnetcall-java-tests</module>
         <module>jnetproto-java</module>
         <module>alien0-java</module>
         <module>alien1-java</module>

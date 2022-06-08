@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Alien0.Sharp\Alien0.Sharp.csproj" />
-    <ProjectReference Include="..\JNetCall.Sharp\JNetCall.Sharp.csproj" />
+    <ProjectReference Include="..\JNetCall.Sharp.InProc\JNetCall.Sharp.InProc.csproj" />
   </ItemGroup>
 
 </Project>

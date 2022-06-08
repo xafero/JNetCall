@@ -11,7 +11,7 @@ namespace JNetCall.Sharp.Tests
 
         protected override T Create<T>()
         {
-            return ServiceClient.CreateMain<T>(Path);
+            return StdIOClient.Create<T>(Path);
         }
     }
 }
