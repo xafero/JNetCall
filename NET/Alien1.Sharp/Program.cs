@@ -15,6 +15,7 @@ namespace Example
                 host.AddServiceEndpoint<IDataTyped>();
                 host.AddServiceEndpoint<IMultiple>();
                 host.AddServiceEndpoint<IStringCache>();
+                host.AddServiceEndpoint<ISimultaneous>();
 
                 var @in = Console.OpenStandardInput();
                 var @out = Console.OpenStandardOutput();

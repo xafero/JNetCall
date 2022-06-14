@@ -5,6 +5,7 @@ import org.example.api.ICalculator;
 import org.example.api.IDataTyped;
 import org.example.api.IMultiple;
 import org.example.api.IStringCache;
+import org.example.api.ISimultaneous;
 import org.example.impl.CalculatorService;
 
 public class Main {
@@ -16,6 +17,7 @@ public class Main {
             host.addServiceEndpoint(IDataTyped.class);
             host.addServiceEndpoint(IMultiple.class);
             host.addServiceEndpoint(IStringCache.class);
+            host.addServiceEndpoint(ISimultaneous.class);
 
             host.open(System.in, System.out);
         }

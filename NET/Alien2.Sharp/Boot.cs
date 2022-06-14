@@ -17,6 +17,7 @@ namespace X
             host.AddServiceEndpoint<IDataTyped>();
             host.AddServiceEndpoint<IMultiple>();
             host.AddServiceEndpoint<IStringCache>();
+            host.AddServiceEndpoint<ISimultaneous>();
 
             host.Build();
         }

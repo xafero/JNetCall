@@ -3,6 +3,7 @@ import org.example.api.ICalculator;
 import org.example.api.IDataTyped;
 import org.example.api.IMultiple;
 import org.example.api.IStringCache;
+import org.example.api.ISimultaneous;
 import org.example.impl.CalculatorService;
 
 @SuppressWarnings("unused")
@@ -15,6 +16,7 @@ public final class Boot {
         host.addServiceEndpoint(IDataTyped.class);
         host.addServiceEndpoint(IMultiple.class);
         host.addServiceEndpoint(IStringCache.class);
+        host.addServiceEndpoint(ISimultaneous.class);
 
         host.build();
     }
