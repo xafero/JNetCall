@@ -13,6 +13,8 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 abstract class AbstractHost<T> implements AutoCloseable {
     private final Class<T> serviceClass;
@@ -55,6 +57,10 @@ abstract class AbstractHost<T> implements AutoCloseable {
         try {
             var args = Conversions.convertFor(call.A(), method);
             var res = method.invoke(inst, args);
+            if (res instanceof CompletableFuture task) {
+                // TODO Handle non-sync!
+                res = getTaskResult(task);
+            }
             write(proto, res, MethodStatus.Ok);
         } catch (Throwable e) {
             var cause = e instanceof InvocationTargetException
@@ -62,6 +68,12 @@ abstract class AbstractHost<T> implements AutoCloseable {
             var debug = Strings.getStackTrace(cause);
             write(proto, debug, MethodStatus.MethodFailed);
         }
+    }
+
+    private static Object getTaskResult(CompletableFuture task)
+            throws ExecutionException, InterruptedException {
+        var raw = task.get();
+        return raw;
     }
 
     private boolean checkMethod(Method m, String callName) {

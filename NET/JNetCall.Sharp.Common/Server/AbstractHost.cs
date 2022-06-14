@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using JNetCall.Sharp.API;
 using JNetProto.Sharp.Beans;
 using JNetProto.Sharp.Tools;
@@ -61,6 +62,11 @@ namespace JNetCall.Sharp.Server
                     .Select(p => p.ParameterType).ToArray();
                 var args = Conversions.Convert(types, call.A);
                 var res = method.Invoke(inst, args);
+                if (res is Task task)
+                {
+                    // TODO Handle non-sync!
+                    res = GetTaskResult(task);
+                }
                 Write(proto, res, MethodStatus.Ok);
             }
             catch (Exception e)
@@ -71,6 +77,19 @@ namespace JNetCall.Sharp.Server
                 var debug = cause!.ToString();
                 Write(proto, debug, MethodStatus.MethodFailed);
             }
+        }
+
+        private static object GetTaskResult(Task task)
+        {
+            task.Wait();
+            var taskType = task.GetType();
+            var taskArg = taskType.GetGenericArguments().FirstOrDefault();
+            if (taskArg == null)
+                return null;
+            var raw = taskType.GetProperty("Result")?.GetValue(task);
+            if (raw == null || raw.GetType().Name.Equals("VoidTaskResult"))
+                return null;
+            return raw;
         }
 
         private const StringComparison Cmp = StringComparison.InvariantCultureIgnoreCase;

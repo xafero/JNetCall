@@ -5,6 +5,7 @@ import org.example.api.ICalculator;
 import org.example.api.IDataTyped;
 import org.example.api.IMultiple;
 import org.example.api.IStringCache;
+import org.example.api.ISimultaneous;
 import org.javatuples.Pair;
 import org.javatuples.Quartet;
 import org.javatuples.Quintet;
@@ -14,8 +15,9 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.*;
 
-public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IStringCache {
+public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IStringCache, ISimultaneous {
 
     public double add(double n1, double n2) {
         double result = n1 + n2;
@@ -118,6 +120,26 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
         map.put("year", dts.getYear());
         map.put("seconds", (int) dur.getSeconds());
         return map;
+    }
+
+    @Override
+    public CompletionStage<Integer> getId() {
+        return CompletableFuture.supplyAsync(() -> new Random().nextInt(-100, 100));
+    }
+
+    private String currentWord;
+
+    @Override
+    public CompletionStage<Void> loadIt(String word) {
+        currentWord = word;
+        return CompletableFuture.completedFuture(null);
+    }
+
+    @Override
+    public CompletionStage<String> removeIt() {
+        var res = CompletableFuture.completedFuture(currentWord);
+        currentWord = null;
+        return res;
     }
 
     @Override

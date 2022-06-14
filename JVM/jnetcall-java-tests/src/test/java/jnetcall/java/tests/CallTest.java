@@ -5,6 +5,7 @@ import org.example.api.ICalculator;
 import org.example.api.IDataTyped;
 import org.example.api.IMultiple;
 import org.example.api.IStringCache;
+import org.example.api.ISimultaneous;
 import org.testng.annotations.Test;
 import org.testng.util.Strings;
 
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public abstract class CallTest {
 
@@ -127,6 +129,20 @@ public abstract class CallTest {
             txt = client.ToArrayText(by, bs, bi, bl, bf, bd, bb, bc, bt, bu, bg).replace(" ", "")
                     .trim().replace("3,4", "3.4").replace("1,7", "1.7");
             assertEquals("y=[42],s=[-32768],i=[-2147483648],l=[-9223372036854775808],f=[-3.4028235E+38],d=[-1.7976931348623157E+308],b=[False],c=[X],t=[Str1],u=[-9223372036854775808],g=[00000000-0000-0000-0000-000000000000]", txt);
+        }
+    }
+
+    @Test
+    public void shouldCallSimultan() throws Exception {
+        try (var client = create(ISimultaneous.class)) {
+
+            client.loadIt("Hello").toCompletableFuture().get();
+
+            var id = client.getId().toCompletableFuture().get();
+            assertTrue(id >= -100 && id <= 100, id + " ?!");
+
+            var txt = client.removeIt().toCompletableFuture().get();
+            assertEquals("Hello", txt);
         }
     }
 

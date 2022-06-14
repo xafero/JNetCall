@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Example.API;
 using static Example.API.IMultiple;
 
 namespace Example.Impl
 {
-    public class CalculatorService : ICalculator, IStringCache
+    public class CalculatorService : ICalculator, IStringCache, ISimultaneous
     {
         public double Add(double n1, double n2)
         {
@@ -111,6 +112,26 @@ namespace Example.Impl
             map.Add("year", dts.Year);
             map.Add("seconds", (int) dur.TotalSeconds);
             return map;
+        }
+
+        public Task<int> GetId()
+        {
+            return Task.Factory.StartNew(() => new Random().Next(-100, 100));
+        }
+
+        private string _currentWord;
+
+        public Task LoadIt(string word)
+        {
+            _currentWord = word;
+            return Task.CompletedTask;
+        }
+
+        public Task<string> RemoveIt()
+        {
+            var res = Task.FromResult(_currentWord);
+            _currentWord = null;
+            return res;
         }
 
         public Tuple<int, string> GetTuple2T(int a, string b)

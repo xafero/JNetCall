@@ -12,7 +12,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 abstract class AbstractInterceptor implements InvocationHandler, AutoCloseable {
     protected static final ProtoSettings settings = new ProtoSettings();
@@ -68,12 +72,24 @@ abstract class AbstractInterceptor implements InvocationHandler, AutoCloseable {
                 .findFirst().orElse(MethodStatus.Unknown);
         switch (status) {
             case Ok:
-                var retType = method.getGenericReturnType();
-                var raw = Conversions.convert(retType, input.R());
+                var raw = getCompatibleValue(method.getGenericReturnType(), input.R());
                 return raw;
             default:
                 throw new UnsupportedOperationException("[" + input.S() + "] " + input.R());
         }
+    }
+
+    private static Object getCompatibleValue(Type retType, Object retVal) {
+        if (retType instanceof ParameterizedType parmType && (parmType.getRawType().equals(CompletionStage.class)
+                || parmType.getRawType().equals(CompletableFuture.class))) {
+            var taskArgs = Arrays.stream(parmType.getActualTypeArguments()).findFirst().orElse(null);
+            if (taskArgs == null) {
+                return CompletableFuture.completedFuture(null);
+            }
+            var raw = Conversions.convert(taskArgs, retVal);
+            return CompletableFuture.completedFuture(raw);
+        }
+        return Conversions.convert(retType, retVal);
     }
 
     protected Object invokeBase(Method method, Object[] args, ProtoConvert proto) throws Throwable {

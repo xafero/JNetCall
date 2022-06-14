@@ -1,5 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using Castle.DynamicProxy;
 using JNetCall.Sharp.API;
 using JNetProto.Sharp.Beans;
@@ -60,12 +63,31 @@ namespace JNetCall.Sharp.Client
             switch (status)
             {
                 case MethodStatus.Ok:
-                    var raw = Conversions.Convert(method.ReturnType, input.R);
+                    var raw = GetCompatibleValue(method.ReturnType, input.R);
                     invocation.ReturnValue = raw;
                     break;
                 default:
                     throw new InvalidOperationException($"[{input.S}] {input.R}");
             }
+        }
+
+        private static readonly Type TaskType = typeof(Task);
+        private static readonly MethodInfo TaskRes = TaskType.GetMethod(nameof(Task.FromResult));
+
+        private static object GetCompatibleValue(Type retType, object retVal)
+        {
+            if (TaskType.IsAssignableFrom(retType))
+            {
+                var taskArgs = retType.GetGenericArguments().FirstOrDefault();
+                if (taskArgs == null)
+                {
+                    return Task.CompletedTask;
+                }
+                var raw = Conversions.Convert(taskArgs, retVal);
+                var taskMet = TaskRes.MakeGenericMethod(taskArgs);
+                return taskMet.Invoke(null, new[] { raw });
+            }
+            return Conversions.Convert(retType, retVal);
         }
 
         protected void InterceptBase(IInvocation invocation, ProtoConvert proto)

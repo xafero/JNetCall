@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Example.API;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Xunit;
@@ -110,6 +111,20 @@ namespace JNetCall.Sharp.Tests
             };
             txt = client.ToArrayText(b.y, b.s, b.i, b.l, b.f, b.d, b.b, b.c, b.t, b.u, b.g).Replace(" ", "").Trim();
             Assert.Equal("y=[42],s=[-32768],i=[-2147483648],l=[-9223372036854775808],f=[-3.4028235E38],d=[-1.7976931348623157E308],b=[false],c=[X],t=[Str1],u=[-79228162514264337593543950335],g=[00000000-0000-0000-0000-000000000000]", txt);
+        }
+
+        [Fact]
+        public async Task ShouldCallSimultan()
+        {
+            using var client = Create<ISimultaneous>();
+
+            await client.LoadIt("Hello");
+
+            var id = await client.GetId();
+            Assert.True(id is >= -100 and <= 100, id + " ?!");
+
+            var txt = await client.RemoveIt();
+            Assert.Equal("Hello", txt);
         }
 
         [Fact]
