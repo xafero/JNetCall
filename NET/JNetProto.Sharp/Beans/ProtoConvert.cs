@@ -10,6 +10,9 @@ namespace JNetProto.Sharp.Beans
 {
     public sealed class ProtoConvert : IDisposable
     {
+        private readonly object _writeLock = new();
+        private readonly object _readLock = new();
+
         private readonly IDataReader _reader;
         private readonly IDataWriter _writer;
         private readonly ProtoSettings _cfg;
@@ -24,18 +27,28 @@ namespace JNetProto.Sharp.Beans
         public void WriteObject(object obj)
         {
             var bytes = SerializeObject(obj, _cfg);
-            _writer.WriteBinary(bytes);
+            lock (_writeLock)
+            {
+                _writer.WriteBinary(bytes);
+            }
         }
 
         public T ReadObject<T>()
         {
-            var bytes = _reader.ReadBinary();
+            byte[] bytes;
+            lock (_readLock)
+            {
+                bytes = _reader.ReadBinary();
+            }
             return DeserializeObject<T>(bytes, _cfg);
         }
 
         public void Flush()
         {
-            _writer.Flush();
+            lock (_writeLock)
+            {
+                _writer.Flush();
+            }
         }
 
         public void Dispose()

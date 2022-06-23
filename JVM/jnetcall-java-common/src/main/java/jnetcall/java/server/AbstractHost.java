@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 abstract class AbstractHost<T> implements AutoCloseable {
     private final Class<T> serviceClass;
@@ -40,9 +41,10 @@ abstract class AbstractHost<T> implements AutoCloseable {
 
     protected void handleCall(Object inst, Method[] methods, MethodCall call, ProtoConvert proto)
             throws Exception {
+        var callId = call.I();
         if (!interfaces.containsKey(call.C())) {
             var debug = call.C();
-            write(proto, debug, MethodStatus.ClassNotFound);
+            write(proto, debug, MethodStatus.ClassNotFound, callId);
             return;
         }
         var callName = call.M();
@@ -51,26 +53,26 @@ abstract class AbstractHost<T> implements AutoCloseable {
                 .findFirst().orElse(null);
         if (method == null) {
             var debug = call.C() + "::" + call.M();
-            write(proto, debug, MethodStatus.MethodNotFound);
+            write(proto, debug, MethodStatus.MethodNotFound, callId);
             return;
         }
         try {
             var args = Conversions.convertFor(call.A(), method);
             var res = method.invoke(inst, args);
-            if (res instanceof CompletableFuture task) {
+            if (res instanceof Future<?> task) {
                 // TODO Handle non-sync!
                 res = getTaskResult(task);
             }
-            write(proto, res, MethodStatus.Ok);
+            write(proto, res, MethodStatus.Ok, callId);
         } catch (Throwable e) {
             var cause = e instanceof InvocationTargetException
                     ? e.getCause() : e;
             var debug = Strings.getStackTrace(cause);
-            write(proto, debug, MethodStatus.MethodFailed);
+            write(proto, debug, MethodStatus.MethodFailed, callId);
         }
     }
 
-    private static Object getTaskResult(CompletableFuture task)
+    private static Object getTaskResult(Future<?> task)
             throws ExecutionException, InterruptedException {
         var raw = task.get();
         return raw;
@@ -81,15 +83,15 @@ abstract class AbstractHost<T> implements AutoCloseable {
         return m.getName().equalsIgnoreCase(cName);
     }
 
-    private static void write(ProtoConvert proto, Object res, MethodStatus status)
+    private static void write(ProtoConvert proto, Object res, MethodStatus status, short id)
             throws Exception {
-        var obj = new MethodResult(res, status.getValue());
+        var obj = new MethodResult(id, res, status.getValue());
         proto.writeObject(obj);
         proto.flush();
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         this.interfaces.clear();
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
 using JNetCall.Sharp.API;
@@ -39,11 +41,16 @@ namespace JNetCall.Sharp.Client
 
         public abstract void Intercept(IInvocation invocation);
 
+        private static int _callId = 0;
+        private static int NextId => Interlocked.Increment(ref _callId);
+        
         protected MethodCall? Pack(IInvocation invocation)
         {
             var method = invocation.Method;
+            var id = (short) NextId;
             var call = new MethodCall
             {
+                I = id,
                 C = method.DeclaringType?.Name,
                 M = method.Name,
                 A = invocation.Arguments

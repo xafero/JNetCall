@@ -17,6 +17,7 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.atomic.AtomicInteger;
 
 abstract class AbstractInterceptor implements InvocationHandler, AutoCloseable {
     protected static final ProtoSettings settings = new ProtoSettings();
@@ -54,11 +55,15 @@ abstract class AbstractInterceptor implements InvocationHandler, AutoCloseable {
     @Override
     public abstract Object invoke(Object proxy, Method method, Object[] args) throws Throwable;
 
+    private static AtomicInteger _callId = new AtomicInteger(0);
+    private static int getNextId() { return _callId.incrementAndGet(); }
+
     protected MethodCall pack(Method method, Object[] args) throws Exception {
         var contract = method.getDeclaringClass().getSimpleName();
         var action = method.getName();
         var safeArgs = args == null ? new Object[0] : args;
-        var call = new MethodCall(contract, action, safeArgs);
+        var id = (short) getNextId();
+        var call = new MethodCall(id, contract, action, safeArgs);
         if (call.C().equals("AutoCloseable") && call.M().equals("close")) {
             close();
             return null;

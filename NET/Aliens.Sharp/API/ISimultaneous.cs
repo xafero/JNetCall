@@ -10,5 +10,7 @@ namespace Example.API
         Task LoadIt(string word);
 
         Task<string> RemoveIt();
+
+        Task<Tuple<int, long>> RunIt(int waitMs, int idx);
     }
 }

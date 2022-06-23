@@ -134,6 +134,13 @@ namespace Example.Impl
             return res;
         }
 
+        public async Task<Tuple<int, long>> RunIt(int waitMs, int idx)
+        {
+            await Task.Delay(waitMs);
+            var current = Environment.CurrentManagedThreadId;
+            return Tuple.Create(idx, (long) current);
+        }
+
         public Tuple<int, string> GetTuple2T(int a, string b)
         {
             return Tuple.Create(a, b);

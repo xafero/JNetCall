@@ -1,3 +1,3 @@
 package jnetcall.java.api;
 
-public record MethodResult(Object R, short S) { }
+public record MethodResult(short I, Object R, short S) { }

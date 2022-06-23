@@ -42,10 +42,11 @@ namespace JNetCall.Sharp.Server
         protected void HandleCall(object inst, MethodInfo[] methods, 
             MethodCall call, ProtoConvert proto)
         {
+            var callId = call.I;
             if (!_interfaces.ContainsKey(call.C))
             {
                 var debug = call.C;
-                Write(proto, debug, MethodStatus.ClassNotFound);
+                Write(proto, debug, MethodStatus.ClassNotFound, callId);
                 return;
             }
             var callName = call.M;
@@ -53,7 +54,7 @@ namespace JNetCall.Sharp.Server
             if (method == null)
             {
                 var debug = call.C + "::" + call.M;
-                Write(proto, debug, MethodStatus.MethodNotFound);
+                Write(proto, debug, MethodStatus.MethodNotFound, callId);
                 return;
             }
             try
@@ -67,7 +68,7 @@ namespace JNetCall.Sharp.Server
                     // TODO Handle non-sync!
                     res = GetTaskResult(task);
                 }
-                Write(proto, res, MethodStatus.Ok);
+                Write(proto, res, MethodStatus.Ok, callId);
             }
             catch (Exception e)
             {
@@ -75,7 +76,7 @@ namespace JNetCall.Sharp.Server
                     ? ti.InnerException
                     : e;
                 var debug = cause!.ToString();
-                Write(proto, debug, MethodStatus.MethodFailed);
+                Write(proto, debug, MethodStatus.MethodFailed, callId);
             }
         }
 
@@ -100,9 +101,9 @@ namespace JNetCall.Sharp.Server
             return mName.Equals(callName, Cmp);
         }
 
-        private static void Write(ProtoConvert proto, object res, MethodStatus status)
+        private static void Write(ProtoConvert proto, object res, MethodStatus status, short id)
         {
-            var obj = new MethodResult(res, (short)status);
+            var obj = new MethodResult(id, res, (short)status);
             proto.WriteObject(obj);
             proto.Flush();
         }

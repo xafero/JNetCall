@@ -11,6 +11,10 @@ import java.io.*;
 import java.util.Arrays;
 
 public final class ProtoConvert implements AutoCloseable {
+
+    private final Object _writeLock = new Object();
+    private final Object _readLock = new Object();
+
     private final IDataReader _reader;
     private final IDataWriter _writer;
     private final ProtoSettings _cfg;
@@ -23,16 +27,23 @@ public final class ProtoConvert implements AutoCloseable {
 
     public void writeObject(Object obj) throws Exception {
         var bytes = serializeObject(obj, _cfg);
-        _writer.writeBinary(bytes);
+        synchronized (_writeLock) {
+            _writer.writeBinary(bytes);
+        }
     }
 
     public <T> T readObject(Class<T> clazz) throws Exception {
-        var bytes = _reader.readBinary();
+        byte[] bytes;
+        synchronized (_readLock) {
+            bytes = _reader.readBinary();
+        }
         return deserializeObject(clazz, bytes, _cfg);
     }
 
     public void flush() throws IOException {
-        _writer.flush();
+        synchronized (_writeLock) {
+            _writer.flush();
+        }
     }
 
     @Override

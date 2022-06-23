@@ -1,11 +1,7 @@
 package jnetcall.java.tests;
 
 import jnetproto.java.compat.Primitives;
-import org.example.api.ICalculator;
-import org.example.api.IDataTyped;
-import org.example.api.IMultiple;
-import org.example.api.IStringCache;
-import org.example.api.ISimultaneous;
+import org.example.api.*;
 import org.testng.annotations.Test;
 import org.testng.util.Strings;
 
@@ -136,12 +132,12 @@ public abstract class CallTest {
     public void shouldCallSimultan() throws Exception {
         try (var client = create(ISimultaneous.class)) {
 
-            client.loadIt("Hello").toCompletableFuture().get();
+            client.loadIt("Hello").get();
 
-            var id = client.getId().toCompletableFuture().get();
+            var id = client.getId().get();
             assertTrue(id >= -100 && id <= 100, id + " ?!");
 
-            var txt = client.removeIt().toCompletableFuture().get();
+            var txt = client.removeIt().get();
             assertEquals("Hello", txt);
         }
     }
