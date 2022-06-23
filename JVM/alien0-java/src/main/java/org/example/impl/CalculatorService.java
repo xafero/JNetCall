@@ -123,23 +123,36 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
     }
 
     @Override
-    public CompletionStage<Integer> getId() {
+    public CompletableFuture<Integer> getId() {
         return CompletableFuture.supplyAsync(() -> new Random().nextInt(-100, 100));
     }
 
     private String currentWord;
 
     @Override
-    public CompletionStage<Void> loadIt(String word) {
+    public CompletableFuture<Void> loadIt(String word) {
         currentWord = word;
         return CompletableFuture.completedFuture(null);
     }
 
     @Override
-    public CompletionStage<String> removeIt() {
+    public CompletableFuture<String> removeIt() {
         var res = CompletableFuture.completedFuture(currentWord);
         currentWord = null;
         return res;
+    }
+
+    @Override
+    public CompletableFuture<Pair<Integer, Long>> runIt(int waitMs, int idx) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Thread.sleep(waitMs);
+                var current = Thread.currentThread().getId();
+                return Pair.with(idx, current);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override

@@ -1,12 +1,16 @@
 package org.example.api;
 
-import java.util.concurrent.CompletionStage;
+import org.javatuples.Pair;
+
+import java.util.concurrent.CompletableFuture;
 
 public interface ISimultaneous extends AutoCloseable {
 
-    CompletionStage<Integer> getId();
+    CompletableFuture<Integer> getId();
 
-    CompletionStage<Void> loadIt(String word);
+    CompletableFuture<Void> loadIt(String word);
 
-    CompletionStage<String> removeIt();
+    CompletableFuture<String> removeIt();
+
+    CompletableFuture<Pair<Integer, Long>> runIt(int waitMs, int idx);
 }
