@@ -17,26 +17,43 @@
     <dependencies>
         <dependency>
             <groupId>com.xafero</groupId>
+            <artifactId>jnetproto-java</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.xafero.utils</groupId>
+            <artifactId>javaenums</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.xafero</groupId>
+            <artifactId>jnetcall-java-common</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.xafero</groupId>
+            <artifactId>jnethotel-java</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.xafero</groupId>
             <artifactId>jnetcall-java-inproc</artifactId>
             <version>1.0</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.xafero</groupId>
             <artifactId>jnetcall-java-stdio</artifactId>
             <version>1.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>7.5</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.example</groupId>
             <artifactId>aliens-java</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -46,5 +63,29 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+    
+    <build>
+		<plugins>            
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.8</version>
+				<executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report-aggregate</goal>
+                        </goals>
+                    </execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+    
 </project>
