@@ -12,7 +12,7 @@ cd ..
 
 echo ""
 cd NET
-dotnet test
+dotnet test --collect:"XPlat Code Coverage"
 cd ..
 
 echo ""
