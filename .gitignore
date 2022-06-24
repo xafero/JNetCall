@@ -171,6 +171,9 @@ coverage*.json
 coverage*.xml
 coverage*.info
 
+# Other coverage
+coverage/
+
 # Visual Studio code coverage results
 *.coverage
 *.coveragexml

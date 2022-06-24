@@ -12,7 +12,10 @@ cd ..
 
 echo.
 cd NET
-dotnet test
+rd /s /q JNetCall.Sharp.Tests\TestResults
+rd /s /q JNetProto.Sharp.Tests\TestResults
+dotnet test --collect:"XPlat Code Coverage"
+reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:coverage" -reporttypes:Html
 cd ..
 
 echo.
