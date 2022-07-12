@@ -2,9 +2,8 @@ package jnetproto.java.core;
 
 import jnetproto.java.api.DataType;
 import jnetproto.java.api.IDataReader;
-import jnetproto.java.compat.BitConverter;
-import jnetproto.java.compat.Reflect;
-import jnetproto.java.compat.Tuples;
+import jnetbase.java.*;
+import jnetproto.java.tools.Tuples;
 import org.javatuples.Tuple;
 
 import java.io.IOException;
@@ -112,7 +111,7 @@ public class BinaryReader implements IDataReader {
 
     @Override
     public Object readArray() throws IOException {
-        var item = Reflect.toDataType(_stream.read());
+        var item = DataTypes.toDataType(_stream.read());
         var rank = _stream.read();
         var lengths = new int[rank];
         for (var i = 0; i < rank; i++)
@@ -132,8 +131,8 @@ public class BinaryReader implements IDataReader {
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Map readMap() throws IOException {
-        var keyKind = Reflect.toDataType(_stream.read());
-        var valKind = Reflect.toDataType(_stream.read());
+        var keyKind = DataTypes.toDataType(_stream.read());
+        var valKind = DataTypes.toDataType(_stream.read());
         var size = readI32();
         var map = new TreeMap();
         for (var i = 0; i < size; i++) {
@@ -193,7 +192,7 @@ public class BinaryReader implements IDataReader {
 
     private Iterable<?> readIterable(Iterable<?> coll) throws IOException
     {
-        var valKind = Reflect.toDataType(_stream.read());
+        var valKind = DataTypes.toDataType(_stream.read());
         var size = readI32();
         var adder = Reflect.getMethod(coll, "add", Object.class);
         for (var i = 0; i < size; i++)
@@ -206,7 +205,7 @@ public class BinaryReader implements IDataReader {
 
     @Override
     public Object readObject() throws IOException {
-        var kind = Reflect.toDataType(_stream.read());
+        var kind = DataTypes.toDataType(_stream.read());
         return readObject(kind);
     }
 

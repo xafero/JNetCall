@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace JNetProto.Sharp.Compat
+namespace JNetBase.Sharp
 {
     public static class Arrays
     {

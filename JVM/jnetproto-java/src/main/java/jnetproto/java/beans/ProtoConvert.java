@@ -2,9 +2,10 @@ package jnetproto.java.beans;
 
 import jnetproto.java.api.IDataReader;
 import jnetproto.java.api.IDataWriter;
-import jnetproto.java.compat.Reflect;
+import jnetbase.java.*;
 import jnetproto.java.core.BinaryReader;
 import jnetproto.java.core.BinaryWriter;
+import jnetproto.java.core.DataTypes;
 import jnetproto.java.tools.Conversions;
 
 import java.io.*;
@@ -66,7 +67,7 @@ public final class ProtoConvert implements AutoCloseable {
 
     private static <T> T deserializeObject(Class<T> type, Object[] args, ProtoSettings s)
             throws Exception {
-        var cTypes = Arrays.stream(args).map(a -> Reflect.toClass(a)).toArray(Class[]::new);
+        var cTypes = Arrays.stream(args).map(a -> DataTypes.toClass(a)).toArray(Class[]::new);
         var creator = Reflect.getConstructor(type, cTypes);
         if (creator == null) {
             throw new IllegalArgumentException("No constructor for " + type);

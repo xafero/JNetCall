@@ -8,6 +8,19 @@ namespace JNetProto.Sharp.Core
 {
     public static class DataTypes
     {
+        public static Type ToType(object obj)
+        {
+            var kind = GetKind(obj);
+            try
+            {
+                return GetClass(kind.Kind);
+            }
+            catch (Exception)
+            {
+                return obj.GetType();
+            }
+        }
+
         public static Type GetClass(DataType type)
         {
             switch (type)

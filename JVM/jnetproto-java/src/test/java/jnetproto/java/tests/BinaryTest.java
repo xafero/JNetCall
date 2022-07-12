@@ -1,12 +1,10 @@
 package jnetproto.java.tests;
 
-import jnetproto.java.api.IDataReader;
-import jnetproto.java.api.IDataWriter;
-import jnetproto.java.compat.Reflect;
-import jnetproto.java.compat.Strings;
-import jnetproto.java.compat.Tuples;
+import jnetproto.java.api.*;
+import jnetbase.java.*;
 import jnetproto.java.core.BinaryReader;
 import jnetproto.java.core.BinaryWriter;
+import jnetproto.java.tools.*;
 import org.apache.commons.codec.binary.Hex;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

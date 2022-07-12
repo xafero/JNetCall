@@ -1,9 +1,8 @@
 package jnetproto.java.core;
 
-import com.xafero.javaenums.Enums;
+import com.xafero.javaenums.*;
 import jnetproto.java.api.IDataWriter;
-import jnetproto.java.compat.BitConverter;
-import jnetproto.java.compat.Reflect;
+import jnetbase.java.*;
 import org.javatuples.Tuple;
 
 import java.io.IOException;
@@ -193,20 +192,20 @@ public class BinaryWriter implements IDataWriter {
         var kind = DataTypes.getKind(value);
         if (!skipHeader)
         {
-            _stream.write(Reflect.getByte(kind));
+            _stream.write(DataTypes.getByte(kind));
             if (kind instanceof DataTypes.ArrayDt adt)
             {
-                _stream.write(Reflect.getByte(adt.Item()));
+                _stream.write(DataTypes.getByte(adt.Item()));
                 _stream.write((byte)adt.Rank());
             }
             else if (kind instanceof DataTypes.MapDt mdt)
             {
-                _stream.write(Reflect.getByte(mdt.Key()));
-                _stream.write(Reflect.getByte(mdt.Val()));
+                _stream.write(DataTypes.getByte(mdt.Key()));
+                _stream.write(DataTypes.getByte(mdt.Val()));
             }
             else if (kind instanceof DataTypes.ListDt ldt)
             {
-                _stream.write(Reflect.getByte(ldt.Item()));
+                _stream.write(DataTypes.getByte(ldt.Item()));
             }
         }
         if (kind instanceof DataTypes.EnumDt edt)

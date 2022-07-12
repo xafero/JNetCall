@@ -6,7 +6,7 @@ import jnethotel.java.Clr;
 import jnethotel.java.Natives;
 import jnethotel.java.api.ICoreClr;
 import jnetproto.java.beans.ProtoConvert;
-import jnetproto.java.compat.ByteArrayStream;
+import jnetbase.java.*;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Method;

@@ -1,6 +1,6 @@
 package jnetcall.java.tests;
 
-import jnetproto.java.compat.Primitives;
+import jnetbase.java.*;
 import org.example.api.*;
 import org.testng.annotations.Test;
 import org.testng.util.Strings;

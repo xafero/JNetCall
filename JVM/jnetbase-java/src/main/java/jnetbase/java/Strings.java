@@ -1,4 +1,4 @@
-package jnetproto.java.compat;
+package jnetbase.java;
 
 import java.io.*;
 

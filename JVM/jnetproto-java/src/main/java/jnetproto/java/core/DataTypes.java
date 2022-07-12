@@ -1,8 +1,8 @@
 package jnetproto.java.core;
 
-import com.xafero.javaenums.Enums;
+import com.xafero.javaenums.*;
 import jnetproto.java.api.DataType;
-import jnetproto.java.compat.Reflect;
+import jnetbase.java.*;
 import org.javatuples.Tuple;
 
 import java.math.BigDecimal;
@@ -14,6 +14,24 @@ import java.util.Set;
 import java.util.UUID;
 
 public final class DataTypes {
+
+    public static Class<?> toClass(Object a) {
+        var kind = DataTypes.getKind(a);
+        try {
+            return DataTypes.getClass(kind.Kind());
+        } catch (Exception e) {
+            return a.getClass();
+        }
+    }
+
+    public static byte getByte(IDataType kind) {
+        return (byte) kind.Kind().ordinal();
+    }
+
+    public static DataType toDataType(int read) {
+        return DataType.values()[read];
+    }
+
     public static Class<?> getClass(DataType type) {
         switch (type) {
             case Bool: return boolean.class;

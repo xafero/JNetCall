@@ -2,7 +2,7 @@ package jnetcall.java.client;
 
 import jnetproto.java.beans.ProtoConvert;
 import jnetproto.java.beans.ProtoSettings;
-import jnetproto.java.compat.Strings;
+import jnetbase.java.*;
 
 import java.io.IOException;
 import java.lang.reflect.Method;

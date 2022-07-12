@@ -1,4 +1,4 @@
-package jnetproto.java.compat;
+package jnetproto.java.tools;
 
 import org.javatuples.*;
 

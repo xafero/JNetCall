@@ -1,7 +1,4 @@
-package jnetproto.java.compat;
-
-import jnetproto.java.api.DataType;
-import jnetproto.java.core.DataTypes;
+package jnetbase.java;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -19,14 +16,6 @@ public final class Reflect {
         if (!type.isArray())
             return 0;
         return Strings.countMatches(type.getName(), '[');
-    }
-
-    public static byte getByte(DataTypes.IDataType kind) {
-        return (byte) kind.Kind().ordinal();
-    }
-
-    public static DataType toDataType(int read) {
-        return DataType.values()[read];
     }
 
     public static Object invoke(Method method, Object obj, Object[] args) {
@@ -86,17 +75,6 @@ public final class Reflect {
             return clazz.getConstructor(types);
         } catch (NoSuchMethodException e) {
             return (Constructor<T>) clazz.getConstructors()[0];
-        }
-    }
-
-    public record Property(String Name, Method Get, Method Set) { };
-
-    public static Class<?> toClass(Object a) {
-        var kind = DataTypes.getKind(a);
-        try {
-            return DataTypes.getClass(kind.Kind());
-        } catch (Exception e) {
-            return a.getClass();
         }
     }
 }

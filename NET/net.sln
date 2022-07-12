@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JNetCall.Sharp.StdIO", "JNe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JNetCall.Sharp.InProc", "JNetCall.Sharp.InProc\JNetCall.Sharp.InProc.csproj", "{19260F11-BC46-4FE9-8089-4876319B996C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JNetBase.Sharp", "JNetBase.Sharp\JNetBase.Sharp.csproj", "{28DAFFDB-20F9-465E-939C-761DB5B0758D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{19260F11-BC46-4FE9-8089-4876319B996C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19260F11-BC46-4FE9-8089-4876319B996C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19260F11-BC46-4FE9-8089-4876319B996C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28DAFFDB-20F9-465E-939C-761DB5B0758D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28DAFFDB-20F9-465E-939C-761DB5B0758D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28DAFFDB-20F9-465E-939C-761DB5B0758D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28DAFFDB-20F9-465E-939C-761DB5B0758D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
