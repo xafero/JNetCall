@@ -1,12 +1,12 @@
 package jnetcall.java.client;
 
 import com.sun.jna.Function;
+import jnetbase.java.io.ByteArrayStream;
 import jnetcall.java.api.MethodResult;
 import jnethotel.java.Clr;
 import jnethotel.java.Natives;
 import jnethotel.java.api.ICoreClr;
 import jnetproto.java.beans.ProtoConvert;
-import jnetbase.java.*;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Method;

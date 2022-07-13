@@ -1,4 +1,4 @@
-package jnetbase.java;
+package jnetbase.java.meta;
 
 import java.lang.reflect.Method;
 

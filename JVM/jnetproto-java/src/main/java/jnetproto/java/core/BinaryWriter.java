@@ -1,8 +1,9 @@
 package jnetproto.java.core;
 
-import com.xafero.javaenums.*;
+import com.xafero.javaenums.Enums;
+import jnetbase.java.meta.Reflect;
+import jnetbase.java.sys.BitConverter;
 import jnetproto.java.api.IDataWriter;
-import jnetbase.java.*;
 import org.javatuples.Tuple;
 
 import java.io.IOException;

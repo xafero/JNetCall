@@ -1,4 +1,4 @@
-package jnetbase.java;
+package jnetbase.java.sys;
 
 import java.io.*;
 

@@ -1,8 +1,8 @@
 package jnetproto.java.core;
 
-import com.xafero.javaenums.*;
+import com.xafero.javaenums.Enums;
+import jnetbase.java.meta.Reflect;
 import jnetproto.java.api.DataType;
-import jnetbase.java.*;
 import org.javatuples.Tuple;
 
 import java.math.BigDecimal;

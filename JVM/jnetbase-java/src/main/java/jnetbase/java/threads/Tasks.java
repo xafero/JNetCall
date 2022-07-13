@@ -1,4 +1,4 @@
-package jnetbase.java;
+package jnetbase.java.threads;
 
 import java.util.Collection;
 import java.util.List;
@@ -51,9 +51,31 @@ public final class Tasks {
     private static <T> T get(Future<T> task) {
         try {
             return task.get();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
-        } catch (ExecutionException e) {
+        }
+    }
+
+    public static <T> T await(Callable<T> callable) {
+        try {
+            return callable.call();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> CompletableFuture<T> run(Callable<Callable<T>> callable) {
+        return CompletableFuture.supplyAsync(() -> await(await(callable)));
+    }
+
+    public static <T> T await(CompletableFuture<T> callable) {
+        return Tasks.blockGet(callable);
+    }
+
+    private static <T> T blockGet(Future<T> future) {
+        try {
+            return future.get();
+        } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
     }

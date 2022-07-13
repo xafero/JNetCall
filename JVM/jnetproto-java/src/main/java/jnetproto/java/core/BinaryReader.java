@@ -1,8 +1,9 @@
 package jnetproto.java.core;
 
+import jnetbase.java.meta.Reflect;
+import jnetbase.java.sys.BitConverter;
 import jnetproto.java.api.DataType;
 import jnetproto.java.api.IDataReader;
-import jnetbase.java.*;
 import jnetproto.java.tools.Tuples;
 import org.javatuples.Tuple;
 
@@ -77,7 +78,7 @@ public class BinaryReader implements IDataReader {
 
     @Override
     public char readChar() throws IOException {
-        return (char)readI16();
+        return (char) readI16();
     }
 
     @Override
@@ -147,22 +148,20 @@ public class BinaryReader implements IDataReader {
     public Tuple readTuple() throws IOException {
         var size = readI8();
         var args = new Object[size];
-        for (var i = 0; i < size; i++)
-        {
+        for (var i = 0; i < size; i++) {
             var obj = readObject();
             args[i] = obj;
         }
         var method = Arrays.stream(Tuples.class.getMethods())
                 .filter(m -> m.getName().equals("create") && m.getParameterCount() == args.length);
-        return (Tuple)Reflect.invoke(method.findFirst().orElseThrow(), null, args);
+        return (Tuple) Reflect.invoke(method.findFirst().orElseThrow(), null, args);
     }
 
     @Override
     public Object[] readBag() throws IOException {
         var size = readI8();
         var args = new Object[size];
-        for (var i = 0; i < size; i++)
-        {
+        for (var i = 0; i < size; i++) {
             var obj = readObject();
             args[i] = obj;
         }
@@ -182,23 +181,21 @@ public class BinaryReader implements IDataReader {
 
     @Override
     public Set<?> readSet() throws IOException {
-        return (Set<?>)readIterable(new TreeSet<Object>());
+        return (Set<?>) readIterable(new TreeSet<Object>());
     }
 
     @Override
     public List<?> readList() throws IOException {
-        return (List<?>)readIterable(new ArrayList<Object>());
+        return (List<?>) readIterable(new ArrayList<Object>());
     }
 
-    private Iterable<?> readIterable(Iterable<?> coll) throws IOException
-    {
+    private Iterable<?> readIterable(Iterable<?> coll) throws IOException {
         var valKind = DataTypes.toDataType(_stream.read());
         var size = readI32();
         var adder = Reflect.getMethod(coll, "add", Object.class);
-        for (var i = 0; i < size; i++)
-        {
+        for (var i = 0; i < size; i++) {
             var val = readObject(valKind);
-            Reflect.invoke(adder, coll, new Object[] { val });
+            Reflect.invoke(adder, coll, new Object[]{val});
         }
         return coll;
     }
@@ -210,33 +207,54 @@ public class BinaryReader implements IDataReader {
     }
 
     private Object readObject(DataType kind) throws IOException {
-        switch (kind)
-        {
-            case Bool: return readBool();
-            case I8: return readI8();
-            case I16: return readI16();
-            case I32: return readI32();
-            case I64: return readI64();
-            case F32: return readF32();
-            case F64: return readF64();
-            case F128: return readF128();
-            case Char: return readChar();
-            case UTF8: return readUtf8();
-            case Duration: return readDuration();
-            case Timestamp: return readTimestamp();
-            case Guid: return readGuid();
-            case Array: return readArray();
-            case Map: return readMap();
-            case Tuple: return readTuple();
-            case Set: return readSet();
-            case List: return readList();
-            case Bag: return readBag();
-            case Binary: return readBinary();
-            case Null: return readNull();
-            default: throw new IllegalArgumentException("readObject " + kind);
+        switch (kind) {
+            case Bool:
+                return readBool();
+            case I8:
+                return readI8();
+            case I16:
+                return readI16();
+            case I32:
+                return readI32();
+            case I64:
+                return readI64();
+            case F32:
+                return readF32();
+            case F64:
+                return readF64();
+            case F128:
+                return readF128();
+            case Char:
+                return readChar();
+            case UTF8:
+                return readUtf8();
+            case Duration:
+                return readDuration();
+            case Timestamp:
+                return readTimestamp();
+            case Guid:
+                return readGuid();
+            case Array:
+                return readArray();
+            case Map:
+                return readMap();
+            case Tuple:
+                return readTuple();
+            case Set:
+                return readSet();
+            case List:
+                return readList();
+            case Bag:
+                return readBag();
+            case Binary:
+                return readBinary();
+            case Null:
+                return readNull();
+            default:
+                throw new IllegalArgumentException("readObject " + kind);
         }
     }
-    
+
     @Override
     public void close() throws Exception {
         if (_stream == null)

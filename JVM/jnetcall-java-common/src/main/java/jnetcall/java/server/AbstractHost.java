@@ -1,11 +1,11 @@
 package jnetcall.java.server;
 
+import jnetbase.java.sys.Strings;
 import jnetcall.java.api.MethodCall;
 import jnetcall.java.api.MethodResult;
 import jnetcall.java.api.MethodStatus;
 import jnetproto.java.beans.ProtoConvert;
 import jnetproto.java.beans.ProtoSettings;
-import jnetbase.java.*;
 import jnetproto.java.tools.Conversions;
 
 import java.lang.reflect.InvocationTargetException;
@@ -13,7 +13,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 

@@ -1,4 +1,4 @@
-package jnetbase.java;
+package jnetbase.java.io;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
