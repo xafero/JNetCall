@@ -6,4 +6,6 @@ public interface IStringCache extends AutoCloseable {
     String get(int key) throws UnsupportedOperationException;
     void delete(int key);
     int getSize();
+
+    void dispose() throws Exception;
 }

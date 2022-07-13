@@ -12,8 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 public abstract class CallTest {
 
@@ -41,6 +40,9 @@ public abstract class CallTest {
             client.delete(43);
             client.delete(44);
             assertEquals(0, client.getSize());
+
+            assertThrows(UnsupportedOperationException.class, () -> client.get(89));
+            client.dispose();
         }
     }
 

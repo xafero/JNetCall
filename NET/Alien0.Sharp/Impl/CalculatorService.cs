@@ -8,7 +8,7 @@ using static Example.API.IMultiple;
 
 namespace Example.Impl
 {
-    public class CalculatorService : ICalculator, IStringCache, ISimultaneous
+    public class CalculatorService : ICalculator, IStringCache, ISimultaneous, ITriggering
     {
         public double Add(double n1, double n2)
         {
@@ -199,7 +199,7 @@ namespace Example.Impl
             var bld = new StringBuilder();
             bld.Append(Arrays.ToString(taken));
             bld.Append(" | ");
-            bld.Append(days);
+            bld.Append("[" + days + "]");
             return bld.ToString();
         }
 
@@ -224,6 +224,26 @@ namespace Example.Impl
         }
 
         public int Size => _cache.Count;
+
+        public void Close() => Dispose();
+
+        public bool EnumWindows(PCallBack callback, int count)
+        {
+            for (var i = 0; i < count; i++)
+                callback(i, i + count + "!");
+            return true;
+        }
+
+        public void StartPub(int count)
+        {
+            for (var i = 0; i < count; i++)
+                ThresholdReached?.Invoke(this, new ThresholdEventArgs
+                {
+                    Threshold = i, TimeReached = DateTime.Now
+                });
+        }
+
+        public event ThresholdHandler ThresholdReached;
 
         public string Name => "C#";
 

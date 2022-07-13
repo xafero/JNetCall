@@ -6,6 +6,7 @@ import org.example.api.IDataTyped;
 import org.example.api.IMultiple;
 import org.example.api.IStringCache;
 import org.example.api.ISimultaneous;
+import org.example.api.ITriggering;
 import org.javatuples.Pair;
 import org.javatuples.Quartet;
 import org.javatuples.Quintet;
@@ -17,7 +18,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IStringCache, ISimultaneous {
+public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IStringCache,
+        ISimultaneous, AutoCloseable, ITriggering {
 
     public double add(double n1, double n2) {
         double result = n1 + n2;
@@ -242,11 +244,48 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
     }
 
     @Override
+    public void close() {
+    }
+
+    @Override
+    public boolean enumWindows(PCallBack callback, int count) {
+        for (var i = 0; i < count; i++)
+            callback.invoke(i, i + count + "!");
+        return true;
+    }
+
+    @Override
+    public void startPub(int count) {
+        for (var i = 0; i < count; i++) {
+            var arg = new ThresholdEventArgs(i, LocalDateTime.now());
+            fireThresholdReached(this, arg);
+        }
+    }
+
+    private final List<ThresholdHandler> ThresholdReached = new LinkedList<>();
+
+    private void fireThresholdReached(Object sender, ThresholdEventArgs arg) {
+        for (var handler : ThresholdReached)
+            handler.invoke(sender, arg);
+    }
+
+    @Override
+    public void addThresholdReached(ThresholdHandler value) {
+        ThresholdReached.add(value);
+    }
+
+    @Override
+    public void removeThresholdReached(ThresholdHandler value) {
+        ThresholdReached.remove(value);        
+    }
+
+    @Override
     public String getName() {
         return "Java";
     }
 
     @Override
-    public void close() throws Exception {
+    public void dispose() {
+        close();
     }
 }
