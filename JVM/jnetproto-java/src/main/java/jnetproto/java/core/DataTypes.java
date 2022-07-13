@@ -127,7 +127,7 @@ public final class DataTypes {
             case "java.time.Duration": return DataType.Duration;
             case "java.time.LocalDateTime": return DataType.Timestamp;
             case "java.util.UUID": return DataType.Guid;
-            default: throw new IllegalArgumentException(type.toString());
+            default: return DataType.Unknown;
         }
     }
 }

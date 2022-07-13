@@ -11,14 +11,8 @@ namespace JNetProto.Sharp.Core
         public static Type ToType(object obj)
         {
             var kind = GetKind(obj);
-            try
-            {
-                return GetClass(kind.Kind);
-            }
-            catch (Exception)
-            {
-                return obj.GetType();
-            }
+            var type = GetClass(kind.Kind);
+            return type ?? obj.GetType();
         }
 
         public static Type GetClass(DataType type)
@@ -39,7 +33,7 @@ namespace JNetProto.Sharp.Core
                 case DataType.Timestamp: return typeof(DateTime);
                 case DataType.Guid: return typeof(Guid);
                 case DataType.Null: return typeof(object);
-                default: throw new ArgumentException(type.ToString());
+                default: return null;
             }
         }
 
@@ -120,7 +114,7 @@ namespace JNetProto.Sharp.Core
                 case "System.TimeSpan": return DataType.Duration;
                 case "System.DateTime": return DataType.Timestamp;
                 case "System.Guid": return DataType.Guid;
-                default: throw new ArgumentException(type.ToString());
+                default: return default;
             }
         }
     }

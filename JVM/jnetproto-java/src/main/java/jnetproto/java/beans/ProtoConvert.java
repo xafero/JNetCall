@@ -55,25 +55,15 @@ public final class ProtoConvert implements AutoCloseable {
 
     private static byte[] serializeObject(Object obj, ProtoSettings s)
             throws Exception {
-        var type = obj.getClass();
-        var props = Reflect.getProperties(type);
-        var args = new Object[props.size()];
-        for (var i = 0; i < args.length; i++) {
-            var getter = props.get(i).Get();
-            args[i] = Reflect.invoke(getter, obj, new Object[0]);
-        }
+        var raw = Conversions.toObjectArray(obj);
+        var args = (Object[]) raw;
         return serializeObject(args, s);
     }
 
     private static <T> T deserializeObject(Class<T> type, Object[] args, ProtoSettings s)
             throws Exception {
-        var cTypes = Arrays.stream(args).map(a -> DataTypes.toClass(a)).toArray(Class[]::new);
-        var creator = Reflect.getConstructor(type, cTypes);
-        if (creator == null) {
-            throw new IllegalArgumentException("No constructor for " + type);
-        }
-        args = Conversions.convertFor(args, creator);
-        return creator.newInstance(args);
+        var raw = Conversions.fromObjectArray(type, args);
+        return (T) raw;
     }
 
     private static byte[] serializeObject(Object[] args, ProtoSettings s)

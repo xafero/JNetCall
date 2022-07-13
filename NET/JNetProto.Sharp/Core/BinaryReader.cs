@@ -29,7 +29,9 @@ namespace JNetProto.Sharp.Core
             var length = _stream.Read(bytes);
             if (length != size)
             {
-                var hex = BitConverter.ToString(bytes).Replace("-", "");
+                var hex = bytes.Length <= 1024
+                    ? BitConverter.ToString(bytes).Replace("-", "")
+                    : "(too big for hex)";
                 throw new ArgumentException($"Got {length} B instead of {size}! {hex}");
             }
             return bytes;

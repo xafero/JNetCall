@@ -77,7 +77,7 @@ public abstract class CallTest {
             assertEquals("[Sunday, Thursday, Saturday]", bds.toString());
 
             var bdt = client.GetTextOf(new IMultiple.WeekDay[]{bd1, bd2}, bds);
-            assertEquals("[Wednesday, Friday] | Sunday, Thursday, Saturday", bdt);
+            assertEquals("[Wednesday, Friday] | [Sunday, Thursday, Saturday]", bdt);
         }
     }
 

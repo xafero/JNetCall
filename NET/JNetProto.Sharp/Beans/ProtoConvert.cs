@@ -2,6 +2,7 @@
 using System.Linq;
 using JNetProto.Sharp.API;
 using JNetProto.Sharp.Core;
+using JNetProto.Sharp.Tools;
 using Stream = System.IO.Stream;
 using MemoryStream = System.IO.MemoryStream;
 
@@ -58,26 +59,16 @@ namespace JNetProto.Sharp.Beans
 
         private static byte[] SerializeObject(object obj, ProtoSettings s)
         {
-            var type = obj.GetType();
-            var props = type.GetProperties();
-            var args = new object[props.Length];
-            for (var i = 0; i < args.Length; i++)
-                args[i] = props[i].GetValue(obj);
+            var raw = Conversions.ToObjectArray(obj);
+            var args = (object[])raw;
             return SerializeObject(args, s);
         }
 
         private static T DeserializeObject<T>(object[] args, ProtoSettings _)
         {
             var type = typeof(T);
-            var cTypes = args.Select(DataTypes.ToType).ToArray();
-            var creator = type.GetConstructor(cTypes);
-            if (creator == null)
-            {
-                creator = type.GetConstructors().FirstOrDefault();
-                if (creator == null)
-                    throw new ArgumentException($"No constructor: {type}");
-            }
-            return (T)creator.Invoke(args);
+            var raw = Conversions.FromObjectArray(type, args);
+            return (T)raw;
         }
 
         private static byte[] SerializeObject(object[] args, ProtoSettings _)

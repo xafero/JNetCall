@@ -8,5 +8,7 @@ namespace Example.API
         string Get(int key);
         void Delete(int key);
         int Size { get; }
+
+        void Close();
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Example.API;
 using JNetBase.Sharp;
 using static Example.API.IMultiple;
+using static Example.API.ITriggering;
 
 namespace Example.Impl
 {

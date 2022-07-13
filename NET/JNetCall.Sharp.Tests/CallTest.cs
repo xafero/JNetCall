@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Example.API;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Xunit;
+using static Example.API.ITriggering;
 
 namespace JNetCall.Sharp.Tests
 {
@@ -34,6 +35,9 @@ namespace JNetCall.Sharp.Tests
             client.Delete(43);
             client.Delete(44);
             Assert.Equal(0, client.Size);
+
+            Assert.Throws<InvalidOperationException>(() => client.Get(89));
+            client.Close();
         }
 
         [Fact]
