@@ -1,5 +1,4 @@
 ﻿using System.Threading;
-using JNetBase.Sharp.Threads;
 using Nito.AsyncEx;
 
 namespace JNetCall.Sharp.Client.Model

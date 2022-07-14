@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Example.API;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Xunit;
-using static Example.API.ITriggering;
 
 namespace JNetCall.Sharp.Tests
 {
