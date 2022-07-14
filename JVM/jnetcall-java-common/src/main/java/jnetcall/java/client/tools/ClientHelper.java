@@ -7,7 +7,8 @@ public final class ClientHelper {
 
     public static <T> T create(Class<T> clazz, InvocationHandler handler) {
         var loader = clazz.getClassLoader();
-        T proxy = (T) Proxy.newProxyInstance(loader, new Class[]{clazz}, handler);
-        return proxy;
+        var types = new Class[]{clazz};
+        var proxy = Proxy.newProxyInstance(loader, types, handler);
+        return (T) proxy;
     }
 }
