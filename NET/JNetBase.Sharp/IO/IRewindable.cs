@@ -1,4 +1,4 @@
-﻿namespace JNetBase.Sharp
+﻿namespace JNetBase.Sharp.IO
 {
     public interface IRewindable
     {

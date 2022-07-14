@@ -3,7 +3,7 @@ package org.example;
 import jnetcall.java.client.InProcClient;
 import org.example.api.ICalculator;
 
-import static jnetcall.java.client.ServiceEnv.buildPath;
+import static jnetcall.java.client.tools.ServiceEnv.buildPath;
 
 public class Main {
 

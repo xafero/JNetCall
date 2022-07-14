@@ -1,7 +1,7 @@
 ﻿using System;
 using Example.API;
 using JNetCall.Sharp.Client;
-using static JNetCall.Sharp.Client.ServiceEnv;
+using static JNetCall.Sharp.Client.Tools.ServiceEnv;
 
 namespace Example
 {

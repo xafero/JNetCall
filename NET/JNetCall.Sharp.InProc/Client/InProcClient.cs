@@ -1,3 +1,5 @@
+using JNetCall.Sharp.Client.Tools;
+
 namespace JNetCall.Sharp.Client
 {
     public static class InProcClient

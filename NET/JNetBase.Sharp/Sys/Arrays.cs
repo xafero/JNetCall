@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace JNetBase.Sharp
+namespace JNetBase.Sharp.Sys
 {
     public static class Arrays
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Example.API;
-using JNetBase.Sharp;
+using JNetBase.Sharp.Sys;
 using static Example.API.IMultiple;
 using static Example.API.ITriggering;
 

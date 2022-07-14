@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace JNetCall.Sharp.Client
+namespace JNetCall.Sharp.Client.Tools
 {
     public static class ServiceEnv
     {

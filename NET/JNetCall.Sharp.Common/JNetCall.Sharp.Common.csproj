@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\JNetBase.Sharp\JNetBase.Sharp.csproj" />
     <ProjectReference Include="..\JNetProto.Sharp\JNetProto.Sharp.csproj" />
   </ItemGroup>
 

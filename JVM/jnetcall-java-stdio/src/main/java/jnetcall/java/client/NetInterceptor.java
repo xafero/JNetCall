@@ -3,6 +3,7 @@ package jnetcall.java.client;
 import jnetbase.java.sys.Strings;
 import jnetproto.java.beans.ProtoConvert;
 import jnetproto.java.beans.ProtoSettings;
+import jnetcall.java.client.tools.*;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
