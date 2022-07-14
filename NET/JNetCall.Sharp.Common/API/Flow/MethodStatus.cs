@@ -1,4 +1,4 @@
-namespace JNetCall.Sharp.API
+namespace JNetCall.Sharp.API.Flow
 {
     public enum MethodStatus : short
     {
@@ -9,6 +9,8 @@ namespace JNetCall.Sharp.API
         MethodNotFound = 406,
 
         MethodFailed = 500,
+
+        Continue = 100,
 
         Ok = 200
     }

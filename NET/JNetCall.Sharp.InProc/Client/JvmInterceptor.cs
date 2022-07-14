@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Castle.DynamicProxy;
-using JNetCall.Sharp.API;
+using JNetCall.Sharp.API.Flow;
 using JNetHotel.Sharp;
 using JNetProto.Sharp.Beans;
 
