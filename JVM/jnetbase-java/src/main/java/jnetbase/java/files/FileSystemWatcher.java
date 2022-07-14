@@ -1,5 +1,7 @@
 package jnetbase.java.files;
 
+import jnetbase.java.threads.IExecutor;
+
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.*;
@@ -98,10 +100,15 @@ public final class FileSystemWatcher implements AutoCloseable {
     private void start() throws IOException {
         var args = _kinds.toArray(WatchEvent.Kind[]::new);
         _key = _folder.register(_watcher, args);
-        _thread = _executor.newThread(this::tryRun);
-        _thread.setName("FileSystemWatcher");
-        _thread.setDaemon(true);
-        _thread.start();
+
+        if (_executor instanceof IExecutor ee) {
+            _thread = ee.createThread(this::tryRun, "FileSystemWatcher");
+        } else {
+            _thread = _executor.newThread(this::tryRun);
+            _thread.setName("FileSystemWatcher");
+            _thread.setDaemon(true);
+            _thread.start();
+        }
     }
 
     @Override
