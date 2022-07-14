@@ -1,10 +1,11 @@
-package jnetcall.java.api;
+package jnetcall.java.api.flow;
 
 public enum MethodStatus {
     Unknown(0),
     ClassNotFound(404),
     MethodNotFound(406),
     MethodFailed(500),
+    Continue(100),
     Ok(200);
 
     private final short value;

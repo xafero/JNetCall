@@ -1,8 +1,8 @@
 package jnetcall.java.client;
 
-import jnetcall.java.api.MethodCall;
-import jnetcall.java.api.MethodResult;
-import jnetcall.java.api.MethodStatus;
+import jnetcall.java.api.flow.MethodCall;
+import jnetcall.java.api.flow.MethodResult;
+import jnetcall.java.api.flow.MethodStatus;
 import jnetproto.java.beans.ProtoConvert;
 import jnetproto.java.beans.ProtoSettings;
 import jnetproto.java.tools.Conversions;
