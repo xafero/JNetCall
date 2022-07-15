@@ -79,4 +79,14 @@ public final class Tasks {
             throw new RuntimeException(e);
         }
     }
+
+    public static <T> CompletableFuture<T> wrap(Future<T> future) {
+        try {
+            return CompletableFuture.completedFuture(future.get());
+        } catch (InterruptedException e) {
+            return CompletableFuture.failedFuture(e);
+        } catch (ExecutionException e) {
+            return CompletableFuture.failedFuture(e.getCause());
+        }
+    }
 }
