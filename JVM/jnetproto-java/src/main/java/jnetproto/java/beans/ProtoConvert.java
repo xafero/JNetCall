@@ -1,15 +1,12 @@
 package jnetproto.java.beans;
 
-import jnetbase.java.meta.Reflect;
 import jnetproto.java.api.IDataReader;
 import jnetproto.java.api.IDataWriter;
 import jnetproto.java.core.BinaryReader;
 import jnetproto.java.core.BinaryWriter;
-import jnetproto.java.core.DataTypes;
 import jnetproto.java.tools.Conversions;
 
 import java.io.*;
-import java.util.Arrays;
 
 public final class ProtoConvert implements AutoCloseable {
 

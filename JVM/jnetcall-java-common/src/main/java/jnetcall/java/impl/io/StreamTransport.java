@@ -1,8 +1,8 @@
 package jnetcall.java.impl.io;
 
+import jnetbase.java.io.IRewindable;
 import jnetcall.java.api.enc.IEncoding;
 import jnetcall.java.api.io.IPullTransport;
-import jnetbase.java.io.IRewindable;
 import jnetcall.java.api.io.ISendTransport;
 
 import java.io.InputStream;

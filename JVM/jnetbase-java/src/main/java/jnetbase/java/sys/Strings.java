@@ -1,6 +1,9 @@
 package jnetbase.java.sys;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public final class Strings {
 

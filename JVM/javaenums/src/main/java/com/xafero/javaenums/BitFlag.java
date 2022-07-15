@@ -1,7 +1,10 @@
 package com.xafero.javaenums;
 
 import com.xafero.javaenums.api.IFlag;
-import com.xafero.javaenums.bits.*;
+import com.xafero.javaenums.bits.BitFlag16;
+import com.xafero.javaenums.bits.BitFlag32;
+import com.xafero.javaenums.bits.BitFlag64;
+import com.xafero.javaenums.bits.BitFlag8;
 import com.xafero.javaenums.flags.ByteFlag;
 import com.xafero.javaenums.flags.IntFlag;
 import com.xafero.javaenums.flags.LongFlag;

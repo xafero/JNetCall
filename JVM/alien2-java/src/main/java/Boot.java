@@ -1,9 +1,5 @@
 import jnetcall.java.server.ServiceLots;
-import org.example.api.ICalculator;
-import org.example.api.IDataTyped;
-import org.example.api.IMultiple;
-import org.example.api.IStringCache;
-import org.example.api.ISimultaneous;
+import org.example.api.*;
 import org.example.impl.CalculatorService;
 
 @SuppressWarnings("unused")

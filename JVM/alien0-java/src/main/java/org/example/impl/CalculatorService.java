@@ -1,12 +1,7 @@
 package org.example.impl;
 
 import com.xafero.javaenums.BitFlag;
-import org.example.api.ICalculator;
-import org.example.api.IDataTyped;
-import org.example.api.IMultiple;
-import org.example.api.IStringCache;
-import org.example.api.ISimultaneous;
-import org.example.api.ITriggering;
+import org.example.api.*;
 import org.javatuples.Pair;
 import org.javatuples.Quartet;
 import org.javatuples.Quintet;
@@ -16,7 +11,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
 
 public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IStringCache,
         ISimultaneous, AutoCloseable, ITriggering {

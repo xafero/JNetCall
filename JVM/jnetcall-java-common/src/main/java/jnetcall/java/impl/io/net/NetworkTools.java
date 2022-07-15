@@ -1,15 +1,11 @@
 package jnetcall.java.impl.io.net;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.ReadableByteChannel;
-import java.util.Arrays;
-
-import jnetbase.java.sys.BitConverter;
 
 public final class NetworkTools {
 

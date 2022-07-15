@@ -5,8 +5,6 @@ import jnetcall.java.server.api.IHosting;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.Arrays;
 
 public final class DelegateWrap implements InvocationHandler {
 
