@@ -36,6 +36,7 @@ public final class StreamTransport implements ISendTransport, IPullTransport, Au
         try {
             var bytes = _encoding.encode(payload);
             _streamOut.write(bytes, 0, bytes.length);
+            _streamOut.flush();
             if (_streamOut instanceof IRewindable r)
                 r.rewind(bytes.length);
         } catch (Exception e) {

@@ -24,6 +24,7 @@ namespace JNetCall.Sharp.Impl.IO
         {
             var bytes = _encoding.Encode(payload);
             _streamOut.Write(bytes, 0, bytes.Length);
+            _streamOut.Flush();
             if (_streamOut is IRewindable r)
                 r.Rewind(bytes.Length);
         }
