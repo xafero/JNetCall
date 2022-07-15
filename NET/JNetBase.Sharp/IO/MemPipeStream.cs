@@ -6,7 +6,7 @@ using Nito.AsyncEx;
 
 namespace JNetBase.Sharp.IO
 {
-    public class MemPipeStream : Stream, IRewindable
+    public sealed class MemPipeStream : Stream, IRewindable
     {
         private readonly Stream _stream;
         private readonly AsyncProducerConsumerQueue<bool> _queue;
