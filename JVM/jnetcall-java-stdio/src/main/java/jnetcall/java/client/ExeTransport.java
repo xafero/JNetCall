@@ -4,7 +4,8 @@ import jnetbase.java.sys.Strings;
 import jnetcall.java.api.io.IPullTransport;
 import jnetcall.java.api.io.ISendTransport;
 import jnetcall.java.client.tools.ServiceEnv;
-import jnetproto.java.tools.Tuples;
+import jnetcall.java.common.ByteMarks;
+import jnetcall.java.common.StreamInit;
 import org.javatuples.Pair;
 
 import java.io.*;
@@ -49,17 +50,11 @@ final class ExeTransport implements ISendTransport, IPullTransport {
         _process.destroy();
     }
 
-    private static Pair<InputStream, OutputStream> writeSync(Process process) throws IOException {
+    private static Pair<InputStream, OutputStream> writeSync(Process process)
+            throws IOException {
         var stdOut = process.getInputStream();
         var stdIn = process.getOutputStream();
-        final int marker = 0xEE;
-        // Send flag
-        stdIn.write(marker);
-        stdIn.flush();
-        // Receive flag
-        while (stdOut.read() != marker) ;
-        // Ready!
-        return Tuples.create(stdOut, stdIn);
+        return ByteMarks.writeSync(stdOut, stdIn);
     }
 
     private String getErrorDetails() throws IOException {
@@ -74,14 +69,14 @@ final class ExeTransport implements ISendTransport, IPullTransport {
     }
 
     @Override
-    public void close() throws Exception {
-        stop(250);
-        _parent.close();
-    }
-
-    @Override
     public <T> T pull(Class<T> clazz) {
         var msg = _parent.pull(clazz);
         return msg;
+    }
+
+    @Override
+    public void close() throws Exception {
+        stop(250);
+        _parent.close();
     }
 }

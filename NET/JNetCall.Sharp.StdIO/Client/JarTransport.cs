@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using JNetCall.Sharp.API.IO;
+using JNetCall.Sharp.Common;
 
 namespace JNetCall.Sharp.Client
 {
@@ -59,16 +60,7 @@ namespace JNetCall.Sharp.Client
         {
             var stdOut = process.StandardOutput.BaseStream;
             var stdIn = process.StandardInput.BaseStream;
-            const int marker = 0xEE;
-            // Send flag
-            stdIn.WriteByte(marker);
-            stdIn.Flush();
-            // Receive flag
-            while (stdOut.ReadByte() != marker)
-            {
-            }
-            // Ready!
-            return (stdOut, stdIn);
+            return ByteMarks.WriteSync(stdOut, stdIn);
         }
 
         private string GetErrorDetails()
