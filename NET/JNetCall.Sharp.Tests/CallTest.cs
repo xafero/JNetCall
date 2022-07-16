@@ -36,7 +36,7 @@ namespace JNetCall.Sharp.Tests
             Assert.Equal(0, client.Size);
 
             Assert.Throws<InvalidOperationException>(() => client.Get(89));
-            client.Close();
+            client.Clean();
         }
 
         [Fact]

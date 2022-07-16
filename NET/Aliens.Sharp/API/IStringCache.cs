@@ -9,6 +9,6 @@ namespace Example.API
         void Delete(int key);
         int Size { get; }
 
-        void Close();
+        void Clean();
     }
 }

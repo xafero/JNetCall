@@ -280,7 +280,7 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
     }
 
     @Override
-    public void dispose() {
+    public void clean() {
         close();
     }
 }

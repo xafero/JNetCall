@@ -226,7 +226,7 @@ namespace Example.Impl
 
         public int Size => _cache.Count;
 
-        public void Close() => Dispose();
+        public void Clean() => Dispose();
 
         public bool EnumWindows(PCallBack callback, int count)
         {

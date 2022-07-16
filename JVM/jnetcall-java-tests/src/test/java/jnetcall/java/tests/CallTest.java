@@ -42,7 +42,7 @@ public abstract class CallTest {
             assertEquals(0, client.getSize());
 
             assertThrows(UnsupportedOperationException.class, () -> client.get(89));
-            client.dispose();
+            client.clean();
         }
     }
 

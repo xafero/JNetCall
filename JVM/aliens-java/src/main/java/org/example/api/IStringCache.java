@@ -7,5 +7,5 @@ public interface IStringCache extends AutoCloseable {
     void delete(int key);
     int getSize();
 
-    void dispose() throws Exception;
+    void clean() throws Exception;
 }
