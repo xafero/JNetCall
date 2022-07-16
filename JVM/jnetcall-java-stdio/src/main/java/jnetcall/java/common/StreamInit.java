@@ -1,4 +1,4 @@
-package jnetcall.java.client;
+package jnetcall.java.common;
 
 import jnetcall.java.api.io.ISendTransport;
 
