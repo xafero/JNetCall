@@ -1,5 +1,7 @@
 // ReSharper disable StringLiteralTypo
+
 using System;
+using System.Collections.Generic;
 using System.IO;
 using JNetProto.Sharp.Beans;
 using Newtonsoft.Json;
@@ -10,6 +12,40 @@ namespace JNetProto.Sharp.Tests
 {
     public class ComplexTest
     {
+        [Theory]
+        [InlineData("380000001302130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A01010000000100690207", 'C')]
+        [InlineData("380000001302130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A01010000000100690207", 'N')]
+        [InlineData("360000001301130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A0101000000010069", 'B')]
+        [InlineData("360000001301130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A0101000000010069", 'M')]
+        [InlineData("34000000130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A0101000000010069", 'A')]
+        [InlineData("34000000130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A0101000000010069", 'L')]
+        public void ShouldColl(string hex, char mode)
+        {
+            var isArray0 = mode == 'A';
+            var isList1 = mode == 'M';
+            var isArray1 = mode == 'B';
+            var isList2 = mode == 'N';
+            var isArray2 = mode == 'C';
+            
+            var example1 = new Call("c", "m", new object[] { 'a' }, new[] { "h" });
+            var example2 = new Call("d", "n", new object[] { 'b' }, new[] { "i" });
+
+            object value = isArray2 ? new CallArrayBag2(new[] { example1, example2 }, 0x07)
+                : isList2 ? new CallListBag2(new List<Call> { example1, example2 }, 0x07)
+                : isArray1 ? new CallArrayBag1(new[] { example1, example2 })
+                : isList1 ? new CallListBag1(new List<Call> { example1, example2 })
+                : isArray0 ? new[] { example1, example2 }
+                : new List<Call> { example1, example2 };
+
+            Func<ProtoConvert, object> creator = isArray2 ? r => r.ReadObject<CallArrayBag2>()
+                : isList2 ? r => r.ReadObject<CallListBag2>()
+                : isArray1 ? r => r.ReadObject<CallArrayBag1>()
+                : isList1 ? r => r.ReadObject<CallListBag1>()
+                : isArray0 ? r => r.ReadObject<Call[]>()
+                : r => r.ReadObject<List<Call>>();
+            TestWrite(hex, value, creator);
+        }
+
         [Theory]
         [InlineData("1400000013020A0C007468697320697320676F6F64030800", 3, null, 5, "this is good")]
         [InlineData("0C00000013020A040063726170030600", 2, null, 4, "crap")]
@@ -52,7 +88,10 @@ namespace JNetProto.Sharp.Tests
             using var reader = CreateReader(mem, s);
             var obj = creator(reader);
 
-            if (obj is not Call && obj is not EnumTest.Texted)
+            if (obj is not Call && obj is not EnumTest.Texted && 
+                obj is not Call[] && obj is not ICollection<Call> &&
+                obj is not CallArrayBag1 && obj is not CallArrayBag2 &&
+                obj is not CallListBag1 && obj is not CallListBag2)
             {
                 Assert.Equal(value, obj);
                 return;
@@ -79,5 +118,10 @@ namespace JNetProto.Sharp.Tests
 
         public readonly record struct Call(string C, string M, object[] A, string[] H);
         public readonly record struct Result(object R, short S);
+
+        public record CallListBag2(IList<Call> Calls, byte Ord);
+        public record CallListBag1(IList<Call> Calls);
+        public record CallArrayBag2(Call[] Calls, byte Ord);
+        public record CallArrayBag1(Call[] Calls);
     }
 }
