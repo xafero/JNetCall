@@ -1,5 +1,6 @@
 package jnetproto.java.beans;
 
+import jnetbase.java.meta.TypeToken;
 import jnetproto.java.api.IDataReader;
 import jnetproto.java.api.IDataWriter;
 import jnetproto.java.core.BinaryReader;
@@ -7,6 +8,7 @@ import jnetproto.java.core.BinaryWriter;
 import jnetproto.java.tools.Conversions;
 
 import java.io.*;
+import java.lang.reflect.Type;
 
 public final class ProtoConvert implements AutoCloseable {
 
@@ -31,11 +33,16 @@ public final class ProtoConvert implements AutoCloseable {
     }
 
     public <T> T readObject(Class<T> clazz) throws Exception {
+        var token = TypeToken.wrap(clazz);
+        return readObject(token);
+    }
+
+    public <T> T readObject(TypeToken<T> type) throws Exception {
         byte[] bytes;
         synchronized (_readLock) {
             bytes = _reader.readBinary();
         }
-        return deserializeObject(clazz, bytes, _cfg);
+        return deserializeObject(type, bytes, _cfg);
     }
 
     public void flush() throws IOException {
@@ -57,8 +64,9 @@ public final class ProtoConvert implements AutoCloseable {
         return serializeObject(args, s);
     }
 
-    private static <T> T deserializeObject(Class<T> type, Object[] args, ProtoSettings s)
+    private static <T> T deserializeObject(TypeToken<T> token, Object[] args, ProtoSettings s)
             throws Exception {
+        var type = token.toType();
         var raw = Conversions.fromObjectArray(type, args);
         return (T) raw;
     }
@@ -72,7 +80,7 @@ public final class ProtoConvert implements AutoCloseable {
         }
     }
 
-    private static <T> T deserializeObject(Class<T> clazz, byte[] bytes, ProtoSettings s)
+    private static <T> T deserializeObject(TypeToken<T> clazz, byte[] bytes, ProtoSettings s)
             throws Exception {
         try (var mem = new ByteArrayInputStream(bytes);
              IDataReader reader = new BinaryReader(mem)) {
