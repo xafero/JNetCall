@@ -3,10 +3,12 @@ package jnetproto.java.tools;
 import com.xafero.javaenums.BitFlag;
 import com.xafero.javaenums.Enums;
 import jnetbase.java.meta.Reflect;
+import jnetbase.java.sys.ArrayX;
 import jnetproto.java.api.DataType;
 import jnetproto.java.core.DataTypes;
 
 import java.lang.reflect.*;
+import java.sql.Ref;
 import java.util.Arrays;
 
 public final class Conversions {
@@ -58,12 +60,28 @@ public final class Conversions {
         return creator.getParameters().length == args.length;
     }
 
-    public static Object fromObjectArray(Class<?> type, Object[] args) {
+    public static Object fromObjectArray(Type type, Object[] args) {
         try {
-            var cTypes = Arrays.stream(args).map(DataTypes::toClass).toArray(Class[]::new);
-            var creator = Reflect.getConstructor(type, cTypes);
+            var kind = DataTypes.getKind(type);
+            if (kind.Kind() != DataType.Unknown)
+            {
+                if (kind instanceof DataTypes.ArrayDt at && at.Item().Kind() == DataType.Unknown)
+                {
+                    var arrayType = ((Class<?>)type).getComponentType();
+                    var array = ArrayX.asTypedArray(args, arrayType, Conversions::convertRaw);
+                    return array;
+                }
+                if (kind instanceof DataTypes.ListDt lt && lt.Item().Kind() == DataType.Unknown)
+                {
+                    var listType = ((ParameterizedType)type).getActualTypeArguments()[0];
+                    var list = ArrayX.asTypedArrayList(args, listType, Conversions::convertRaw);
+                    return list;
+                }
+            }
+            var inputTypes = Arrays.stream(args).map(DataTypes::toClass).toArray(Class[]::new);
+            var creator = Reflect.getConstructor(type, inputTypes);
             if (creator == null || !isUsable(creator, args)) {
-                creator = Arrays.stream(type.getConstructors()).findFirst().orElse(null);
+                creator = Reflect.getFirstConstructor(type);
                 if (creator == null || !isUsable(creator, args)) {
                     var props = Reflect.getProperties(type);
                     if (props.size() == args.length) {
@@ -78,11 +96,39 @@ public final class Conversions {
                     throw new IllegalArgumentException("No constructor: " + type);
                 }
             }
+            var outputTypes = creator.getParameters();
             args = Conversions.convertFor(args, creator);
+            args = convertFor(args, outputTypes);
             return creator.newInstance(args);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static Object[] convertFor(Object[] args, Parameter[] parameters)
+    {
+        for (var i = 0; i < args.length && i < parameters.length; i++)
+        {
+            var prm = parameters[i].getParameterizedType();
+            var arg = args[i];
+            var value = convertRaw(arg, prm);
+            args[i] = value;
+        }
+        return args;
+    }
+
+    private static Object convertRaw(Object v, Type r)
+    {
+        var t = r instanceof Class<?> c ? c : (Class) ((ParameterizedType)r).getRawType();
+        if (t.isEnum())
+            return v;
+        if (t.equals(Object.class))
+            return v;
+        if (t.isInstance(v))
+            return v;
+        if (v instanceof Object[] va)
+            return fromObjectArray(r, va);
+        return v;
     }
 
     public static Object toObjectArray(Object obj) {
