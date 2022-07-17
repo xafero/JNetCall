@@ -1,6 +1,7 @@
 package jnetproto.java.tests;
 
 import com.google.gson.GsonBuilder;
+import jnetbase.java.meta.TypeToken;
 import jnetproto.java.beans.ProtoConvert;
 import jnetproto.java.beans.ProtoSettings;
 import org.testng.annotations.DataProvider;
@@ -56,7 +57,7 @@ public final class ComplexTest {
                 : isArray1 ?   r.readObject(CallArrayBag1.class)
                 : isList1 ?   r.readObject(CallListBag1.class)
                 : isArray0 ?  r.readObject(Call[].class)
-                :     r.readObject(  List.class); // TODO List<Call>
+                :     r.readObject(  new TypeToken<List<Call>>() {}  );
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
