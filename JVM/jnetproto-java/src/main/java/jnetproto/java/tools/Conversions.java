@@ -8,7 +8,6 @@ import jnetproto.java.api.DataType;
 import jnetproto.java.core.DataTypes;
 
 import java.lang.reflect.*;
-import java.sql.Ref;
 import java.util.Arrays;
 
 public final class Conversions {

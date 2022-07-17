@@ -8,7 +8,6 @@ import jnetproto.java.core.BinaryWriter;
 import jnetproto.java.tools.Conversions;
 
 import java.io.*;
-import java.lang.reflect.Type;
 
 public final class ProtoConvert implements AutoCloseable {
 
