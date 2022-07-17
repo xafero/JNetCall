@@ -9,8 +9,7 @@ namespace JNetCall.Sharp.API
         bool TryCall(byte[] @in, Stream output);
     }
 
-    // ReSharper disable UnusedMember.Global
-
+    // ReSharper disable once UnusedType.Global
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate IntPtr CallDelegate(IntPtr input);
 }
