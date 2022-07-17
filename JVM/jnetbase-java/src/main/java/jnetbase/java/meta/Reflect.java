@@ -105,6 +105,11 @@ public final class Reflect {
         }
     }
 
+    public static List<Property> getProperties(Type type)
+    {
+        return getProperties(extractRawClass(type));
+    }
+
     public static List<Property> getProperties(Class<?> type) {
         var getMap = new HashMap<String, Method>();
         var setMap = new HashMap<String, Method>();
@@ -140,6 +145,18 @@ public final class Reflect {
         return props;
     }
 
+    public static Class extractRawClass(Type type)
+    {
+        if (type instanceof ParameterizedType pt)
+            if (pt.getRawType() instanceof Class<?> pc)
+                return pc;
+        return (Class) type;
+    }
+
+    public static <T> Constructor<T> getConstructor(Type type, Class[] types) {
+        return getConstructor(extractRawClass(type), types);
+    }
+
     public static <T> Constructor<T> getConstructor(Class<T> clazz, Class[] types) {
         try {
             return clazz.getConstructor(types);
@@ -156,6 +173,10 @@ public final class Reflect {
         }
     }
 
+    public static <T> T createNew(Type type) {
+        return (T) createNew(extractRawClass(type));
+    }
+
     public static <T> T createNew(Class<T> clazz) {
         try {
             return clazz.getDeclaredConstructor().newInstance();
@@ -163,5 +184,16 @@ public final class Reflect {
                  NoSuchMethodException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static <T> Constructor<T> getFirstConstructor(Type type)
+    {
+        return getFirstConstructor(extractRawClass(type));
+    }
+
+    public static <T> Constructor<T> getFirstConstructor(Class<T> clazz) {
+        for (var item : clazz.getConstructors()  )
+            return (Constructor<T>) item;
+        return null;
     }
 }
