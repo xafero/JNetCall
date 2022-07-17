@@ -84,18 +84,21 @@ namespace JNetProto.Sharp.Core
                 }
                 return new MapDt(DataType.Map, GetKind(f.Key), GetKind(f.Value));
             }
-            if (type.GetInterface(typeof(ISet<>).Name) is { } setType)
+            if ((type.Name.Equals(SetName) ? type : type.GetInterface(SetName)) is { } setType)
             {
                 var item = setType.GetGenericArguments()[0];
                 return new ListDt(DataType.Set, GetKind(item));
             }
-            if (type.GetInterface(typeof(IList<>).Name) is { } listType)
+            if ((type.Name.Equals(ListName) ? type : type.GetInterface(ListName)) is { } listType)
             {
                 var item = listType.GetGenericArguments()[0];
                 return new ListDt(DataType.List, GetKind(item));
             }
             return new SingleDt(GetSingleKind(type));
         }
+
+        private static readonly string ListName = typeof(IList<>).Name;
+        private static readonly string SetName = typeof(ISet<>).Name;
 
         private static DataType GetSingleKind(Type type)
         {
