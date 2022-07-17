@@ -8,11 +8,62 @@ import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 import static org.testng.Assert.assertEquals;
 
 public final class ComplexTest {
+
+    @DataProvider(name = "writeArgs2")
+    public Object[][] getWriteArgs2() {
+        return new Object[][]
+        {
+            {"380000001302130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A01010000000100690207", 'C'},
+            {"380000001302130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A01010000000100690207", 'N'},
+            {"360000001301130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A0101000000010069", 'B'},
+            {"360000001301130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A0101000000010069", 'M'},
+            {"34000000130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A0101000000010069", 'A'},
+            {"34000000130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A0101000000010069", 'L'}
+        };
+    }
+
+    @Test(dataProvider = "writeArgs2")
+    public void ShouldColl(String hex, char mode) throws Exception {
+        var isArray0 = mode == 'A';
+        var isList1 = mode == 'M';
+        var isArray1 = mode == 'B';
+        var isList2 = mode == 'N';
+        var isArray2 = mode == 'C';
+
+        var example1 = new Call("c", "m", new Object[] { 'a' }, new String[] { "h" });
+        var example2 = new Call("d", "n", new Object[] { 'b' }, new String[] { "i" });
+
+        Object value = isArray2 ? new CallArrayBag2(new Call[] { example1, example2 }, (byte)0x07)
+                : isList2 ? new CallListBag2(Arrays.asList(  example1, example2  ), (byte)0x07)
+                : isArray1 ? new CallArrayBag1(new Call[] { example1, example2 })
+                : isList1 ? new CallListBag1( Arrays.asList( example1, example2  ))
+                : isArray0 ? new Call[] { example1, example2 }
+                : Arrays.asList(  example1, example2  );
+
+        Function<ProtoConvert, Object> creator = r -> {
+            try {
+                return isArray2 ?  r.readObject(CallArrayBag2.class)
+                : isList2 ?   r.readObject(CallListBag2.class)
+                : isArray1 ?   r.readObject(CallArrayBag1.class)
+                : isList1 ?   r.readObject(CallListBag1.class)
+                : isArray0 ?  r.readObject(Call[].class)
+                :     r.readObject(  List.class); // TODO List<Call>
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        };
+        testWrite(hex, value, creator);
+    }
+
     @DataProvider(name = "writeArgs")
     public Object[][] getWriteArgs() {
         return new Object[][]
@@ -67,7 +118,10 @@ public final class ComplexTest {
             try (var reader = createReader(mem[0], s)) {
                 Object obj = creator.apply(reader);
 
-                if (!(obj instanceof Call) && !(obj instanceof EnumTest.Texted))
+                if (!(obj instanceof Call) && !(obj instanceof EnumTest.Texted) &&
+                        !(obj instanceof Call[]) && !(obj instanceof Collection) &&
+                        !(obj instanceof CallArrayBag1) && !(obj instanceof CallArrayBag2) &&
+                        !(obj instanceof CallListBag1) && !(obj instanceof CallListBag2))
                 {
                     assertEquals(value, obj);
                     return;
@@ -95,4 +149,9 @@ public final class ComplexTest {
 
     public record Call(String C, String M, Object[] A, String[] H) { }
     public record Result(Object R, short S) { }
+
+    public record CallListBag2(List<Call> Calls, byte Ord) { }
+    public record CallListBag1(List<Call> Calls) { }
+    public record CallArrayBag2(Call[] Calls, byte Ord) { }
+    public record CallArrayBag1(Call[] Calls) { }
 }
