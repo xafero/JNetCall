@@ -89,6 +89,10 @@ public final class Conversions {
         try {
             var kind = DataTypes.getKind(obj);
             if (kind.Kind() != DataType.Unknown) {
+                if (kind instanceof DataTypes.ArrayDt at && at.Item().Kind() == DataType.Unknown)
+                    obj = ArrayX.asObjectArray(obj);
+                if (kind instanceof DataTypes.ListDt lt && lt.Item().Kind() == DataType.Unknown)
+                    obj = ArrayX.asObjectArray((Iterable)obj);
                 if (obj instanceof Object[] ar && Arrays.stream(ar)
                         .anyMatch(a -> DataTypes.getKind(a).Kind() == DataType.Unknown))
                     for (var i = 0; i < ar.length; i++)
