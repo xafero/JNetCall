@@ -5,6 +5,7 @@ import jnetbase.java.meta.Reflect;
 import jnetproto.java.api.DataType;
 import org.javatuples.Tuple;
 
+import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -65,7 +66,9 @@ public final class DataTypes {
         {
             return new SingleDt(DataType.Null);
         }
-        var type = instance instanceof Class<?> cl ? cl : instance.getClass();
+        var type = instance instanceof Class<?> cl ? cl :
+                instance instanceof ParameterizedType pt ? (Class<?>) pt.getRawType() :
+                instance.getClass();
         if (Enums.isEnum(type))
         {
             var item = Enums.getEnumUnderlyingType(type);
@@ -101,12 +104,16 @@ public final class DataTypes {
         }
         if (Set.class.isAssignableFrom(type))
         {
-            var item = ((Set<?>)instance).iterator().next();
+            var item = instance instanceof Set<?> s
+                    ? s.iterator().next()
+                    : ((ParameterizedType)instance).getActualTypeArguments()[0];
             return new ListDt(DataType.Set, getKind(item));
         }
         if (List.class.isAssignableFrom(type))
         {
-            var item = ((List<?>)instance).get(0);
+            var item = instance instanceof List<?> l
+                    ? l.get(0)
+                    : ((ParameterizedType)instance).getActualTypeArguments()[0];
             return new ListDt(DataType.List, getKind(item));
         }
         return new SingleDt(getSingleKind(type));
