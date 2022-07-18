@@ -12,7 +12,7 @@ import java.util.List;
 public final class ServiceLots {
 
     public static <T> ClassHosting create(Class<T> serviceClass) {
-        var protocol = new W();
+        var protocol = new NativeHostSink();
         register(protocol);
         return create(serviceClass, protocol);
     }
