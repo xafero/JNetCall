@@ -4,7 +4,7 @@ using JNetProto.Sharp.Beans;
 
 namespace JNetCall.Sharp.Impl.Enc
 {
-    public class BinaryEncoding : IByteEncoding
+    public sealed class BinaryEncoding : IByteEncoding
     {
         private readonly ProtoSettings _config;
 
