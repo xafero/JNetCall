@@ -27,10 +27,18 @@ abstract class AbstractHost<T> implements AutoCloseable {
         this.config = new ProtoSettings();
     }
 
-    protected T createInst() throws Exception {
+    private T createInst() throws Exception {
         var clazz = this.serviceClass;
         var svc = clazz.getDeclaredConstructor().newInstance();
         return svc;
+    }
+
+    protected T tryCreateInst() {
+        try {
+            return createInst();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public <I> void addServiceEndpoint(Class<I> interfaceClass) {
