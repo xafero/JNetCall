@@ -9,14 +9,14 @@ using JNetCall.Sharp.Impl.Enc;
 
 namespace JNetCall.Sharp.Server
 {
-    public sealed class NativeHostSink : ICaller, IPullTransport
+    public sealed class ServiceLot : ICaller, IPullTransport
     {
         private readonly object _sync;
         private readonly IEncoding<byte[]> _encoding;
         private readonly BlockingCollection<object> _inputs;
         private readonly BlockingCollection<object> _outputs;
 
-        public NativeHostSink()
+        public ServiceLot()
         {
             _sync = new object();
             _encoding = new BinaryEncoding();

@@ -15,14 +15,14 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public final class NativeHostSink implements ICaller, IPullTransport {
+public final class ServiceLot implements ICaller, IPullTransport {
 
     private final Object _sync;
     private final IEncoding<byte[]> _encoding;
     private final BlockingQueue<Object> _inputs;
     private final BlockingQueue<Object> _outputs;
 
-    public NativeHostSink() {
+    public ServiceLot() {
         _sync = new Object();
         _encoding = new BinaryEncoding();
         _inputs = new LinkedBlockingQueue<>();

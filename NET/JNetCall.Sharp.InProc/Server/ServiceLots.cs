@@ -12,7 +12,7 @@ namespace JNetCall.Sharp.Server
     {
         public static ClassHosting Create<T>() where T : new()
         {
-            var protocol = new NativeHostSink();
+            var protocol = new ServiceLot();
             Register(protocol);
             return Create<T>(protocol);
         }
