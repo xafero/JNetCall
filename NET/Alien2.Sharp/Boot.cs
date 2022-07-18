@@ -1,3 +1,4 @@
+// ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable CheckNamespace
 using System;
@@ -12,7 +13,11 @@ namespace X
         static Boot()
         {
             var host = ServiceLots.Create<CalculatorService>();
-
+            
+            // TODO ?!
+            // host.registerAll();
+            // host.serveAndWait();
+            
             host.AddServiceEndpoint<ICalculator>();
             host.AddServiceEndpoint<IDataTyped>();
             host.AddServiceEndpoint<IMultiple>();
