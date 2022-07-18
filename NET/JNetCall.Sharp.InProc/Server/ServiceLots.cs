@@ -1,22 +1,33 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JNetBase.Sharp.Threads;
 using JNetCall.Sharp.API;
+using JNetCall.Sharp.API.IO;
 using JNetCall.Sharp.Tools;
 
 namespace JNetCall.Sharp.Server
 {
     public static class ServiceLots
     {
-        public static ServiceLot<T> Create<T>()
+        public static ClassHosting Create<T>() where T : new()
         {
-            var instance = new ServiceLot<T>(typeof(T));
-            return instance;
+            var protocol = new NativeHostSink();
+            Register(protocol);
+            return Create<T>(protocol);
+        }
+
+        private static ClassHosting Create<T>(ISendTransport protocol) where T : new()
+        {
+            var instance = new T();
+            var pool = new ThreadExecutor();
+            var host = new ClassHosting(instance, protocol, pool);
+            return host;
         }
 
         private static readonly IList<ICaller> Lots = new List<ICaller>();
 
-        internal static void Register<T>(ServiceLot<T> lot)
+        private static void Register(ICaller lot)
         {
             Lots.Add(lot);
         }
