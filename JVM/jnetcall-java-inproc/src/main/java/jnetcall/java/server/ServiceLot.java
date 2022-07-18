@@ -1,5 +1,6 @@
 package jnetcall.java.server;
 
+import jnetcall.java.api.ICaller;
 import jnetcall.java.api.flow.MethodCall;
 import jnetproto.java.beans.ProtoConvert;
 
@@ -7,7 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 
-public final class ServiceLot<T> extends AbstractHost<T> implements AutoCloseable {
+public final class ServiceLot<T> extends AbstractHost<T> implements AutoCloseable, ICaller {
     private T _instance;
     private Method[] _methods;
 
@@ -21,7 +22,7 @@ public final class ServiceLot<T> extends AbstractHost<T> implements AutoCloseabl
         ServiceLots.register(this);
     }
 
-    boolean tryCall(byte[] in, OutputStream output) throws Exception {
+    public boolean tryCall(byte[] in, OutputStream output) throws Exception {
         try (var input = new ByteArrayInputStream(in);
              var proto = new ProtoConvert(input, output, config)) {
             var call = proto.readObject(MethodCall.class);

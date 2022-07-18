@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using JNetCall.Sharp.API;
+using JNetCall.Sharp.Tools;
 
 namespace JNetCall.Sharp.Server
 {
@@ -36,34 +36,9 @@ namespace JNetCall.Sharp.Server
 
         public static IntPtr Call(IntPtr inputPtr)
         {
-            var input = ToByteArray(inputPtr);
+            var input = Interop.ToByteArray(inputPtr);
             var output = Call(input);
-            return ToPointer(output);
-        }
-
-        private static IntPtr ToPointer(byte[] data)
-        {
-            var pointer = Marshal.AllocHGlobal(data.Length);
-            Marshal.Copy(data, 0, pointer, data.Length);
-            return pointer;
-        }
-
-        private static byte[] ToByteArray(IntPtr ptr, int size = -1)
-        {
-            if (size == -1)
-            {
-                const int header = 4;
-                var len = BitConverter.ToInt32(ToByteArray(ptr, header));
-                size = header + len;
-            }
-            var array = new byte[size];
-            unsafe
-            {
-                var arrayPtr = ((byte*)ptr)!;
-                for (var i = 0; i < array.Length; i++)
-                    array[i] = arrayPtr[i];
-            }
-            return array;
+            return Interop.ToPointer(output);
         }
     }
 }

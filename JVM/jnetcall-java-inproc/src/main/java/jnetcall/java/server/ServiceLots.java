@@ -1,5 +1,7 @@
 package jnetcall.java.server;
 
+import jnetcall.java.api.ICaller;
+
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +13,7 @@ public final class ServiceLots {
         return instance;
     }
 
-    private static final List<ServiceLot<?>> lots = new ArrayList<>();
+    private static final List<ICaller> lots = new ArrayList<>();
 
     static <T> void register(ServiceLot<T> lot) {
         lots.add(lot);
