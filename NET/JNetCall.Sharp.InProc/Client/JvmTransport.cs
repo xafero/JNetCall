@@ -3,15 +3,20 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using JNetBase.Sharp.Threads;
+using JNetCall.Sharp.API.Enc;
 using JNetCall.Sharp.API.Flow;
 using JNetCall.Sharp.API.IO;
-using JNetHotel.Sharp;
+using JNetCall.Sharp.Impl.Enc;
 
 namespace JNetCall.Sharp.Client
 {
     internal sealed class JvmTransport : IPullTransport
     {
-        private readonly string _jar;
+        private static SingleThread<JvmContainer> _single;
+
+        private readonly object _sync;
+        private readonly IEncoding<byte[]> _encoding;
         private readonly Timer _timer;
         private readonly BlockingCollection<object> _inputs;
         private readonly BlockingCollection<object> _outputs;
@@ -20,48 +25,56 @@ namespace JNetCall.Sharp.Client
         {
             if (!File.Exists(jar))
                 throw new FileNotFoundException($"Missing: {jar}");
-            _jar = jar;
+            _sync = new object();
+            _encoding = new BinaryEncoding();
             _timer = StartTimer(OnTick);
             _inputs = new BlockingCollection<object>();
             _outputs = new BlockingCollection<object>();
+            if (_single != null)
+                return;
+            _single = new SingleThread<JvmContainer>(() => new JvmContainer(jar));
         }
 
         private void OnTick(object _)
         {
-            Console.WriteLine(" " + DateTime.Now + " ");
-
-            /*
-             *  lock (_sync)
+            try
             {
-                foreach (var input in inputs) _in.Add(input);
-                var copy = new List<MethodResult>();
-                while (_out.TryTake(out var item)) copy.Add(item);
-                return copy;
+                lock (_sync)
+                {
+                    var outputs = new List<MethodCall>();
+                    while (_outputs.TryTake(out var item)) outputs.Add((MethodCall)item);
+                    var output = _encoding.Encode(outputs);
+                    var input = SendAndGetArray(output);
+                    var inputs = _encoding.Decode<IList<MethodResult>>(input);
+                    foreach (var item in inputs) _inputs.Add(item);
+                }
             }
-            
-              public void Intercept(IInvocation invocation)
-        {
-            using var input = new MemoryStream();
-            using var output = new MemoryStream();
-            using var proto = new ProtoConvert(input, output, Settings);
-            var call = Pack(invocation);
-            if (call == null)
-                return;
-            Write(proto, call);
-            var array = output.ToArray();
-            var result = SendAndGetArray(array);
-            input.Write(result);
-            input.Position = 0L;
-            var answer = Read<MethodResult>(proto);
-            Unpack(invocation, answer);
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+            }
         }
-            
-             */
+
+        private byte[] SendAndGetArray(byte[] input)
+        {
+            lock (_sync)
+            {
+                var res = new byte[1][];
+                var wait = new ManualResetEvent(false);
+                _single.Execute(i =>
+                {
+                    res[0] = i.SendAndGetArray(input);
+                    wait.Set();
+                });
+                wait.WaitOne();
+                var bytes = res[0];
+                return bytes;
+            }
         }
 
         private static Timer StartTimer(TimerCallback task)
         {
-            var periodMs = 500L;
+            var periodMs = 15L;
             var timer = new Timer(task);
             timer.Change(periodMs, periodMs);
             return timer;
@@ -82,52 +95,7 @@ namespace JNetCall.Sharp.Client
             _inputs.Dispose();
             _outputs.Dispose();
             _timer.Dispose();
-        }
-
-        private static readonly object Sync = new();
-        private static Jvm _vm;
-
-        private static Jvm SetupJvm(string jar)
-        {
-            lock (Sync)
-            {
-                if (_vm != null)
-                    return _vm;
-
-                var vmRef = Natives.GetVmRef();
-                vmRef.LoadLib();
-                var jvm = new Jvm(vmRef, jar);
-                return jvm;
-            }
-        }
-
-        private void Prepare()
-        {
-            lock (Sync)
-            {
-                _vm = SetupJvm(_jar);
-            }
-        }
-
-        private byte[] SendAndGetArray(byte[] input)
-        {
-            lock (Sync)
-            {
-                var args = new List<object> { input };
-                const string type = "Lx/Boot;";
-                var output = _vm.CallStaticMethod<byte[]>(type, "call", "([B)[B", args);
-                return output;
-            }
-        }
-
-        private void Stop(int milliseconds = 250)
-        {
-            var domain = AppDomain.CurrentDomain;
-            domain.ProcessExit += (_, _) =>
-            {
-                lock (Sync)
-                    _vm.Dispose();
-            };
+            _encoding.Dispose();
         }
     }
 }

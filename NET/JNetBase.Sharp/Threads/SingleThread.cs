@@ -32,6 +32,11 @@ namespace JNetBase.Sharp.Threads
             _actions.Dispose();
         }
 
+        ~SingleThread()
+        {
+            Dispose();
+        }
+
         public void Execute(Action<T> action)
         {
             _actions.Add(action);
