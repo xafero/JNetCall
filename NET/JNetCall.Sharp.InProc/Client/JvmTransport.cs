@@ -21,13 +21,13 @@ namespace JNetCall.Sharp.Client
         private readonly BlockingCollection<object> _inputs;
         private readonly BlockingCollection<object> _outputs;
 
-        public JvmTransport(string jar)
+        public JvmTransport(string jar, long pollMs)
         {
             if (!File.Exists(jar))
                 throw new FileNotFoundException($"Missing: {jar}");
             _sync = new object();
             _encoding = new BinaryEncoding();
-            _timer = StartTimer(OnTick);
+            _timer = StartTimer(OnTick, pollMs);
             _inputs = new BlockingCollection<object>();
             _outputs = new BlockingCollection<object>();
             if (_single != null)
@@ -51,7 +51,7 @@ namespace JNetCall.Sharp.Client
             }
             catch (Exception e)
             {
-                Console.Error.WriteLine(e);
+                Console.WriteLine(e);
             }
         }
 
@@ -72,11 +72,10 @@ namespace JNetCall.Sharp.Client
             }
         }
 
-        private static Timer StartTimer(TimerCallback task)
+        private static Timer StartTimer(TimerCallback task, long pollMs)
         {
-            var periodMs = 15L;
             var timer = new Timer(task);
-            timer.Change(periodMs, periodMs);
+            timer.Change(pollMs, pollMs);
             return timer;
         }
 

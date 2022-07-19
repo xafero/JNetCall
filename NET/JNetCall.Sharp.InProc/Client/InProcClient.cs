@@ -8,7 +8,7 @@ namespace JNetCall.Sharp.Client
         public static T Create<T>(string jar) where T : class
         {
             var pool = new ThreadExecutor();
-            var protocol = new JvmTransport(jar);
+            var protocol = new JvmTransport(jar, 15);
             var handler = new ClassProxy(protocol, pool);
             handler.Listen();
             return ClientHelper.Create<T>(handler);

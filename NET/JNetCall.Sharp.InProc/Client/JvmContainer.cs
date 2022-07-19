@@ -38,6 +38,7 @@ namespace JNetCall.Sharp.Client
 
         public void Dispose()
         {
+            // NO-OP
         }
     }
 }
