@@ -1,11 +1,14 @@
 package jnetcall.java.client;
 
 import com.sun.jna.Function;
+import jnetbase.java.meta.TypeToken;
 import jnetbase.java.threads.FuncTimerTask;
+import jnetcall.java.api.enc.IEncoding;
 import jnetcall.java.api.flow.MethodCall;
 import jnetcall.java.api.flow.MethodResult;
 import jnetcall.java.api.io.IPullTransport;
 import jnetcall.java.api.io.ISendTransport;
+import jnetcall.java.impl.enc.BinaryEncoding;
 import jnethotel.java.Clr;
 import jnethotel.java.Natives;
 import jnethotel.java.api.ICoreClr;
@@ -14,30 +17,41 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static jnetproto.java.api.DataType.List;
+
 final class ClrTransport implements IPullTransport {
 
     private final String _dll;
     private final Timer _timer;
+    private final IEncoding<byte[]> _encoding;
     private final BlockingQueue<Object> _inputs;
     private final BlockingQueue<Object> _outputs;
+    private final long _pollMs;
 
-    public ClrTransport(String dll) {
+    public ClrTransport(String dll, long pollMs) {
         try {
             if (!(new File(dll)).exists())
                 throw new FileNotFoundException("Missing: " + dll);
             _dll = dll;
-            _timer = startTimer(FuncTimerTask.wrap(this::onTick));
+            _pollMs = pollMs;
+            _timer = startTimer(FuncTimerTask.wrap(this::onTick), _pollMs);
+            _encoding = new BinaryEncoding();
             _inputs = new LinkedBlockingQueue<>();
             _outputs = new LinkedBlockingQueue<>();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
+    private static final TypeToken<java.util.List<MethodResult>> mrList = new TypeToken<>() {
+    };
 
     private void onTick(FuncTimerTask t) {
         System.out.println(" " + LocalDateTime.now() + " " + t);
@@ -68,10 +82,9 @@ final class ClrTransport implements IPullTransport {
          */
     }
 
-    private static Timer startTimer(TimerTask task) {
-        var periodMs = 500L;
+    private static Timer startTimer(TimerTask task, long pollMs) {
         var timer = new Timer(true);
-        timer.scheduleAtFixedRate(task, periodMs, periodMs);
+        timer.scheduleAtFixedRate(task, pollMs, pollMs);
         return timer;
     }
 
@@ -90,10 +103,11 @@ final class ClrTransport implements IPullTransport {
     }
 
     @Override
-    public void close() {
+    public void close() throws Exception {
         _inputs.clear();
         _outputs.clear();
         _timer.cancel();
+        _encoding.close();
     }
 
     private static final Object Sync = new Object();
@@ -109,6 +123,7 @@ final class ClrTransport implements IPullTransport {
             vmRef.loadLib();
             var clr = new Clr(vmRef);
             _caller = getCallCallback(clr.getCore(), dll);
+            installStop();
             return clr;
         }
     }
@@ -138,7 +153,7 @@ final class ClrTransport implements IPullTransport {
         }
     }
 
-    private void stop(int milliseconds) {
+    private static void installStop() {
         var domain = Runtime.getRuntime();
         domain.addShutdownHook(new Thread(() -> {
             try {
