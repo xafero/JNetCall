@@ -9,6 +9,7 @@ import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +28,9 @@ public final class ComplexTest {
             {"360000001301130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A0101000000010069", 'B'},
             {"360000001301130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A0101000000010069", 'M'},
             {"34000000130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A0101000000010069", 'A'},
-            {"34000000130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A0101000000010069", 'L'}
+            {"34000000130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A0101000000010069", 'L'},
+            {"020000001300", 'D'},
+            {"020000001300", 'O'}
         };
     }
 
@@ -38,11 +41,15 @@ public final class ComplexTest {
         var isArray1 = mode == 'B';
         var isList2 = mode == 'N';
         var isArray2 = mode == 'C';
+        var isListE = mode == 'O';
+        var isArrayE = mode == 'D';
 
         var example1 = new Call("c", "m", new Object[] { 'a' }, new String[] { "h" });
         var example2 = new Call("d", "n", new Object[] { 'b' }, new String[] { "i" });
 
-        Object value = isArray2 ? new CallArrayBag2(new Call[] { example1, example2 }, (byte)0x07)
+        Object value = isArrayE ? new Call[0]
+                : isListE ? new ArrayList<Call>()
+                : isArray2 ? new CallArrayBag2(new Call[] { example1, example2 }, (byte)0x07)
                 : isList2 ? new CallListBag2(Arrays.asList(  example1, example2  ), (byte)0x07)
                 : isArray1 ? new CallArrayBag1(new Call[] { example1, example2 })
                 : isList1 ? new CallListBag1( Arrays.asList( example1, example2  ))
@@ -51,7 +58,9 @@ public final class ComplexTest {
 
         Function<ProtoConvert, Object> creator = r -> {
             try {
-                return isArray2 ?  r.readObject(CallArrayBag2.class)
+                return isArrayE ?  r.readObject(Call[].class)
+                : isListE ?   r.readObject(  new TypeToken<List<Call>>() {}  )
+                : isArray2 ?  r.readObject(CallArrayBag2.class)
                 : isList2 ?   r.readObject(CallListBag2.class)
                 : isArray1 ?   r.readObject(CallArrayBag1.class)
                 : isList1 ?   r.readObject(CallListBag1.class)

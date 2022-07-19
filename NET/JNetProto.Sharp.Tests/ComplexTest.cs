@@ -19,6 +19,8 @@ namespace JNetProto.Sharp.Tests
         [InlineData("360000001301130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A0101000000010069", 'M')]
         [InlineData("34000000130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A0101000000010069", 'A')]
         [InlineData("34000000130213040A0100630A01006D13010961000E0A010100000001006813040A0100640A01006E13010962000E0A0101000000010069", 'L')]
+        [InlineData("020000001300", 'D')]
+        [InlineData("020000001300", 'O')]
         public void ShouldColl(string hex, char mode)
         {
             var isArray0 = mode == 'A';
@@ -26,18 +28,24 @@ namespace JNetProto.Sharp.Tests
             var isArray1 = mode == 'B';
             var isList2 = mode == 'N';
             var isArray2 = mode == 'C';
-            
+            var isListE = mode == 'O';
+            var isArrayE = mode == 'D';
+
             var example1 = new Call("c", "m", new object[] { 'a' }, new[] { "h" });
             var example2 = new Call("d", "n", new object[] { 'b' }, new[] { "i" });
 
-            object value = isArray2 ? new CallArrayBag2(new[] { example1, example2 }, 0x07)
+            object value = isArrayE ? Array.Empty<Call>()
+                : isListE ? new List<Call>()
+                : isArray2 ? new CallArrayBag2(new[] { example1, example2 }, 0x07)
                 : isList2 ? new CallListBag2(new List<Call> { example1, example2 }, 0x07)
                 : isArray1 ? new CallArrayBag1(new[] { example1, example2 })
                 : isList1 ? new CallListBag1(new List<Call> { example1, example2 })
                 : isArray0 ? new[] { example1, example2 }
                 : new List<Call> { example1, example2 };
 
-            Func<ProtoConvert, object> creator = isArray2 ? r => r.ReadObject<CallArrayBag2>()
+            Func<ProtoConvert, object> creator = isArrayE ? r => r.ReadObject<Call[]>()
+                : isListE ? r => r.ReadObject<List<Call>>()
+                : isArray2 ? r => r.ReadObject<CallArrayBag2>()
                 : isList2 ? r => r.ReadObject<CallListBag2>()
                 : isArray1 ? r => r.ReadObject<CallArrayBag1>()
                 : isList1 ? r => r.ReadObject<CallListBag1>()

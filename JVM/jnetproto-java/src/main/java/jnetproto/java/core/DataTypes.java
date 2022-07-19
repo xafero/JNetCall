@@ -105,14 +105,14 @@ public final class DataTypes {
         if (Set.class.isAssignableFrom(type))
         {
             var item = instance instanceof Set<?> s
-                    ? s.iterator().next()
+                    ? (s.isEmpty() ? Object.class : s.iterator().next())
                     : ((ParameterizedType)instance).getActualTypeArguments()[0];
             return new ListDt(DataType.Set, getKind(item));
         }
         if (List.class.isAssignableFrom(type))
         {
             var item = instance instanceof List<?> l
-                    ? l.get(0)
+                    ? (l.isEmpty() ? Object.class : l.get(0))
                     : ((ParameterizedType)instance).getActualTypeArguments()[0];
             return new ListDt(DataType.List, getKind(item));
         }
