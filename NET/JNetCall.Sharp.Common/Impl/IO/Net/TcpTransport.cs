@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -7,7 +6,7 @@ using JNetCall.Sharp.API.IO;
 
 namespace JNetCall.Sharp.Impl.IO.Net
 {
-    public sealed class TcpTransport : ISendTransport, IPullTransport, IDisposable
+    public sealed class TcpTransport : IPullTransport
     {
         private readonly IEncoding<byte[]> _encoding;
         private readonly TcpListener _receiver;

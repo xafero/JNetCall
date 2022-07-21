@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using System.Net.Sockets;
 using JNetCall.Sharp.API.Enc;
@@ -6,7 +5,7 @@ using JNetCall.Sharp.API.IO;
 
 namespace JNetCall.Sharp.Impl.IO.Net
 {
-    public sealed class UdpTransport : ISendTransport, IPullTransport, IDisposable
+    public sealed class UdpTransport : IPullTransport
     {
         private readonly IEncoding<byte[]> _encoding;
         private readonly UdpClient _receiver;

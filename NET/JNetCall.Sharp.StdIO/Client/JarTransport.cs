@@ -7,7 +7,7 @@ using JNetCall.Sharp.Common;
 
 namespace JNetCall.Sharp.Client
 {
-    internal sealed class JarTransport : ISendTransport, IPullTransport
+    internal sealed class JarTransport : IPullTransport, IErrorable
     {
         private readonly string _jar;
         private readonly IPullTransport _parent;
@@ -63,7 +63,7 @@ namespace JNetCall.Sharp.Client
             return ByteMarks.WriteSync(stdOut, stdIn);
         }
 
-        private string GetErrorDetails()
+        public string GetErrorDetails()
         {
             _process.StandardInput.Close();
             return $"{_process.StandardOutput.ReadToEnd()} " +

@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using JNetBase.Sharp.IO;
 using JNetCall.Sharp.API.Enc;
@@ -6,7 +5,7 @@ using JNetCall.Sharp.API.IO;
 
 namespace JNetCall.Sharp.Impl.IO
 {
-    public sealed class StreamTransport : ISendTransport, IPullTransport, IDisposable
+    public sealed class StreamTransport : IPullTransport
     {
         private readonly IEncoding<byte[]> _encoding;
         private readonly Stream _streamIn;

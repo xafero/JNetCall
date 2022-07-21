@@ -27,14 +27,6 @@ namespace JNetCall.Sharp.Impl.Util
             return id;
         }
 
-        private const StringComparison Cmp = StringComparison.InvariantCultureIgnoreCase;
-
-        public static bool IsSameMethod(MemberInfo m, string callName)
-        {
-            var mName = m.Name.Replace("_", string.Empty);
-            return mName.Equals(callName, Cmp);
-        }
-
         public static string ToDelegateId(Delegate del)
         {
             var hash = del.Target?.GetHashCode() ?? 0;

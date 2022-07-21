@@ -6,7 +6,7 @@ using JNetCall.Sharp.API.IO;
 
 namespace JNetCall.Sharp.Impl.IO.Disk
 {
-    public sealed class FolderTransport : ISendTransport, IPushTransport, IDisposable
+    public sealed class FolderTransport : IPushTransport
     {
         private readonly IEncoding<byte[]> _encoding;
         private readonly string _inputFolder;

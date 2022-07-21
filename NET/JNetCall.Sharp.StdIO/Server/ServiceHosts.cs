@@ -14,6 +14,12 @@ namespace JNetCall.Sharp.Server
         {
             var stdIn = Console.OpenStandardInput();
             var stdOut = Console.OpenStandardOutput();
+            return Create<T>(stdIn, stdOut);
+        }
+
+        public static ClassHosting Create<T>(Stream stdIn, Stream stdOut)
+            where T : new()
+        {
             ByteMarks.WriteSync(stdIn, stdOut);
             var protocol = InitDefault(stdIn, stdOut);
             return Create<T>(protocol);
