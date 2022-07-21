@@ -1,6 +1,8 @@
 package jnetcall.java.tests;
 
+import com.google.common.base.Stopwatch;
 import jnetbase.java.sys.Primitives;
+import jnetbase.java.threads.Tasks;
 import org.example.api.*;
 import org.javatuples.Pair;
 import org.testng.annotations.Test;
@@ -15,6 +17,7 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 import static org.example.api.ITriggering.*;
 import static org.testng.Assert.*;
@@ -146,6 +149,22 @@ public abstract class CallTest {
 
             var txt = client.removeIt().get();
             assertEquals("Hello", txt);
+
+            final int count = 3;
+            var range = IntStream.range(0, count);
+
+            var watch = Stopwatch.createStarted();
+            var tasks = range.mapToObj(i -> client.runIt(26, i)).toList();
+            watch.stop();
+            var listTime = watch.elapsed(TimeUnit.MILLISECONDS);
+
+            var all = Tasks.whenAll(tasks);
+            assertEquals(count, all.size());
+
+            var numbers = all.stream().map(t -> t.getValue0()).distinct().toArray();
+            assertEquals(count, numbers.length);
+
+            assertTrue(listTime >= 0 && listTime <= 2, listTime + " ?!");
         }
     }
 

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Example.API;
@@ -131,6 +133,23 @@ namespace JNetCall.Sharp.Tests
 
             var txt = await client.RemoveIt();
             Assert.Equal("Hello", txt);
+
+            const int count = 3;
+            var range = Enumerable.Range(0, count);
+
+            var watch = Stopwatch.StartNew();
+            var tasks = range.Select(i => client.RunIt(26, i))
+                .ToList();
+            watch.Stop();
+            var listTime = watch.ElapsedMilliseconds;
+
+            var all = Task.WhenAll(tasks).GetAwaiter().GetResult();
+            Assert.Equal(count, all.Length);
+
+            var numbers = all.Select(t => t.Item1).Distinct().ToArray();
+            Assert.Equal(count, numbers.Length);
+
+            Assert.True(listTime is >= 0 and <= 2, listTime + " ?!");
         }
 
         [Fact]

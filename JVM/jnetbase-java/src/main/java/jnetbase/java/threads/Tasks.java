@@ -80,7 +80,7 @@ public final class Tasks {
         }
     }
 
-    public static <T> CompletableFuture<T> wrap(Future<T> future) {
+    public static <T> CompletableFuture<T> wrapBlock(Future<T> future) {
         try {
             return CompletableFuture.completedFuture(future.get());
         } catch (InterruptedException e) {
@@ -88,5 +88,19 @@ public final class Tasks {
         } catch (ExecutionException e) {
             return CompletableFuture.failedFuture(e.getCause());
         }
+    }
+
+    public static <T> CompletableFuture<T> wrap(Future<T> future) {
+        return future instanceof CompletableFuture<T> cf ? cf : wrap(future::get);
+    }
+
+    public static <T> CompletableFuture<T> wrap(Callable<T> callable) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return callable.call();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

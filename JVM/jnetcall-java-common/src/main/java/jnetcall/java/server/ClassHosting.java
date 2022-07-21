@@ -74,7 +74,7 @@ public final class ClassHosting implements IHosting {
         var task = (res instanceof Future<?> future
                 ? Tasks.wrap(future)
                 : CompletableFuture.completedFuture(res))
-                .thenApplyAsync(data -> {
+                .thenApply(data -> {
                     var obj = new MethodResult(id, data, status.getValue());
                     return obj;
                 });

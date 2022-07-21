@@ -3,6 +3,7 @@ package jnetcall.java.client;
 import jnetbase.java.meta.Reflect;
 import jnetbase.java.threads.IExecutor;
 import jnetbase.java.threads.ManualResetEvent;
+import jnetbase.java.threads.Tasks;
 import jnetcall.java.api.flow.ICall;
 import jnetcall.java.api.flow.MethodCall;
 import jnetcall.java.api.flow.MethodResult;
@@ -21,9 +22,7 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class ClassProxy implements IProxy {
@@ -128,19 +127,18 @@ public final class ClassProxy implements IProxy {
     }
 
     private Object waitSignal(ICall call) throws InterruptedException {
-        var state = _signals.get(call.I());
+        var id = call.I();
+        var state = _signals.get(id);
         state.SyncWait.waitOne();
-        return state.Result;
+        var res = state.Result;
+        return res;
     }
 
     private CompletableFuture<Object> pinSignal(ICall call) {
-        var task = CompletableFuture.completedFuture(call.I()).thenApply(callId -> {
-            var state = _signals.get(callId);
-            try {
-                state.AsyncWait.waitOne();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        var id = call.I();
+        var task = Tasks.wrap(() -> {
+            var state = _signals.get(id);
+            state.AsyncWait.waitOne();
             var res = state.Result;
             return res;
         });
