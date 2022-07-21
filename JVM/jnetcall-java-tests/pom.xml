@@ -17,6 +17,11 @@
     <dependencies>
         <dependency>
             <groupId>com.xafero</groupId>
+            <artifactId>jnetbase-java</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.xafero</groupId>
             <artifactId>jnetproto-java</artifactId>
             <version>1.0</version>
         </dependency>
