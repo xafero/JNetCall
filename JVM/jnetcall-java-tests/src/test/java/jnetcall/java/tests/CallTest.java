@@ -2,16 +2,21 @@ package jnetcall.java.tests;
 
 import jnetbase.java.sys.Primitives;
 import org.example.api.*;
+import org.javatuples.Pair;
 import org.testng.annotations.Test;
 import org.testng.util.Strings;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
+import static org.example.api.ITriggering.*;
 import static org.testng.Assert.*;
 
 public abstract class CallTest {
@@ -169,6 +174,46 @@ public abstract class CallTest {
             value2 = 7.00D;
             result = client.divide(value1, value2);
             assertEquals(3.142857142857143, result);
+        }
+    }
+
+    @Test
+    public void shouldCallTrigger() throws Exception {
+        try (var client = create(ITriggering.class)) {
+
+            final int cbCount = 3;
+            var cbList = new ArrayList<Pair<Integer, String>>();
+            final var clc = new CountDownLatch(cbCount);
+
+            PCallBack EnumWindowsCallback = (handle, lParam) -> {
+                cbList.add(Pair.with(handle, lParam));
+                clc.countDown();
+                return true;
+            };
+
+            var callOk = client.enumWindows(EnumWindowsCallback, cbCount);
+            assertTrue(callOk);
+            clc.await(5, TimeUnit.SECONDS);
+
+            assertEquals(cbCount, cbList.size());
+            assertEquals("[[0, 3!], [1, 4!], [2, 5!]]", cbList.toString());
+
+            final int evtCount = 4;
+            var evtList = new ArrayList<Pair<String, Integer>>();
+            final var cle = new CountDownLatch(evtCount);
+
+            ThresholdHandler OnThresholdReached = (sender, e) -> {
+                var s = sender.toString();
+                evtList.add(Pair.with(s, e.Threshold()));
+                cle.countDown();
+            };
+
+            client.addThresholdReached(OnThresholdReached);
+            client.startPub(evtCount);
+            cle.await(5, TimeUnit.SECONDS);
+
+            assertEquals(evtCount, evtList.size());
+            client.removeThresholdReached(OnThresholdReached);
         }
     }
 }

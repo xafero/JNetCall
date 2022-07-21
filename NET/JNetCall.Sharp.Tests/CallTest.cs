@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Example.API;
+using JNetBase.Sharp.Sys;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Xunit;
+using static Example.API.ITriggering;
 
 namespace JNetCall.Sharp.Tests
 {
@@ -155,6 +158,48 @@ namespace JNetCall.Sharp.Tests
             value2 = 7.00D;
             result = client.Divide(value1, value2);
             Assert.Equal(3.142857142857143, result);
+        }
+
+        [Fact]
+        public void ShouldCallTrigger()
+        {
+            using var client = Create<ITriggering>();
+
+            const int cbCount = 3;
+            var cbList = new List<Tuple<int, string>>();
+            var clc = new CountdownEvent(cbCount);
+
+            bool EnumWindowsCallback(int handle, string lParam)
+            {
+                cbList.Add(Tuple.Create(handle, lParam));
+                clc.Signal();
+                return true;
+            }
+
+            var callOk = client.EnumWindows(EnumWindowsCallback, cbCount);
+            Assert.True(callOk);
+            clc.Wait(TimeSpan.FromSeconds(5));
+
+            Assert.Equal(cbCount, cbList.Count);
+            Assert.Equal("[(0, 3!), (1, 4!), (2, 5!)]", Arrays.ToString(cbList));
+
+            const int evtCount = 4;
+            var evtList = new List<Tuple<string, int>>();
+            var cle = new CountdownEvent(evtCount);
+
+            void OnThresholdReached(object sender, ThresholdEventArgs e)
+            {
+                var s = sender.ToString();
+                evtList.Add(Tuple.Create(s, e.Threshold));
+                cle.Signal();
+            }
+
+            client.ThresholdReached += OnThresholdReached;
+            client.StartPub(evtCount);
+            cle.Wait(TimeSpan.FromSeconds(5));
+
+            Assert.Equal(evtCount, evtList.Count);
+            client.ThresholdReached -= OnThresholdReached;
         }
     }
 }
