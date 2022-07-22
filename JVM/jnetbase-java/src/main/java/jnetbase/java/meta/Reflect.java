@@ -3,10 +3,7 @@ package jnetbase.java.meta;
 import jnetbase.java.sys.Strings;
 
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.BiFunction;
@@ -195,5 +192,21 @@ public final class Reflect {
         for (var item : clazz.getConstructors()  )
             return (Constructor<T>) item;
         return null;
+    }
+
+    public static List<Class<?>> getInterfaces(Class<?> type) {
+        var interfaces = new LinkedHashSet<Class<?>>();
+        getAllInterfaces(type, interfaces);
+        return new ArrayList<>(interfaces);
+    }
+
+    private static void getAllInterfaces(Class<?> type, Set<Class<?>> found) {
+        while (type != null)
+        {
+            for (var interf : type.getInterfaces())
+                if (found.add(interf))
+                    getAllInterfaces(interf, found);
+            type = type.getSuperclass();
+        }
     }
 }
