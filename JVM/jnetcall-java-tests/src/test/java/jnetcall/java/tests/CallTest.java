@@ -19,12 +19,17 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-import static org.example.api.ITriggering.*;
+import static org.example.api.ITriggering.PCallBack;
+import static org.example.api.ITriggering.ThresholdHandler;
 import static org.testng.Assert.*;
 
 public abstract class CallTest {
 
     protected abstract <T extends AutoCloseable> T create(Class<T> clazz);
+
+    protected String patch(String input) { return input; }
+
+    protected int getMaxListWait() { return 1; }
 
     @Test
     public void shouldCallCache() throws Exception {
@@ -124,6 +129,7 @@ public abstract class CallTest {
             var ag = UUID.fromString("27edb110-afef-4ce3-b8c1-3fcb2ec3fabe");
             var txt = client.ToSimpleText(ay, as, ai, al, af, ad, ab, ac, at, au, ag).replace(" ", "")
                     .trim().replace("3,4", "3.4").replace("1,7", "1.7");
+            txt = patch(txt);
             assertEquals("y=127,s=32767,i=2147483647,l=9223372036854775807,f=3.4028235E+38,d=1.7976931348623157E+308,b=True,c=￿,t=Str,u=9223372036854775807,g=27edb110-afef-4ce3-b8c1-3fcb2ec3fabe", txt);
 
             var by = new byte[]{ 42 }; var bs = new short[]{ Short.MIN_VALUE }; var bi = new int[]{ Integer.MIN_VALUE };
@@ -134,6 +140,7 @@ public abstract class CallTest {
             var bg = new UUID[]{ UUID.fromString("00000000-0000-0000-0000-000000000000") };
             txt = client.ToArrayText(by, bs, bi, bl, bf, bd, bb, bc, bt, bu, bg).replace(" ", "")
                     .trim().replace("3,4", "3.4").replace("1,7", "1.7");
+            txt = patch(txt);
             assertEquals("y=[42],s=[-32768],i=[-2147483648],l=[-9223372036854775808],f=[-3.4028235E+38],d=[-1.7976931348623157E+308],b=[False],c=[X],t=[Str1],u=[-9223372036854775808],g=[00000000-0000-0000-0000-000000000000]", txt);
         }
     }
@@ -164,7 +171,7 @@ public abstract class CallTest {
             var numbers = all.stream().map(t -> t.getValue0()).distinct().toArray();
             assertEquals(count, numbers.length);
 
-            assertTrue(listTime >= 0 && listTime <= 2, listTime + " ?!");
+            assertTrue(listTime >= 0 && listTime <= getMaxListWait(), listTime + " ?!");
         }
     }
 

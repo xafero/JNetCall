@@ -246,7 +246,7 @@ namespace Example.Impl
 
         public event ThresholdHandler ThresholdReached;
 
-        public string Name => "C#";
+        public virtual string Name => "C#";
 
         public void Dispose()
         {

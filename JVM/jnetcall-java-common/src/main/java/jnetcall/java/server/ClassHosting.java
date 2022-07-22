@@ -43,7 +43,7 @@ public final class ClassHosting implements IHosting {
 
     public void registerAll() {
         var type = _instance.getClass();
-        for (var infType : type.getInterfaces())
+        for (var infType : Reflect.getInterfaces(type))
             addServiceEndpoint(infType);
     }
 

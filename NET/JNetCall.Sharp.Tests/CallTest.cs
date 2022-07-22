@@ -16,6 +16,10 @@ namespace JNetCall.Sharp.Tests
     {
         protected abstract T Create<T>() where T : class, IDisposable;
 
+        protected virtual string Patch(string input) => input;
+
+        protected virtual int MaxListWait => 1;
+
         [Fact]
         public void ShouldCallCache()
         {
@@ -109,6 +113,7 @@ namespace JNetCall.Sharp.Tests
                 g = Guid.Parse("27edb110-afef-4ce3-b8c1-3fcb2ec3fabe")
             };
             var txt = client.ToSimpleText(a.y, a.s, a.i, a.l, a.f, a.d, a.b, a.c, a.t, a.u, a.g).Replace(" ", "").Trim();
+            txt = Patch(txt);
             Assert.Equal("y=-1,s=32767,i=2147483647,l=9223372036854775807,f=3.4028235E38,d=1.7976931348623157E308,b=true,c=￿,t=Str,u=79228162514264337593543950335,g=27edb110-afef-4ce3-b8c1-3fcb2ec3fabe", txt);
 
             var b = new
@@ -118,6 +123,7 @@ namespace JNetCall.Sharp.Tests
                 t = new[] { "Str1" }, u = new[] { decimal.MinValue }, g = new[] { Guid.Empty }
             };
             txt = client.ToArrayText(b.y, b.s, b.i, b.l, b.f, b.d, b.b, b.c, b.t, b.u, b.g).Replace(" ", "").Trim();
+            txt = Patch(txt);
             Assert.Equal("y=[42],s=[-32768],i=[-2147483648],l=[-9223372036854775808],f=[-3.4028235E38],d=[-1.7976931348623157E308],b=[false],c=[X],t=[Str1],u=[-79228162514264337593543950335],g=[00000000-0000-0000-0000-000000000000]", txt);
         }
 
@@ -149,7 +155,7 @@ namespace JNetCall.Sharp.Tests
             var numbers = all.Select(t => t.Item1).Distinct().ToArray();
             Assert.Equal(count, numbers.Length);
 
-            Assert.True(listTime is >= 0 and <= 2, listTime + " ?!");
+            Assert.True(listTime >= 0 && listTime <= MaxListWait, listTime + " ?!");
         }
 
         [Fact]
