@@ -105,7 +105,8 @@ public final class FileSystemWatcher implements AutoCloseable {
     }
 
     private void start() throws IOException {
-        Kind[] args = _kinds.toArray(WatchEvent.Kind[]::new);
+    	Kind[] array = new WatchEvent.Kind[_kinds.size()];
+        Kind[] args = _kinds.toArray(array);
         _key = _folder.register(_watcher, args);
 
         if (_executor instanceof IExecutor) {

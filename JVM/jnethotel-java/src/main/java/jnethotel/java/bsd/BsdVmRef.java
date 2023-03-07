@@ -3,10 +3,12 @@ package jnethotel.java.bsd;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
 
+import jnetbase.java.compat.J8;
 import jnethotel.java.api.ICoreClr;
 import jnethotel.java.api.IVmRef;
 import jnethotel.java.linux.impl.nethost_library_unix;
@@ -26,10 +28,10 @@ public final class BsdVmRef implements IVmRef {
     @Override
     public void loadLib() throws IOException {
         String libFileName = getVmDll();
-        Path libRoot = Path.of("/usr/share/dotnet");
-        String libPath = Files.find(libRoot, 7,
+        Path libRoot = Paths.get("/usr/share/dotnet");
+        String libPath = J8.orElseThrow(Files.find(libRoot, 7,
                         (p, b) -> p.getFileName().toString().equals(libFileName))
-                .findFirst().orElseThrow().getParent().toString();
+                .findFirst()).getParent().toString();
         System.setProperty("jna.library.path", libPath);
 
         final String jnaLibraryName = "nethost";

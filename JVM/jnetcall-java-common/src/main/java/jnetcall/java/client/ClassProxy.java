@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import jnetbase.java.compat.J8;
 import jnetbase.java.meta.Reflect;
 import jnetbase.java.threads.IExecutor;
 import jnetbase.java.threads.ManualResetEvent;
@@ -164,7 +165,7 @@ public final class ClassProxy implements IProxy {
 
     private static void setDelegate(MethodResult msg) {
         short callId = msg.I();
-        Entry<String, DelegateRef> state = Delegates.entrySet().stream().filter(d -> d.getValue().CallId == callId).findFirst().orElseThrow();
+        Entry<String, DelegateRef> state = J8.orElseThrow(Delegates.entrySet().stream().filter(d -> d.getValue().CallId == callId).findFirst());
         Object delegate = state.getValue().Entry;
         Object[] args = (Object[]) msg.R();
         Method method = Reflect.getTheMethod(delegate);
@@ -227,8 +228,7 @@ public final class ClassProxy implements IProxy {
     }
 
     private static Object unpack(Type returnType, MethodResult input) {
-        MethodStatus status = Arrays.stream(MethodStatus.values()).filter(m -> m.getValue() == input.S()).findFirst()
-                .orElseThrow();
+        MethodStatus status = J8.orElseThrow(Arrays.stream(MethodStatus.values()).filter(m -> m.getValue() == input.S()).findFirst());
         switch (status) {
             case Ok:
                 Object raw = getCompatibleValue(returnType, input.R());

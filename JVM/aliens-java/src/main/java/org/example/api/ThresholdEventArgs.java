@@ -7,7 +7,7 @@ public final class ThresholdEventArgs {
 	private final int threshold;
 	private final LocalDateTime timeReached;
 
-	public ThresholdEventArgs(@Deprecated(since = "Threshold") int threshold, @Deprecated(since = "TimeReached") LocalDateTime timeReached) {
+	public ThresholdEventArgs(int threshold, LocalDateTime timeReached) {
 		this.threshold = threshold;
 		this.timeReached = timeReached;
 	}

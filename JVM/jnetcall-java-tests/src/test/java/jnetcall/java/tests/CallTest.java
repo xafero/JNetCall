@@ -38,6 +38,7 @@ import org.testng.util.Strings;
 import com.google.common.base.Stopwatch;
 import com.xafero.javaenums.BitFlag;
 
+import jnetbase.java.compat.J8;
 import jnetbase.java.sys.Primitives;
 import jnetbase.java.threads.Tasks;
 
@@ -125,12 +126,15 @@ public abstract class CallTest {
             assertEquals("[Caller, 7]|[seconds, 94]|[year, 2023]", Strings.join("|", dict));
 
             List<String> lines = Arrays.asList(new String[]{"Dog  ", "Hot", "Dog ", "Dog", "Hot    ", "Cat", "Cat", "Hot", "Hot"});
-            int lineCount = client.GetLineCount(lines.toArray(String[]::new));
+            String[] sArray = new String[lines.size()];
+            int lineCount = client.GetLineCount(lines.toArray(sArray));
             Set<String> set = client.GetUnique(lines, true);
             assertEquals("Cat|Dog|Hot", Strings.join("|", set.stream().toArray(String[]::new)));
             assertEquals(9, lineCount);
 
-            String[] list = client.GetDouble(set).toArray(String[]::new);
+            List<String> doubles = client.GetDouble(set);
+            String[] array = new String[doubles.size()];            		
+            String[] list = doubles.toArray(array);
             assertEquals("Cat|Dog|Hot|Cat|Dog|Hot", Strings.join("|", list));
 
             String[] fs = Arrays.stream(Primitives.castInt(client.AllocateBytes(3, (byte) 42)))
@@ -179,7 +183,7 @@ public abstract class CallTest {
             IntStream range = IntStream.range(0, count);
 
             Stopwatch watch = Stopwatch.createStarted();
-            List<CompletableFuture<Pair<Integer, Long>>> tasks = range.mapToObj(i -> client.runIt(26, i)).toList();
+            List<CompletableFuture<Pair<Integer, Long>>> tasks = J8.toList(range.mapToObj(i -> client.runIt(26, i)));
             watch.stop();
             long listTime = watch.elapsed(TimeUnit.MILLISECONDS);
 

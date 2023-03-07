@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 
 import org.javatuples.Tuple;
 
+import jnetbase.java.compat.J8;
 import jnetbase.java.meta.Reflect;
 import jnetbase.java.sys.BitConverter;
 import jnetproto.java.api.DataType;
@@ -164,7 +165,7 @@ public class BinaryReader implements IDataReader {
         }
         Stream<Method> method = Arrays.stream(Tuples.class.getMethods())
                 .filter(m -> m.getName().equals("create") && m.getParameterCount() == args.length);
-        return (Tuple) Reflect.invoke(method.findFirst().orElseThrow(), null, args);
+        return (Tuple) Reflect.invoke(J8.orElseThrow(method.findFirst()), null, args);
     }
 
     @Override

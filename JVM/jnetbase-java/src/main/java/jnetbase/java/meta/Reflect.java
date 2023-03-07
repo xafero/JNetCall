@@ -158,8 +158,7 @@ public final class Reflect {
             Method setter = setMap.get(parmName);
             if (getter == null && setter == null) {
             	ParamName pna = params.getAnnotation(ParamName.class);
-            	Deprecated pda = params.getAnnotation(Deprecated.class);
-            	parmName = pna != null ? pna.value() : pda != null ? pda.since() : null;
+            	parmName = pna != null ? pna.value() : null;
             	if (parmName != null) {
             		getter = getMap.get(parmName);
             		setter = setMap.get(parmName);            		

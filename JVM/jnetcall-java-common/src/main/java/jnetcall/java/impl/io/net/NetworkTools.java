@@ -7,6 +7,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.ReadableByteChannel;
 
+import jnetbase.java.compat.J8;
+
 public final class NetworkTools {
 
 	public static SocketAddress toEndPoint(String host, int port) {
@@ -24,7 +26,7 @@ public final class NetworkTools {
 		if (prefix == null) {
 			got = stream.read(buffer);
 		} else {
-			buffer.put(prefix.position(0));
+			J8.put(buffer, prefix.position(0));
 			int tmp = stream.read(buffer);
 			got = tmp + skip;
 		}

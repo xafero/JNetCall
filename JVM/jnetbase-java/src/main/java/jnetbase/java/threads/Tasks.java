@@ -11,6 +11,8 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import jnetbase.java.compat.J8;
+
 public final class Tasks {
 
     private static final Object lock = new Object();
@@ -49,9 +51,10 @@ public final class Tasks {
     }
 
     public static <T> List<T> whenAll(Collection<CompletableFuture<T>> tasks) {
-        CompletableFuture[] array = tasks.toArray(CompletableFuture[]::new);
+    	CompletableFuture[] rawArray = new CompletableFuture[tasks.size()];
+        CompletableFuture[] array = tasks.toArray(rawArray);
         CompletableFuture.allOf(array).join();
-        return tasks.stream().map(t -> get(t)).toList();
+        return J8.toList(tasks.stream().map(t -> get(t)));
     }
 
     private static <T> T get(Future<T> task) {
@@ -90,9 +93,9 @@ public final class Tasks {
         try {
             return CompletableFuture.completedFuture(future.get());
         } catch (InterruptedException e) {
-            return CompletableFuture.failedFuture(e);
+            return J8.failedFuture(e);
         } catch (ExecutionException e) {
-            return CompletableFuture.failedFuture(e.getCause());
+            return J8.failedFuture(e.getCause());
         }
     }
 

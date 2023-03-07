@@ -25,7 +25,9 @@ public final class ArrayX {
     }
 
     public static Object[] asObjectArray(Iterable items) {
-        return asObjectList(items).toArray(Object[]::new);
+    	ArrayList<Object> list = asObjectList(items);
+    	Object[] array = new Object[list.size()];
+        return list.toArray(array);
     }
 
     private static Object noConvert(Object obj, Type type) {

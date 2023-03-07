@@ -15,6 +15,11 @@
     </properties>
 
     <dependencies>
+		<dependency>
+			<groupId>com.xafero</groupId>
+    		<artifactId>jnetbase-java</artifactId>
+    		<version>1.0</version>
+		</dependency>
         <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>

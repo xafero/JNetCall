@@ -136,7 +136,7 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
 
     @Override
     public CompletableFuture<Integer> getId() {
-        return CompletableFuture.supplyAsync(() -> new Random().nextInt(-100, 100));
+        return CompletableFuture.supplyAsync(() -> new Random().nextInt(200) - 100);
     }
 
     private String currentWord;

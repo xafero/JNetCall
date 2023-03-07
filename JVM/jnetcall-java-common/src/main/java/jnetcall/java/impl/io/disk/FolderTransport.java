@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -84,15 +85,15 @@ public final class FolderTransport implements ISendTransport, IPushTransport, Au
 
     private <T> T get(String sFile, Class<T> clazz) throws Exception {
         String dFile = sFile.substring(0, sFile.length() - Suffix.length());
-        byte[] bytes = Files.readAllBytes(Path.of(dFile));
+        byte[] bytes = Files.readAllBytes(Paths.get(dFile));
         T msg = _encoding.decode(bytes, clazz);
         CompletableFuture.runAsync(() ->
         {
             try {
                 if (_wait >= 1)
                     Thread.sleep(_wait);
-                Files.deleteIfExists(Path.of(sFile));
-                Files.deleteIfExists(Path.of(dFile));
+                Files.deleteIfExists(Paths.get(sFile));
+                Files.deleteIfExists(Paths.get(dFile));
             } catch (InterruptedException | IOException e) {
                 throw new RuntimeException(e);
             }
@@ -113,7 +114,7 @@ public final class FolderTransport implements ISendTransport, IPushTransport, Au
             Path pathData = _outputFolder.resolve(Prefix + getNextId());
             Files.deleteIfExists(pathData);
             Files.write(pathData, bytes);
-            Path pathMark = Path.of(pathData + Suffix);
+            Path pathMark = Paths.get(pathData + Suffix);
             Files.deleteIfExists(pathMark);
             Files.write(pathMark, new byte[1]);
         } catch (Exception e) {

@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import jnetbase.java.compat.J8;
+
 public final class Strings {
 
     public static int countMatches(CharSequence text, char letter) {
@@ -29,6 +31,6 @@ public final class Strings {
     }
 
     public static String readToEnd(InputStream stream) throws IOException {
-        return new String(stream.readAllBytes());
+        return new String(J8.readAllBytes(stream));
     }
 }

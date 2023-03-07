@@ -22,6 +22,7 @@ import org.javatuples.Tuple;
 
 import com.xafero.javaenums.Enums;
 
+import jnetbase.java.compat.J8;
 import jnetbase.java.meta.Reflect;
 import jnetbase.java.sys.BitConverter;
 import jnetproto.java.api.IDataWriter;
@@ -181,7 +182,7 @@ public class BinaryWriter implements IDataWriter {
             count = coll.size();
             values = raw;
         } else {
-            List<?> array = StreamSupport.stream(raw.spliterator(), false).toList();
+            List<?> array = J8.toList(StreamSupport.stream(raw.spliterator(), false));
             count = array.size();
             values = array;
         }
