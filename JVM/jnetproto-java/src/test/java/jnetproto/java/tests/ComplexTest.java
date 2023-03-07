@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 import org.testng.annotations.DataProvider;
@@ -185,6 +186,25 @@ public final class ComplexTest {
     	public String Name() {
 			return name;
 		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(bigNumber, decimals, name, number);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Example other = (Example) obj;
+			return bigNumber == other.bigNumber
+					&& Double.doubleToLongBits(decimals) == Double.doubleToLongBits(other.decimals)
+					&& Objects.equals(name, other.name) && number == other.number;
+		}   	
 	}
     
     public static final class Invalid {
@@ -203,6 +223,23 @@ public final class ComplexTest {
     	public String Why() {
 			return why;
 		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(what, why);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Invalid other = (Invalid) obj;
+			return what == other.what && Objects.equals(why, other.why);
+		}   	
 	}
 
     public static final class Call {
@@ -251,6 +288,23 @@ public final class ComplexTest {
     	public short S() {
 			return s;
 		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(r, s);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Result other = (Result) obj;
+			return Objects.equals(r, other.r) && s == other.s;
+		} 	    	
 	}
 
     public static final class CallListBag2 {

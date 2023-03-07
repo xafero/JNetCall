@@ -1,5 +1,7 @@
 package jnetproto.java.tests;
 
+import java.util.Objects;
+
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -85,6 +87,24 @@ public final class EnumTest {
 		}
     	public BitFlag<Days> Days() {
 			return days;
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(code, days, what, why);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Bitty other = (Bitty) obj;
+			return code == other.code && Objects.equals(days, other.days) && what == other.what
+					&& Objects.equals(why, other.why);
 		}
     }
 

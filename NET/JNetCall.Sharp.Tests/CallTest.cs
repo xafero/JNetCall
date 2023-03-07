@@ -89,7 +89,7 @@ namespace JNetCall.Sharp.Tests
             var dur = TimeSpan.FromSeconds(94);
             var env = new Dictionary<string, int> { { "Caller", nameof(Program).Length } };
             var dict = client.GetSystemVariables(now, dur, env);
-            Assert.Equal("[Caller, 7]|[seconds, 94]|[year, 2022]", string.Join("|", dict));
+            Assert.Equal("[Caller, 7]|[seconds, 94]|[year, 2023]", string.Join("|", dict));
 
             var lines = new List<string> { "Dog  ", "Hot", "Dog ", "Dog", "Hot    ", "Cat", "Cat", "Hot", "Hot" };
             var lineCount = client.GetLineCount(lines.ToArray());

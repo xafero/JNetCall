@@ -122,7 +122,7 @@ public abstract class CallTest {
             env.put("Caller", "Program".length());
             String[] dict = client.GetSystemVariables(now, dur, env)
                     .entrySet().stream().map(f -> '['+f.getKey()+", "+f.getValue()+']').toArray(String[]::new);
-            assertEquals("[Caller, 7]|[seconds, 94]|[year, 2022]", Strings.join("|", dict));
+            assertEquals("[Caller, 7]|[seconds, 94]|[year, 2023]", Strings.join("|", dict));
 
             List<String> lines = Arrays.asList(new String[]{"Dog  ", "Hot", "Dog ", "Dog", "Hot    ", "Cat", "Cat", "Hot", "Hot"});
             int lineCount = client.GetLineCount(lines.toArray(String[]::new));
