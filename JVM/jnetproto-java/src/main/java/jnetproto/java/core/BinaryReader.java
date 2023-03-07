@@ -1,15 +1,9 @@
 package jnetproto.java.core;
 
-import jnetbase.java.meta.Reflect;
-import jnetbase.java.sys.BitConverter;
-import jnetproto.java.api.DataType;
-import jnetproto.java.api.IDataReader;
-import jnetproto.java.tools.Tuples;
-import org.javatuples.Tuple;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -17,7 +11,23 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.UUID;
+import java.util.stream.Stream;
+
+import org.javatuples.Tuple;
+
+import jnetbase.java.meta.Reflect;
+import jnetbase.java.sys.BitConverter;
+import jnetproto.java.api.DataType;
+import jnetproto.java.api.IDataReader;
+import jnetproto.java.tools.Tuples;
 
 public class BinaryReader implements IDataReader {
     private final Charset _enc;
@@ -29,8 +39,8 @@ public class BinaryReader implements IDataReader {
     }
 
     private byte[] readBytes(int size) throws IOException {
-        var bytes = new byte[size];
-        var length = _stream.read(bytes);
+        byte[] bytes = new byte[size];
+        int length = _stream.read(bytes);
         if (length != size && size != 0)
             throw new IllegalArgumentException("Got " + length + " B instead of " + size + "!");
         return bytes;
@@ -87,21 +97,21 @@ public class BinaryReader implements IDataReader {
     }
 
     private String readUtf8(boolean wide) throws IOException {
-        var size = wide ? readI16() : readI8();
+        short size = wide ? readI16() : readI8();
         return _enc.decode(ByteBuffer.wrap(readBytes(size))).toString();
     }
 
     @Override
     public Duration readDuration() throws IOException {
-        var ms = readF64();
-        var cast = (long) ms;
+        double ms = readF64();
+        long cast = (long) ms;
         return Duration.ofMillis(cast);
     }
 
     @Override
     public LocalDateTime readTimestamp() throws IOException {
-        var millis = readI64();
-        var nano = readI32() * 100;
+        long millis = readI64();
+        int nano = readI32() * 100;
         return LocalDateTime.ofEpochSecond(millis, nano, ZoneOffset.UTC);
     }
 
@@ -112,17 +122,17 @@ public class BinaryReader implements IDataReader {
 
     @Override
     public Object readArray() throws IOException {
-        var item = DataTypes.toDataType(_stream.read());
-        var rank = _stream.read();
-        var lengths = new int[rank];
-        for (var i = 0; i < rank; i++)
+        DataType item = DataTypes.toDataType(_stream.read());
+        int rank = _stream.read();
+        int[] lengths = new int[rank];
+        for (int i = 0; i < rank; i++)
             lengths[i] = readI32();
-        var clazz = DataTypes.getClass(item);
-        var array = Array.newInstance(clazz, lengths);
-        var indices = new int[rank];
-        for (var i = 0; i < rank; i++)
-            for (var j = 0; j < lengths[i]; j++) {
-                var obj = readObject(item);
+        Class<?> clazz = DataTypes.getClass(item);
+        Object array = Array.newInstance(clazz, lengths);
+        int[] indices = new int[rank];
+        for (int i = 0; i < rank; i++)
+            for (int j = 0; j < lengths[i]; j++) {
+                Object obj = readObject(item);
                 indices[i] = j;
                 Array.set(array, indices[0], obj);
             }
@@ -132,13 +142,13 @@ public class BinaryReader implements IDataReader {
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Map readMap() throws IOException {
-        var keyKind = DataTypes.toDataType(_stream.read());
-        var valKind = DataTypes.toDataType(_stream.read());
-        var size = readI32();
-        var map = new TreeMap();
-        for (var i = 0; i < size; i++) {
-            var key = readObject(keyKind);
-            var val = readObject(valKind);
+        DataType keyKind = DataTypes.toDataType(_stream.read());
+        DataType valKind = DataTypes.toDataType(_stream.read());
+        int size = readI32();
+        TreeMap map = new TreeMap();
+        for (int i = 0; i < size; i++) {
+            Object key = readObject(keyKind);
+            Object val = readObject(valKind);
             map.put(key, val);
         }
         return map;
@@ -146,23 +156,23 @@ public class BinaryReader implements IDataReader {
 
     @Override
     public Tuple readTuple() throws IOException {
-        var size = readI8();
-        var args = new Object[size];
-        for (var i = 0; i < size; i++) {
-            var obj = readObject();
+        byte size = readI8();
+        Object[] args = new Object[size];
+        for (int i = 0; i < size; i++) {
+            Object obj = readObject();
             args[i] = obj;
         }
-        var method = Arrays.stream(Tuples.class.getMethods())
+        Stream<Method> method = Arrays.stream(Tuples.class.getMethods())
                 .filter(m -> m.getName().equals("create") && m.getParameterCount() == args.length);
         return (Tuple) Reflect.invoke(method.findFirst().orElseThrow(), null, args);
     }
 
     @Override
     public Object[] readBag() throws IOException {
-        var size = readI8();
-        var args = new Object[size];
-        for (var i = 0; i < size; i++) {
-            var obj = readObject();
+        byte size = readI8();
+        Object[] args = new Object[size];
+        for (int i = 0; i < size; i++) {
+            Object obj = readObject();
             args[i] = obj;
         }
         return args;
@@ -170,7 +180,7 @@ public class BinaryReader implements IDataReader {
 
     @Override
     public byte[] readBinary() throws IOException {
-        var size = readI32();
+        int size = readI32();
         return readBytes(size);
     }
 
@@ -190,11 +200,11 @@ public class BinaryReader implements IDataReader {
     }
 
     private Iterable<?> readIterable(Iterable<?> coll) throws IOException {
-        var valKind = DataTypes.toDataType(_stream.read());
-        var size = readI32();
-        var adder = Reflect.getMethod(coll, "add", Object.class);
-        for (var i = 0; i < size; i++) {
-            var val = readObject(valKind);
+        DataType valKind = DataTypes.toDataType(_stream.read());
+        int size = readI32();
+        Method adder = Reflect.getMethod(coll, "add", Object.class);
+        for (int i = 0; i < size; i++) {
+            Object val = readObject(valKind);
             Reflect.invoke(adder, coll, new Object[]{val});
         }
         return coll;
@@ -202,7 +212,7 @@ public class BinaryReader implements IDataReader {
 
     @Override
     public Object readObject() throws IOException {
-        var kind = DataTypes.toDataType(_stream.read());
+        DataType kind = DataTypes.toDataType(_stream.read());
         return readObject(kind);
     }
 

@@ -1,5 +1,18 @@
 package jnetcall.java.client;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import jnetbase.java.meta.Reflect;
 import jnetbase.java.threads.IExecutor;
 import jnetbase.java.threads.ManualResetEvent;
@@ -17,16 +30,6 @@ import jnetcall.java.client.model.DelegateRef;
 import jnetcall.java.impl.util.ClassTools;
 import jnetproto.java.tools.Conversions;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
 public final class ClassProxy implements IProxy {
 
     private final IExecutor _executor;
@@ -43,10 +46,10 @@ public final class ClassProxy implements IProxy {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        var call = pack(method, args);
+        MethodCall call = pack(method, args);
         if (call == null)
             return null;
-        var answer = request(method, call);
+        Object answer = request(method, call);
         return answer;
     }
 
@@ -57,10 +60,10 @@ public final class ClassProxy implements IProxy {
     }
 
     private MethodCall pack(Method method, Object[] rawArgs) throws Exception {
-        var id = (short) getNextId();
-        var source = method.getDeclaringClass().getSimpleName();
-        var args = rewriteArgsIfNeeded(rawArgs);
-        var call = new MethodCall(id, source, method.getName(), args);
+        short id = (short) getNextId();
+        String source = method.getDeclaringClass().getSimpleName();
+        Object[] args = rewriteArgsIfNeeded(rawArgs);
+        MethodCall call = new MethodCall(id, source, method.getName(), args);
         if (call.C().equals("AutoCloseable") && call.M().equals("close")) {
             close();
             return null;
@@ -71,7 +74,7 @@ public final class ClassProxy implements IProxy {
     private static final Map<String, DelegateRef> Delegates = new HashMap<String, DelegateRef>();
 
     private static short wrapFromDelegate(Object del) {
-        var delId = ClassTools.toDelegateId(del);
+        String delId = ClassTools.toDelegateId(del);
         DelegateRef delRef;
         if ((delRef = Delegates.getOrDefault(delId, null)) == null) {
             Delegates.put(delId, delRef = new DelegateRef());
@@ -85,9 +88,9 @@ public final class ClassProxy implements IProxy {
         if (raw == null) {
             return new Object[0];
         }
-        var args = new Object[raw.length];
-        for (var i = 0; i < args.length; i++) {
-            var arg = raw[i];
+        Object[] args = new Object[raw.length];
+        for (int i = 0; i < args.length; i++) {
+            Object arg = raw[i];
             if (!Reflect.isDelegate(arg)) {
                 args[i] = arg;
                 continue;
@@ -106,20 +109,20 @@ public final class ClassProxy implements IProxy {
     }
 
     private void disposeSignals() {
-        for (var signal : _signals.entrySet())
-            disposeSignal(signal);
+        for (Entry<Short, CallState> signal : _signals.entrySet())
+        	disposeSignal(signal);
         _signals.clear();
     }
 
     private static void disposeSignal(Map.Entry<Short, CallState> signal) {
-        var state = signal.getValue();
+        CallState state = signal.getValue();
         state.Result = new InterruptedException("Dispose");
         state.set();
     }
 
     private CallState createState(ICall call, boolean sync) {
-        var callId = call.I();
-        var state = new CallState();
+        short callId = call.I();
+        CallState state = new CallState();
         if (sync)
             state.SyncWait = new ManualResetEvent(false);
         else
@@ -129,50 +132,52 @@ public final class ClassProxy implements IProxy {
     }
 
     private Object waitSignal(ICall call) throws InterruptedException {
-        var id = call.I();
-        var state = _signals.get(id);
+        short id = call.I();
+        CallState state = _signals.get(id);
         state.SyncWait.waitOne();
-        var res = state.Result;
+        Object res = state.Result;
         return res;
     }
 
     private CompletableFuture<Object> pinSignal(ICall call) {
-        var id = call.I();
-        var task = Tasks.wrap(() -> {
-            var state = _signals.get(id);
+        short id = call.I();
+        Callable<Object> fut = () -> {
+            CallState state = _signals.get(id);
             state.AsyncWait.waitOne();
-            var res = state.Result;
+            Object res = state.Result;
             return res;
-        });
+        };
+        CompletableFuture<Object> task = Tasks.wrap(fut);
         return task;
     }
 
     private void setSignal(ICall call) {
-        if (call instanceof MethodResult mr && mr.S() == MethodStatus.Continue.getValue()) {
-            setDelegate(mr);
+        if (call instanceof MethodResult && ((MethodResult)call).S() == MethodStatus.Continue.getValue()) {
+            setDelegate((MethodResult)call);
             return;
         }
-        var callId = call.I();
-        var state = _signals.get(callId);
+        short callId = call.I();
+        CallState state = _signals.get(callId);
         state.Result = call;
         state.set();
     }
 
     private static void setDelegate(MethodResult msg) {
-        var callId = msg.I();
-        var state = Delegates.entrySet().stream().filter(d -> d.getValue().CallId == callId).findFirst().orElseThrow();
-        var delegate = state.getValue().Entry;
-        var args = (Object[]) msg.R();
-        var method = Reflect.getTheMethod(delegate);
-        var pars = method.getParameters();
-        var argLen = args == null ? 0 : args.length;
-        for (var i = 0; i < argLen; i++) {
-            var par = pars[i].getType();
+        short callId = msg.I();
+        Entry<String, DelegateRef> state = Delegates.entrySet().stream().filter(d -> d.getValue().CallId == callId).findFirst().orElseThrow();
+        Object delegate = state.getValue().Entry;
+        Object[] args = (Object[]) msg.R();
+        Method method = Reflect.getTheMethod(delegate);
+        Parameter[] pars = method.getParameters();
+        int argLen = args == null ? 0 : args.length;
+        for (int i = 0; i < argLen; i++) {
+            Class par = pars[i].getType();
             if (par == Object.class)
                 continue;
-            var arg = args[i];
-            if (!(arg instanceof Object[] oa) || par == Object[].class)
+            Object arg = args[i];
+            if (!(arg instanceof Object[]) || par == Object[].class)
                 continue;
+            Object[] oa = (Object[])arg;
             args[i] = Conversions.fromObjectArray(par, oa);
         }
         Reflect.invoke(method, delegate, args);
@@ -190,22 +195,23 @@ public final class ClassProxy implements IProxy {
     private Object requestSync(Method method, MethodCall msg) throws InterruptedException {
         createState(msg, true);
         _protocol.send(msg);
-        var raw = waitSignal(msg);
-        var res = extract(raw, method.getGenericReturnType());
+        Object raw = waitSignal(msg);
+        Object res = extract(raw, method.getGenericReturnType());
         return res;
     }
 
     @SuppressWarnings("unchecked")
     private static <T> CompletableFuture<T> continueLater(CompletableFuture<Object> task, Type type) {
         return task.thenApply(previous -> {
-            var raw = previous;
-            var res = extract(raw, type);
+            Object raw = previous;
+            Object res = extract(raw, type);
             return (T) res;
         });
     }
 
     private static Object extract(Object res, Type returnType) {
-        if (res instanceof MethodResult mr) {
+        if (res instanceof MethodResult) {
+        	MethodResult mr = (MethodResult)res;
             return unpack(returnType, mr);
         }
         throw new UnsupportedOperationException(res + " ?!");
@@ -214,18 +220,18 @@ public final class ClassProxy implements IProxy {
     private Object requestAsync(Method method, MethodCall msg) {
         createState(msg, false);
         _protocol.send(msg);
-        var taskType = Reflect.getTaskType(method.getGenericReturnType(), Object.class);
-        var task = pinSignal(msg);
-        var next = continueLater(task, taskType);
+        Type taskType = Reflect.getTaskType(method.getGenericReturnType(), Object.class);
+        CompletableFuture<Object> task = pinSignal(msg);
+        CompletableFuture<Object> next = continueLater(task, taskType);
         return next;
     }
 
     private static Object unpack(Type returnType, MethodResult input) {
-        var status = Arrays.stream(MethodStatus.values()).filter(m -> m.getValue() == input.S()).findFirst()
+        MethodStatus status = Arrays.stream(MethodStatus.values()).filter(m -> m.getValue() == input.S()).findFirst()
                 .orElseThrow();
         switch (status) {
             case Ok:
-                var raw = getCompatibleValue(returnType, input.R());
+                Object raw = getCompatibleValue(returnType, input.R());
                 return raw;
             default:
                 throw new UnsupportedOperationException("[" + input.S() + "] " + input.R());
@@ -237,7 +243,7 @@ public final class ClassProxy implements IProxy {
     }
 
     public void listen() {
-        var label = getClass().getSimpleName();
+        String label = getClass().getSimpleName();
         _executor.createThread(this::listenAndWait, label + "|Listen");
     }
 
@@ -245,10 +251,12 @@ public final class ClassProxy implements IProxy {
         _running = true;
         while (_running)
             try {
-                if (_protocol instanceof IPullTransport put) {
-                    var pulled = put.pull(MethodResult.class);
+                if (_protocol instanceof IPullTransport) {
+                	IPullTransport put = (IPullTransport)_protocol;
+                    MethodResult pulled = put.pull(MethodResult.class);
                     setSignal(pulled);
-                } else if (_protocol instanceof IPushTransport pst) {
+                } else if (_protocol instanceof IPushTransport) {
+                	IPushTransport pst = (IPushTransport)_protocol;
                     pst.onPush(this::setSignal, MethodResult.class);
                     break;
                 }

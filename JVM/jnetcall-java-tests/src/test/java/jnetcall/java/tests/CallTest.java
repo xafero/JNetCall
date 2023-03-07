@@ -1,12 +1,8 @@
 package jnetcall.java.tests;
 
-import com.google.common.base.Stopwatch;
-import jnetbase.java.sys.Primitives;
-import jnetbase.java.threads.Tasks;
-import org.example.api.*;
-import org.javatuples.Pair;
-import org.testng.annotations.Test;
-import org.testng.util.Strings;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertThrows;
+import static org.testng.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -14,14 +10,36 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-import static org.example.api.ITriggering.PCallBack;
-import static org.example.api.ITriggering.ThresholdHandler;
-import static org.testng.Assert.*;
+import org.example.api.ICalculator;
+import org.example.api.IDataTyped;
+import org.example.api.IMultiple;
+import org.example.api.IMultiple.Days;
+import org.example.api.IMultiple.WeekDay;
+import org.example.api.ISimultaneous;
+import org.example.api.IStringCache;
+import org.example.api.ITriggering;
+import org.example.api.ITriggering.PCallBack;
+import org.example.api.ITriggering.ThresholdHandler;
+import org.javatuples.Pair;
+import org.javatuples.Quartet;
+import org.javatuples.Quintet;
+import org.javatuples.Triplet;
+import org.testng.annotations.Test;
+import org.testng.util.Strings;
+
+import com.google.common.base.Stopwatch;
+import com.xafero.javaenums.BitFlag;
+
+import jnetbase.java.sys.Primitives;
+import jnetbase.java.threads.Tasks;
 
 public abstract class CallTest {
 
@@ -33,8 +51,8 @@ public abstract class CallTest {
 
     @Test
     public void shouldCallCache() throws Exception {
-        var input = new String[]{"life", "on", "mars"};
-        try (var client = create(IStringCache.class)) {
+        String[] input = new String[]{"life", "on", "mars"};
+        try (IStringCache client = create(IStringCache.class)) {
 
             client.set(42, input[0]);
             assertEquals(1, client.getSize());
@@ -61,83 +79,83 @@ public abstract class CallTest {
 
     @Test
     public void shouldCallMultiple() throws Exception {
-        try (var client = create(IMultiple.class)) {
+        try (IMultiple client = create(IMultiple.class)) {
 
-            var t2T = client.GetTuple2T(200, "Greece");
-            var t2V = client.GetTuple2V(t2T);
+            Pair<Integer, String> t2T = client.GetTuple2T(200, "Greece");
+            Pair<Integer, String> t2V = client.GetTuple2V(t2T);
             assertEquals(t2T, t2V);
 
-            var t3T = client.GetTuple3T(1, "cat", true);
-            var t3V = client.GetTuple3V(t3T);
+            Triplet<Integer, String, Boolean> t3T = client.GetTuple3T(1, "cat", true);
+            Triplet<Integer, String, Boolean> t3V = client.GetTuple3V(t3T);
             assertEquals(t3T, t3V);
 
-            var t4T = client.GetTuple4T("perl", new String[]{"java", "c#"}, 1, new int[]{2, 3});
-            var t4V = client.GetTuple4V(t4T);
+            Quartet<String, String[], Integer, int[]> t4T = client.GetTuple4T("perl", new String[]{"java", "c#"}, 1, new int[]{2, 3});
+            Quartet<String, String[], Integer, int[]> t4V = client.GetTuple4V(t4T);
             assertEquals(t4T.getValue0(), t4V.getValue0());
             assertEquals(t4T.getValue1(), t4V.getValue1());
             assertEquals(t4T.getValue2(), t4V.getValue2());
             assertEquals(t4T.getValue3(), t4V.getValue3());
 
-            var t5T = client.GetTuple5T(1, 1.5f, 2L, "dot", "net");
-            var t5V = client.GetTuple5V(t5T);
+            Quintet<Integer, Float, Long, String, String> t5T = client.GetTuple5T(1, 1.5f, 2L, "dot", "net");
+            Quintet<Integer, Float, Long, String, String> t5V = client.GetTuple5V(t5T);
             assertEquals(t5T, t5V);
 
-            var bd1 = client.FindBestDay(3);
+            WeekDay bd1 = client.FindBestDay(3);
             assertEquals("Wednesday", bd1.toString());
-            var bd2 = client.FindBestDay(5);
+            WeekDay bd2 = client.FindBestDay(5);
             assertEquals("Friday", bd2.toString());
-            var bds = client.FindFreeDays();
+            BitFlag<Days> bds = client.FindFreeDays();
             assertEquals("[Sunday, Thursday, Saturday]", bds.toString());
 
-            var bdt = client.GetTextOf(new IMultiple.WeekDay[]{bd1, bd2}, bds);
+            String bdt = client.GetTextOf(new IMultiple.WeekDay[]{bd1, bd2}, bds);
             assertEquals("[Wednesday, Friday] | [Sunday, Thursday, Saturday]", bdt);
         }
     }
 
     @Test
     public void shouldCallDataTyped() throws Exception {
-        try (var client = create(IDataTyped.class)) {
+        try (IDataTyped client = create(IDataTyped.class)) {
 
-            var now = LocalDateTime.now();
-            var dur = Duration.ofSeconds(94);
-            var env = new HashMap<String, Integer>();
+            LocalDateTime now = LocalDateTime.now();
+            Duration dur = Duration.ofSeconds(94);
+            HashMap<String, Integer> env = new HashMap<String, Integer>();
             env.put("Caller", "Program".length());
-            var dict = client.GetSystemVariables(now, dur, env)
+            String[] dict = client.GetSystemVariables(now, dur, env)
                     .entrySet().stream().map(f -> '['+f.getKey()+", "+f.getValue()+']').toArray(String[]::new);
             assertEquals("[Caller, 7]|[seconds, 94]|[year, 2022]", Strings.join("|", dict));
 
-            var lines = Arrays.asList(new String[]{"Dog  ", "Hot", "Dog ", "Dog", "Hot    ", "Cat", "Cat", "Hot", "Hot"});
-            var lineCount = client.GetLineCount(lines.toArray(String[]::new));
-            var set = client.GetUnique(lines, true);
-            assertEquals("Cat|Dog|Hot", Strings.join("|", set.toArray(String[]::new)));
+            List<String> lines = Arrays.asList(new String[]{"Dog  ", "Hot", "Dog ", "Dog", "Hot    ", "Cat", "Cat", "Hot", "Hot"});
+            int lineCount = client.GetLineCount(lines.toArray(String[]::new));
+            Set<String> set = client.GetUnique(lines, true);
+            assertEquals("Cat|Dog|Hot", Strings.join("|", set.stream().toArray(String[]::new)));
             assertEquals(9, lineCount);
 
-            var list = client.GetDouble(set).toArray(String[]::new);
+            String[] list = client.GetDouble(set).toArray(String[]::new);
             assertEquals("Cat|Dog|Hot|Cat|Dog|Hot", Strings.join("|", list));
 
-            var fs = Arrays.stream(Primitives.castInt(client.AllocateBytes(3, (byte) 42)))
+            String[] fs = Arrays.stream(Primitives.castInt(client.AllocateBytes(3, (byte) 42)))
                     .boxed().map(f -> f.toString()).toArray(String[]::new);
             assertEquals("42|42|42", Strings.join("|", fs));
 
-            var bsf = client.GetFileSize("Z:\\Nothing\\Good\\No fun with that file.txt");
+            long bsf = client.GetFileSize("Z:\\Nothing\\Good\\No fun with that file.txt");
             assertEquals(41, bsf);
 
-            var ay = Byte.MAX_VALUE; var as = Short.MAX_VALUE; var ai = Integer.MAX_VALUE;
-            var al = Long.MAX_VALUE; var af = Float.MAX_VALUE; var ad = Double.MAX_VALUE;
-            var ab = true; var ac = Character.MAX_VALUE; var at = "Str";
-            var au = BigDecimal.valueOf(Long.MAX_VALUE);
-            var ag = UUID.fromString("27edb110-afef-4ce3-b8c1-3fcb2ec3fabe");
-            var txt = client.ToSimpleText(ay, as, ai, al, af, ad, ab, ac, at, au, ag).replace(" ", "")
+            byte ay = Byte.MAX_VALUE; short as = Short.MAX_VALUE; int ai = Integer.MAX_VALUE;
+            long al = Long.MAX_VALUE; float af = Float.MAX_VALUE; double ad = Double.MAX_VALUE;
+            boolean ab = true; char ac = Character.MAX_VALUE; String at = "Str";
+            BigDecimal au = BigDecimal.valueOf(Long.MAX_VALUE);
+            UUID ag = UUID.fromString("27edb110-afef-4ce3-b8c1-3fcb2ec3fabe");
+            String txt = client.ToSimpleText(ay, as, ai, al, af, ad, ab, ac, at, au, ag).replace(" ", "")
                     .trim().replace("3,4", "3.4").replace("1,7", "1.7");
             txt = patch(txt);
             assertEquals("y=127,s=32767,i=2147483647,l=9223372036854775807,f=3.4028235E+38,d=1.7976931348623157E+308,b=True,c=￿,t=Str,u=9223372036854775807,g=27edb110-afef-4ce3-b8c1-3fcb2ec3fabe", txt);
 
-            var by = new byte[]{ 42 }; var bs = new short[]{ Short.MIN_VALUE }; var bi = new int[]{ Integer.MIN_VALUE };
-            var bl = new long[]{ Long.MIN_VALUE }; var bf = new float[]{ -3.4028235E38f };
-            var bd = new double[]{ -1.7976931348623157E308d }; var bb = new boolean[]{ false };
-            var bc = new char[]{ 'X' }; var bt = new String[]{ "Str1" };
-            var bu = new BigDecimal[] { BigDecimal.valueOf(Long.MIN_VALUE) };
-            var bg = new UUID[]{ UUID.fromString("00000000-0000-0000-0000-000000000000") };
+            byte[] by = new byte[]{ 42 }; short[] bs = new short[]{ Short.MIN_VALUE }; int[] bi = new int[]{ Integer.MIN_VALUE };
+            long[] bl = new long[]{ Long.MIN_VALUE }; float[] bf = new float[]{ -3.4028235E38f };
+            double[] bd = new double[]{ -1.7976931348623157E308d }; boolean[] bb = new boolean[]{ false };
+            char[] bc = new char[]{ 'X' }; String[] bt = new String[]{ "Str1" };
+            BigDecimal[] bu = new BigDecimal[] { BigDecimal.valueOf(Long.MIN_VALUE) };
+            UUID[] bg = new UUID[]{ UUID.fromString("00000000-0000-0000-0000-000000000000") };
             txt = client.ToArrayText(by, bs, bi, bl, bf, bd, bb, bc, bt, bu, bg).replace(" ", "")
                     .trim().replace("3,4", "3.4").replace("1,7", "1.7");
             txt = patch(txt);
@@ -147,28 +165,28 @@ public abstract class CallTest {
 
     @Test
     public void shouldCallSimultan() throws Exception {
-        try (var client = create(ISimultaneous.class)) {
+        try (ISimultaneous client = create(ISimultaneous.class)) {
 
             client.loadIt("Hello").get();
 
-            var id = client.getId().get();
+            Integer id = client.getId().get();
             assertTrue(id >= -100 && id <= 100, id + " ?!");
 
-            var txt = client.removeIt().get();
+            String txt = client.removeIt().get();
             assertEquals("Hello", txt);
 
             final int count = 3;
-            var range = IntStream.range(0, count);
+            IntStream range = IntStream.range(0, count);
 
-            var watch = Stopwatch.createStarted();
-            var tasks = range.mapToObj(i -> client.runIt(26, i)).toList();
+            Stopwatch watch = Stopwatch.createStarted();
+            List<CompletableFuture<Pair<Integer, Long>>> tasks = range.mapToObj(i -> client.runIt(26, i)).toList();
             watch.stop();
-            var listTime = watch.elapsed(TimeUnit.MILLISECONDS);
+            long listTime = watch.elapsed(TimeUnit.MILLISECONDS);
 
-            var all = Tasks.whenAll(tasks);
+            List<Pair<Integer, Long>> all = Tasks.whenAll(tasks);
             assertEquals(count, all.size());
 
-            var numbers = all.stream().map(t -> t.getValue0()).distinct().toArray();
+            Object[] numbers = all.stream().map(t -> t.getValue0()).distinct().toArray();
             assertEquals(count, numbers.length);
 
             assertTrue(listTime >= 0 && listTime <= getMaxListWait(), listTime + " ?!");
@@ -177,13 +195,13 @@ public abstract class CallTest {
 
     @Test
     public void shouldCallCalculator() throws Exception {
-        try (var client = create(ICalculator.class)) {
+        try (ICalculator client = create(ICalculator.class)) {
 
             assertEquals("C#", client.getName());
 
-            var value1 = 100.00D;
-            var value2 = 15.99D;
-            var result = client.add(value1, value2);
+            double value1 = 100.00D;
+            double value2 = 15.99D;
+            double result = client.add(value1, value2);
             assertEquals(115.99, result);
 
             value1 = 145.00D;
@@ -205,11 +223,11 @@ public abstract class CallTest {
 
     @Test
     public void shouldCallTrigger() throws Exception {
-        try (var client = create(ITriggering.class)) {
+        try (ITriggering client = create(ITriggering.class)) {
 
             final int cbCount = 3;
-            var cbList = new ArrayList<Pair<Integer, String>>();
-            final var clc = new CountDownLatch(cbCount);
+            ArrayList<Pair<Integer, String>> cbList = new ArrayList<Pair<Integer, String>>();
+            final CountDownLatch clc = new CountDownLatch(cbCount);
 
             PCallBack EnumWindowsCallback = (handle, lParam) -> {
                 cbList.add(Pair.with(handle, lParam));
@@ -217,7 +235,7 @@ public abstract class CallTest {
                 return true;
             };
 
-            var callOk = client.enumWindows(EnumWindowsCallback, cbCount);
+            boolean callOk = client.enumWindows(EnumWindowsCallback, cbCount);
             assertTrue(callOk);
             clc.await(5, TimeUnit.SECONDS);
 
@@ -225,11 +243,11 @@ public abstract class CallTest {
             assertEquals("[[0, 3!], [1, 4!], [2, 5!]]", cbList.toString());
 
             final int evtCount = 4;
-            var evtList = new ArrayList<Pair<String, Integer>>();
-            final var cle = new CountDownLatch(evtCount);
+            ArrayList<Pair<String, Integer>> evtList = new ArrayList<Pair<String, Integer>>();
+            final CountDownLatch cle = new CountDownLatch(evtCount);
 
             ThresholdHandler OnThresholdReached = (sender, e) -> {
-                var s = sender.toString();
+                String s = sender.toString();
                 evtList.add(Pair.with(s, e.Threshold()));
                 cle.countDown();
             };

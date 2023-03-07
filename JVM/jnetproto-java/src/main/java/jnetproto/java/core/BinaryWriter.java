@@ -1,11 +1,5 @@
 package jnetproto.java.core;
 
-import com.xafero.javaenums.Enums;
-import jnetbase.java.meta.Reflect;
-import jnetbase.java.sys.BitConverter;
-import jnetproto.java.api.IDataWriter;
-import org.javatuples.Tuple;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
@@ -14,9 +8,24 @@ import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.StreamSupport;
+
+import org.javatuples.Tuple;
+
+import com.xafero.javaenums.Enums;
+
+import jnetbase.java.meta.Reflect;
+import jnetbase.java.sys.BitConverter;
+import jnetproto.java.api.IDataWriter;
+import jnetproto.java.core.DataTypes.IDataType;
 
 public class BinaryWriter implements IDataWriter {
     private final Charset _enc;
@@ -67,7 +76,7 @@ public class BinaryWriter implements IDataWriter {
     @Override
     public void writeF128(BigDecimal value) throws IOException
     {
-        var raw = value.toString();
+        String raw = value.toString();
         writeUtf8(raw, false);
     }
 
@@ -84,7 +93,7 @@ public class BinaryWriter implements IDataWriter {
     }
 
     private void writeUtf8(String value, boolean wide) throws IOException {
-        var bytes = value.getBytes(_enc);
+        byte[] bytes = value.getBytes(_enc);
         if (wide)
             writeI16((short) bytes.length);
         else
@@ -94,13 +103,13 @@ public class BinaryWriter implements IDataWriter {
 
     @Override
     public void writeDuration(Duration value) throws IOException {
-        var raw = (double) value.toMillis();
+        double raw = (double) value.toMillis();
         writeF64(raw);
     }
 
     @Override
     public void writeTimestamp(LocalDateTime value) throws IOException {
-        var date = value.atZone(ZoneOffset.UTC);
+        ZonedDateTime date = value.atZone(ZoneOffset.UTC);
         writeI64(date.toEpochSecond());
         writeI32(Integer.parseInt(date.format(_fmt)));
     }
@@ -112,11 +121,11 @@ public class BinaryWriter implements IDataWriter {
 
     @Override
     public void writeArray(Object value) throws IOException {
-        var rank = Reflect.getRank(value);
-        for (var dim = 0; dim < rank; dim++)
+        int rank = Reflect.getRank(value);
+        for (int dim = 0; dim < rank; dim++)
             writeI32(Array.getLength(value));
         for (int i = 0; i < Array.getLength(value); i++) {
-            var item = Array.get(value, i);
+            Object item = Array.get(value, i);
             writeObject(item, true);
         }
     }
@@ -124,8 +133,8 @@ public class BinaryWriter implements IDataWriter {
     @Override
     public void writeMap(Map<?,?> value) throws IOException {
         writeI32(value.size());
-        for (var item : value.entrySet()) {
-            var entry = (Map.Entry<?,?>) item;
+        for (Entry<?, ?> item : value.entrySet()) {
+            Entry<?, ?> entry = (Map.Entry<?,?>) item;
             writeObject(entry.getKey(), true);
             writeObject(entry.getValue(), true);
         }
@@ -133,9 +142,9 @@ public class BinaryWriter implements IDataWriter {
 
     @Override
     public void writeTuple(Tuple value) throws IOException {
-        var array = value.toArray();
+        Object[] array = value.toArray();
         writeI8((byte)array.length);
-        for (var i = 0; i < array.length; i++)
+        for (int i = 0; i < array.length; i++)
         {
             writeObject(array[i], false);
         }
@@ -154,7 +163,7 @@ public class BinaryWriter implements IDataWriter {
     @Override
     public void writeBag(Object[] value) throws IOException {
         writeI8((byte)value.length);
-        for (var item : value)
+        for (Object item : value)
             writeObject(item, false);
     }
 
@@ -167,16 +176,17 @@ public class BinaryWriter implements IDataWriter {
     private void writeIterable(Iterable<?> raw, boolean skipHeader) throws IOException {
         int count;
         Iterable<?> values;
-        if (raw instanceof Collection<?> coll) {
+        if (raw instanceof Collection<?>) {
+        	Collection<?> coll = (Collection<?>)raw;
             count = coll.size();
             values = raw;
         } else {
-            var array = StreamSupport.stream(raw.spliterator(), false).toList();
+            List<?> array = StreamSupport.stream(raw.spliterator(), false).toList();
             count = array.size();
             values = array;
         }
         writeI32(count);
-        for (var entry : values)
+        for (Object entry : values)
             writeObject(entry, skipHeader);
     }
 
@@ -190,27 +200,31 @@ public class BinaryWriter implements IDataWriter {
     }
 
     private void writeObject(Object value, boolean skipHeader) throws IOException {
-        var kind = DataTypes.getKind(value);
+        IDataType kind = DataTypes.getKind(value);
         if (!skipHeader)
         {
             _stream.write(DataTypes.getByte(kind));
-            if (kind instanceof DataTypes.ArrayDt adt)
+            if (kind instanceof DataTypes.ArrayDt)
             {
+            	DataTypes.ArrayDt adt = (DataTypes.ArrayDt)kind;
                 _stream.write(DataTypes.getByte(adt.Item()));
                 _stream.write((byte)adt.Rank());
             }
-            else if (kind instanceof DataTypes.MapDt mdt)
+            else if (kind instanceof DataTypes.MapDt)
             {
+            	DataTypes.MapDt mdt = (DataTypes.MapDt)kind;
                 _stream.write(DataTypes.getByte(mdt.Key()));
                 _stream.write(DataTypes.getByte(mdt.Val()));
             }
-            else if (kind instanceof DataTypes.ListDt ldt)
+            else if (kind instanceof DataTypes.ListDt)
             {
+            	DataTypes.ListDt ldt = (DataTypes.ListDt)kind;
                 _stream.write(DataTypes.getByte(ldt.Item()));
             }
         }
-        if (kind instanceof DataTypes.EnumDt edt)
+        if (kind instanceof DataTypes.EnumDt)
         {
+        	DataTypes.EnumDt edt = (DataTypes.EnumDt)kind;
             value = Enums.castToNumber(value, edt.Type());
         }
         switch (kind.Kind())

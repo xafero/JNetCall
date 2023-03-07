@@ -1,9 +1,10 @@
 package org.example;
 
-import jnetcall.java.client.InProcClient;
+import static jnetcall.java.client.tools.ServiceEnv.buildPath;
+
 import org.example.api.ICalculator;
 
-import static jnetcall.java.client.tools.ServiceEnv.buildPath;
+import jnetcall.java.client.InProcClient;
 
 public class Main {
 
@@ -11,12 +12,12 @@ public class Main {
 
         final String path = "..\\..\\..\\NET\\Alien2.Sharp\\bin\\Debug\\net6.0\\Alien2.Sharp.dll";
 
-        var client = InProcClient.create(ICalculator.class, buildPath(path));
+        ICalculator client = InProcClient.create(ICalculator.class, buildPath(path));
         System.out.println(" *** " + client.getName() + " on JVM *** ");
         
-        var value1 = 100.00D;
-        var value2 = 15.99D;
-        var result = client.add(value1, value2);
+        double value1 = 100.00D;
+        double value2 = 15.99D;
+        double result = client.add(value1, value2);
         System.out.printf("Add(%s %s) = %s %n", value1, value2, result);
 
         value1 = 145.00D;

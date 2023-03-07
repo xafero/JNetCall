@@ -1,26 +1,26 @@
 package jnetcall.java.server;
 
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import jnetbase.java.meta.Reflect;
 import jnetbase.java.threads.ThreadExecutor;
 import jnetcall.java.api.ICaller;
 import jnetcall.java.api.io.ISendTransport;
 
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 public final class ServiceLots {
 
     public static <T> ClassHosting create(Class<T> serviceClass) {
-        var protocol = new ServiceLot();
+    	ServiceLot protocol = new ServiceLot();
         register(protocol);
         return create(serviceClass, protocol);
     }
 
     private static <T> ClassHosting create(Class<T> serviceClass, ISendTransport protocol) {
-        var instance = Reflect.createNew(serviceClass);
-        var pool = new ThreadExecutor();
-        var host = new ClassHosting(instance, protocol, pool);
+        T instance = Reflect.createNew(serviceClass);
+        ThreadExecutor pool = new ThreadExecutor();
+        ClassHosting host = new ClassHosting(instance, protocol, pool);
         return host;
     }
 
@@ -32,8 +32,8 @@ public final class ServiceLots {
 
     @SuppressWarnings("unused")
     public static byte[] call(byte[] input) throws Exception {
-        for (var lot : lots)
-            try (var output = new ByteArrayOutputStream()) {
+        for (ICaller lot : lots)
+            try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
                 if (!lot.tryCall(input, output))
                     continue;
                 return output.toByteArray();

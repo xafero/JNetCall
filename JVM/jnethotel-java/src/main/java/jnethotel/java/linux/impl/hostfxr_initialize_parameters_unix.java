@@ -2,6 +2,7 @@ package jnethotel.java.linux.impl;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+
 import jnethotel.java.interop.api.hostfxr_initialize_parameters;
 
 public class hostfxr_initialize_parameters_unix

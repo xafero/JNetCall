@@ -1,16 +1,17 @@
 package jnethotel.java;
 
-import com.sun.jna.Function;
-import com.sun.jna.Memory;
-import com.sun.jna.Pointer;
-import jnethotel.java.api.ICoreClr;
-import jnethotel.java.api.IVmRef;
-import jnethotel.java.interop.VmHelper;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+
+import com.sun.jna.Function;
+import com.sun.jna.Memory;
+import com.sun.jna.Pointer;
+
+import jnethotel.java.api.ICoreClr;
+import jnethotel.java.api.IVmRef;
+import jnethotel.java.interop.VmHelper;
 
 public final class Clr implements AutoCloseable {
 
@@ -29,8 +30,8 @@ public final class Clr implements AutoCloseable {
     public static Function getCallback(ICoreClr coreClr, String dll, String type,
                                        String method, String delegate)
             throws Exception {
-        var runtimeConfig = VmHelper.getRuntimeConfig(dll);
-        var typeName = type.contains(", ") ? type : VmHelper.getTypeName(type, dll);
+        String runtimeConfig = VmHelper.getRuntimeConfig(dll);
+        String typeName = type.contains(", ") ? type : VmHelper.getTypeName(type, dll);
 
         if (!(new File(dll).exists()))
             throw new FileNotFoundException(dll);
@@ -41,7 +42,7 @@ public final class Clr implements AutoCloseable {
     }
 
     private static Memory toPointer(byte[] data) {
-        var pointer = new Memory(data.length);
+        Memory pointer = new Memory(data.length);
         pointer.write(0, data, 0, data.length);
         return pointer;
     }
@@ -49,12 +50,12 @@ public final class Clr implements AutoCloseable {
     private static byte[] toByteArray(Pointer ptr, int size) {
         if (size == -1) {
             final int header = 4;
-            var lenBits = ptr.getByteArray(0, header);
-            var len = ByteBuffer.wrap(lenBits).order(ByteOrder.nativeOrder()).getInt();
+            byte[] lenBits = ptr.getByteArray(0, header);
+            int len = ByteBuffer.wrap(lenBits).order(ByteOrder.nativeOrder()).getInt();
             size = header + len;
         }
-        var array = new byte[size];
-        for (var i = 0; i < array.length; i++)
+        byte[] array = new byte[size];
+        for (int i = 0; i < array.length; i++)
             array[i] = ptr.getByte(i);
         return array;
     }
@@ -64,8 +65,8 @@ public final class Clr implements AutoCloseable {
     }
 
     public byte[] callStaticByteArrayMethod(Function func, byte[] input) {
-        var inputPtr = toPointer(input);
-        var outputPtr = func.invokePointer(new Object[]{inputPtr});
+        Memory inputPtr = toPointer(input);
+        Pointer outputPtr = func.invokePointer(new Object[]{inputPtr});
         return toByteArray(outputPtr, -1);
     }
 }

@@ -1,48 +1,60 @@
 package jnetproto.java.tools;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.List;
+
 import com.xafero.javaenums.BitFlag;
 import com.xafero.javaenums.Enums;
+
+import jnetbase.java.meta.Property;
 import jnetbase.java.meta.Reflect;
 import jnetbase.java.sys.ArrayX;
 import jnetproto.java.api.DataType;
 import jnetproto.java.core.DataTypes;
-
-import java.lang.reflect.*;
-import java.util.Arrays;
+import jnetproto.java.core.DataTypes.IDataType;
 
 public final class Conversions {
 
     public static Object[] convertFor(Object[] args, Executable method) {
-        var genTypes = method.getGenericParameterTypes();
+        Type[] genTypes = method.getGenericParameterTypes();
         return convert(genTypes, args);
     }
 
     public static Object[] convert(Type[] types, Object[] args) {
-        for (var i = 0; i < args.length; i++)
+        for (int i = 0; i < args.length; i++)
             args[i] = convert(types[i], args[i]);
         return args;
     }
 
     public static Object convert(Type type, Object arg) {
-        if (type instanceof ParameterizedType param) {
-            var baseType = param.getRawType();
-            var typeArgs = param.getActualTypeArguments();
+        if (type instanceof ParameterizedType) {
+        	ParameterizedType param = (ParameterizedType)type;
+            Type baseType = param.getRawType();
+            Type[] typeArgs = param.getActualTypeArguments();
             if (BitFlag.class.equals(baseType)) {
                 return Enums.castToEnum(arg, (Class<?>) typeArgs[0]);
             }
         }
-        if (type instanceof Class clazz) {
+        if (type instanceof Class) {
+        	Class clazz = (Class)type;
             if (clazz.isInstance(arg)) {
                 return arg;
             }
             if (clazz.isArray()) {
-                var arrayType = clazz.getComponentType();
+                Class arrayType = clazz.getComponentType();
                 if (Enums.isEnum(arrayType)) {
-                    var arraySize = Array.getLength(arg);
-                    var array = Array.newInstance(arrayType, arraySize);
-                    for (var i = 0; i < arraySize; i++) {
-                        var item = Array.get(arg, i);
-                        var conv = Enums.castToEnum(item, arrayType);
+                    int arraySize = Array.getLength(arg);
+                    Object array = Array.newInstance(arrayType, arraySize);
+                    for (int i = 0; i < arraySize; i++) {
+                        Object item = Array.get(arg, i);
+                        Object conv = Enums.castToEnum(item, arrayType);
                         Array.set(array, i, conv);
                     }
                     return array;
@@ -61,33 +73,33 @@ public final class Conversions {
 
     public static Object fromObjectArray(Type type, Object[] args) {
         try {
-            var kind = DataTypes.getKind(type);
+            IDataType kind = DataTypes.getKind(type);
             if (kind.Kind() != DataType.Unknown)
             {
-                if (kind instanceof DataTypes.ArrayDt at && at.Item().Kind() == DataType.Unknown)
+                if (kind instanceof DataTypes.ArrayDt && ((DataTypes.ArrayDt)kind).Item().Kind() == DataType.Unknown)
                 {
-                    var arrayType = ((Class<?>)type).getComponentType();
-                    var array = ArrayX.asTypedArray(args, arrayType, Conversions::convertRaw);
+                    Class<?> arrayType = ((Class<?>)type).getComponentType();
+                    Object array = ArrayX.asTypedArray(args, arrayType, Conversions::convertRaw);
                     return array;
                 }
-                if (kind instanceof DataTypes.ListDt lt && lt.Item().Kind() == DataType.Unknown)
+                if (kind instanceof DataTypes.ListDt && ((DataTypes.ListDt)kind).Item().Kind() == DataType.Unknown)
                 {
-                    var listType = ((ParameterizedType)type).getActualTypeArguments()[0];
-                    var list = ArrayX.asTypedArrayList(args, listType, Conversions::convertRaw);
+                    Type listType = ((ParameterizedType)type).getActualTypeArguments()[0];
+                    List<?> list = ArrayX.asTypedArrayList(args, listType, Conversions::convertRaw);
                     return list;
                 }
             }
-            var inputTypes = Arrays.stream(args).map(DataTypes::toClass).toArray(Class[]::new);
-            var creator = Reflect.getConstructor(type, inputTypes);
+            Class[] inputTypes = Arrays.stream(args).map(DataTypes::toClass).toArray(Class[]::new);
+            Constructor<Object> creator = Reflect.getConstructor(type, inputTypes);
             if (creator == null || !isUsable(creator, args)) {
                 creator = Reflect.getFirstConstructor(type);
                 if (creator == null || !isUsable(creator, args)) {
-                    var props = Reflect.getProperties(type);
+                    List<Property> props = Reflect.getProperties(type);
                     if (props.size() == args.length) {
-                        var obj = Reflect.createNew(type);
-                        for (var i = 0; i < props.size(); i++) {
-                            var arg = args[i];
-                            var prop = props.get(i);
+                        Object obj = Reflect.createNew(type);
+                        for (int i = 0; i < props.size(); i++) {
+                            Object arg = args[i];
+                            Property prop = props.get(i);
                             prop.Set().invoke(obj, arg);
                         }
                         return obj;
@@ -95,7 +107,7 @@ public final class Conversions {
                     throw new IllegalArgumentException("No constructor: " + type);
                 }
             }
-            var outputTypes = creator.getParameters();
+            Parameter[] outputTypes = creator.getParameters();
             args = Conversions.convertFor(args, creator);
             args = convertFor(args, outputTypes);
             return creator.newInstance(args);
@@ -106,11 +118,11 @@ public final class Conversions {
 
     private static Object[] convertFor(Object[] args, Parameter[] parameters)
     {
-        for (var i = 0; i < args.length && i < parameters.length; i++)
+        for (int i = 0; i < args.length && i < parameters.length; i++)
         {
-            var prm = parameters[i].getParameterizedType();
-            var arg = args[i];
-            var value = convertRaw(arg, prm);
+            Type prm = parameters[i].getParameterizedType();
+            Object arg = args[i];
+            Object value = convertRaw(arg, prm);
             args[i] = value;
         }
         return args;
@@ -118,39 +130,41 @@ public final class Conversions {
 
     private static Object convertRaw(Object v, Type r)
     {
-        var t = r instanceof Class<?> c ? c : (Class) ((ParameterizedType)r).getRawType();
+        Class t = r instanceof Class<?> ? (Class)r : (Class) ((ParameterizedType)r).getRawType();
         if (t.isEnum())
             return v;
         if (t.equals(Object.class))
             return v;
         if (t.isInstance(v))
             return v;
-        if (v instanceof Object[] va)
-            return fromObjectArray(r, va);
+        if (v instanceof Object[])
+            return fromObjectArray(r, (Object[])v);
         return v;
     }
 
     public static Object toObjectArray(Object obj) {
         try {
-            var kind = DataTypes.getKind(obj);
+            IDataType kind = DataTypes.getKind(obj);
             if (kind.Kind() != DataType.Unknown) {
-                if (kind instanceof DataTypes.ArrayDt at && at.Item().Kind() == DataType.Unknown)
+                if (kind instanceof DataTypes.ArrayDt && ((DataTypes.ArrayDt)kind).Item().Kind() == DataType.Unknown)
                     obj = ArrayX.asObjectArray(obj);
-                if (kind instanceof DataTypes.ListDt lt && lt.Item().Kind() == DataType.Unknown)
+                if (kind instanceof DataTypes.ListDt && ((DataTypes.ListDt)kind).Item().Kind() == DataType.Unknown)
                     obj = ArrayX.asObjectArray((Iterable)obj);
-                if (obj instanceof Object[] ar && Arrays.stream(ar)
-                        .anyMatch(a -> DataTypes.getKind(a).Kind() == DataType.Unknown))
-                    for (var i = 0; i < ar.length; i++)
+                if (obj instanceof Object[] && Arrays.stream((Object[])obj)
+                        .anyMatch(a -> DataTypes.getKind(a).Kind() == DataType.Unknown)) {
+                	Object[] ar = (Object[])obj;
+                    for (int i = 0; i < ar.length; i++)
                         ar[i] = toObjectArray(ar[i]);
+                }
                 return obj;
             }
-            var type = obj.getClass();
-            var props = Reflect.getProperties(type);
-            var args = new Object[props.size()];
-            for (var i = 0; i < args.length; i++) {
-                var prop = props.get(i);
-                var propGet = prop.Get();
-                var propVal = propGet.invoke(obj);
+            Class type = obj.getClass();
+            List<Property> props = Reflect.getProperties(type);
+            Object[] args = new Object[props.size()];
+            for (int i = 0; i < args.length; i++) {
+                Property prop = props.get(i);
+                Method propGet = prop.Get();
+                Object propVal = propGet.invoke(obj);
                 args[i] = toObjectArray(propVal);
             }
             return args;

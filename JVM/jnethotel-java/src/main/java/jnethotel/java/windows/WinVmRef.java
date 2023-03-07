@@ -1,14 +1,15 @@
 package jnethotel.java.windows;
 
-import com.sun.jna.Native;
-import com.sun.jna.NativeLibrary;
-import jnethotel.java.api.ICoreClr;
-import jnethotel.java.api.IVmRef;
-import jnethotel.java.windows.impl.nethost_library_windows;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import com.sun.jna.Native;
+import com.sun.jna.NativeLibrary;
+
+import jnethotel.java.api.ICoreClr;
+import jnethotel.java.api.IVmRef;
+import jnethotel.java.windows.impl.nethost_library_windows;
 
 public final class WinVmRef implements IVmRef {
 
@@ -24,9 +25,9 @@ public final class WinVmRef implements IVmRef {
 
     @Override
     public void loadLib() throws IOException {
-        var libFileName = getVmDll();
-        var libRoot = Path.of("C:\\Program Files\\dotnet");
-        var libPath = Files.find(libRoot, 7,
+        String libFileName = getVmDll();
+        Path libRoot = Path.of("C:\\Program Files\\dotnet");
+        String libPath = Files.find(libRoot, 7,
                         (p, b) -> p.getFileName().toString().equals(libFileName) &&
                                 p.getParent().toString().contains("-x64"))
                 .findFirst().orElseThrow().getParent().toString();

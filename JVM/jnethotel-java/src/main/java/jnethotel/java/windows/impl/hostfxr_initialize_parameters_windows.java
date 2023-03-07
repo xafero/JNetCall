@@ -3,6 +3,7 @@ package jnethotel.java.windows.impl;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
+
 import jnethotel.java.interop.api.hostfxr_initialize_parameters;
 
 public class hostfxr_initialize_parameters_windows

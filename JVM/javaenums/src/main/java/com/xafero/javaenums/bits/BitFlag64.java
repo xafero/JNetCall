@@ -1,11 +1,11 @@
 package com.xafero.javaenums.bits;
 
+import java.util.Collection;
+
 import com.xafero.javaenums.BitFlag;
 import com.xafero.javaenums.Enums;
 import com.xafero.javaenums.flags.LongFlag;
 import com.xafero.javaenums.units.LongEnum;
-
-import java.util.Collection;
 
 public final class BitFlag64<T extends Enum & LongFlag>
         extends BitFlag<T>

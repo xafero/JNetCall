@@ -1,10 +1,11 @@
 package jnetcall.java.tests.io;
 
-import jnetcall.java.api.io.ISendTransport;
-import jnetcall.java.impl.io.net.UdpTransport;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.javatuples.Pair;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import jnetcall.java.api.io.ISendTransport;
+import jnetcall.java.impl.io.net.UdpTransport;
 
 public final class UdpTransportTest extends TransportTest {
 
@@ -16,15 +17,15 @@ public final class UdpTransportTest extends TransportTest {
 
     @Override
     protected Pair<ISendTransport, ISendTransport> getBoth() {
-        var offset = getNextOffset();
-        var portOne = 11001 + offset;
-        var portTwo = 11051 + offset;
-        var left = new UdpTransport(
+        int offset = getNextOffset();
+        int portOne = 11001 + offset;
+        int portTwo = 11051 + offset;
+        UdpTransport left = new UdpTransport(
                 Encoding,
                 "localhost", portOne,
                 "localhost", portTwo
         );
-        var right = new UdpTransport(
+        UdpTransport right = new UdpTransport(
                 Encoding,
                 "localhost", portTwo,
                 "localhost", portOne

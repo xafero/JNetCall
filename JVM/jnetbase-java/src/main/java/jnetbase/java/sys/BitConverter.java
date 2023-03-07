@@ -55,7 +55,7 @@ public final class BitConverter {
     }
 
     public static byte[] getBytes(UUID value) {
-        var most = getBytes(value.getMostSignificantBits());
+        byte[] most = getBytes(value.getMostSignificantBits());
         return allocate(16)
                 .put(most, 4, 4)
                 .put(most, 2, 1)
@@ -68,12 +68,12 @@ public final class BitConverter {
     }
 
     public static UUID toGuid(byte[] bytes) {
-        var raw = wrap(bytes);
-        var first = getBytes(raw.getInt());
-        var second = getBytes(raw.getInt());
-        var most = toInt64(new byte[]{second[2], second[3], second[0], second[1],
+        ByteBuffer raw = wrap(bytes);
+        byte[] first = getBytes(raw.getInt());
+        byte[] second = getBytes(raw.getInt());
+        long most = toInt64(new byte[]{second[2], second[3], second[0], second[1],
                 first[0], first[1], first[2], first[3]});
-        var least = raw.order(ByteOrder.BIG_ENDIAN).getLong();
+        long least = raw.order(ByteOrder.BIG_ENDIAN).getLong();
         return new UUID(most, least);
     }
 }

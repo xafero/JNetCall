@@ -10,22 +10,22 @@ import java.nio.channels.ReadableByteChannel;
 public final class NetworkTools {
 
 	public static SocketAddress toEndPoint(String host, int port) {
-		var addr = new InetSocketAddress(host, port);
+		InetSocketAddress addr = new InetSocketAddress(host, port);
 		return addr;
 	}
 
 	private static ByteBuffer tryRead(ReadableByteChannel stream, int size, ByteBuffer prefix) 
 			throws IOException 
 	{
-		var skip = prefix != null ? prefix.capacity() : 0;
+		int skip = prefix != null ? prefix.capacity() : 0;
 		size += skip;
-		var buffer = ByteBuffer.allocate(size);
+		ByteBuffer buffer = ByteBuffer.allocate(size);
 		int got;
 		if (prefix == null) {
 			got = stream.read(buffer);
 		} else {
 			buffer.put(prefix.position(0));
-			var tmp = stream.read(buffer);
+			int tmp = stream.read(buffer);
 			got = tmp + skip;
 		}
 		if (size != got) {
@@ -36,9 +36,9 @@ public final class NetworkTools {
 	}
 
 	public static ByteBuffer readWithSize(ReadableByteChannel stream) throws IOException {
-		var sizeBytes = tryRead(stream, 4, null);
-		var size = sizeBytes.order(ByteOrder.nativeOrder()).getInt();
-		var bytes = tryRead(stream, size, sizeBytes);
+		ByteBuffer sizeBytes = tryRead(stream, 4, null);
+		int size = sizeBytes.order(ByteOrder.nativeOrder()).getInt();
+		ByteBuffer bytes = tryRead(stream, size, sizeBytes);
 		return bytes;
 	}
 }

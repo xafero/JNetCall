@@ -1,13 +1,14 @@
 package jnethotel.java.mac;
 
+import java.nio.ByteBuffer;
+
 import com.sun.jna.Function;
+
 import jnethotel.java.interop.BaseCoreClr;
 import jnethotel.java.interop.api.hostfxr_delegate_type;
 import jnethotel.java.linux.impl.hostfxr_initialize_parameters_unix;
 import jnethotel.java.linux.impl.hostfxr_library_unix;
 import jnethotel.java.linux.impl.nethost_library_unix;
-
-import java.nio.ByteBuffer;
 
 class MacCoreClr extends BaseCoreClr<String, ByteBuffer, hostfxr_initialize_parameters_unix.ByReference> {
 

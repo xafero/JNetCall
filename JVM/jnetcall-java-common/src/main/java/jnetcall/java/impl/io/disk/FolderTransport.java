@@ -1,10 +1,6 @@
 package jnetcall.java.impl.io.disk;
 
-import jnetbase.java.files.FileSystemWatcher;
-import jnetbase.java.threads.IExecutor;
-import jnetcall.java.api.enc.IEncoding;
-import jnetcall.java.api.io.IPushTransport;
-import jnetcall.java.api.io.ISendTransport;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +10,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import jnetbase.java.files.FileSystemWatcher;
+import jnetbase.java.threads.IExecutor;
+import jnetcall.java.api.enc.IEncoding;
+import jnetcall.java.api.io.IPushTransport;
+import jnetcall.java.api.io.ISendTransport;
 
 public final class FolderTransport implements ISendTransport, IPushTransport, AutoCloseable {
 
@@ -42,7 +42,7 @@ public final class FolderTransport implements ISendTransport, IPushTransport, Au
     private static final String Suffix = ".s";
 
     private FileSystemWatcher startWatch() {
-        var watcher = new FileSystemWatcher(_inputFolder, _executor, ENTRY_CREATE);
+    	FileSystemWatcher watcher = new FileSystemWatcher(_inputFolder, _executor, ENTRY_CREATE);
         watcher.setFileFilter(FolderTransport::checkName);
         watcher.setCallback(this::onCreated);
         watcher.enableRaisingEvents(true);
@@ -68,7 +68,7 @@ public final class FolderTransport implements ISendTransport, IPushTransport, Au
         }
         _onPush = file -> {
             try {
-                var msg = get(file, clazz);
+                T msg = get(file, clazz);
                 data.accept(msg);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -83,9 +83,9 @@ public final class FolderTransport implements ISendTransport, IPushTransport, Au
     }
 
     private <T> T get(String sFile, Class<T> clazz) throws Exception {
-        var dFile = sFile.substring(0, sFile.length() - Suffix.length());
-        var bytes = Files.readAllBytes(Path.of(dFile));
-        var msg = _encoding.decode(bytes, clazz);
+        String dFile = sFile.substring(0, sFile.length() - Suffix.length());
+        byte[] bytes = Files.readAllBytes(Path.of(dFile));
+        T msg = _encoding.decode(bytes, clazz);
         CompletableFuture.runAsync(() ->
         {
             try {
@@ -109,11 +109,11 @@ public final class FolderTransport implements ISendTransport, IPushTransport, Au
     @Override
     public <T> void send(T payload) {
         try {
-            var bytes = _encoding.encode(payload);
-            var pathData = _outputFolder.resolve(Prefix + getNextId());
+            byte[] bytes = _encoding.encode(payload);
+            Path pathData = _outputFolder.resolve(Prefix + getNextId());
             Files.deleteIfExists(pathData);
             Files.write(pathData, bytes);
-            var pathMark = Path.of(pathData + Suffix);
+            Path pathMark = Path.of(pathData + Suffix);
             Files.deleteIfExists(pathMark);
             Files.write(pathMark, new byte[1]);
         } catch (Exception e) {

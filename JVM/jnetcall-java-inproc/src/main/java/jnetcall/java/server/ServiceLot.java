@@ -1,5 +1,12 @@
 package jnetcall.java.server;
 
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import jnetbase.java.meta.TypeToken;
 import jnetcall.java.api.ICaller;
 import jnetcall.java.api.enc.IEncoding;
@@ -7,13 +14,6 @@ import jnetcall.java.api.flow.MethodCall;
 import jnetcall.java.api.flow.MethodResult;
 import jnetcall.java.api.io.IPullTransport;
 import jnetcall.java.impl.enc.BinaryEncoding;
-
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public final class ServiceLot implements ICaller, IPullTransport {
 
@@ -46,20 +46,20 @@ public final class ServiceLot implements ICaller, IPullTransport {
     private List<MethodResult> synchronize(Collection<MethodCall> inputs) {
         synchronized (_sync) {
             _inputs.addAll(inputs);
-            var copy = new ArrayList<MethodResult>();
+            ArrayList<MethodResult> copy = new ArrayList<MethodResult>();
             ((BlockingQueue) _outputs).drainTo(copy);
             return copy;
         }
     }
 
-    private static final TypeToken<List<MethodCall>> mcList = new TypeToken<>() {
+    private static final TypeToken<List<MethodCall>> mcList = new TypeToken() {
     };
 
     @Override
     public boolean tryCall(byte[] in, OutputStream output) throws Exception {
-        var calls = _encoding.decode(in, mcList);
-        var answers = synchronize(calls);
-        var bytes = _encoding.encode(answers);
+        List<MethodCall> calls = _encoding.decode(in, mcList);
+        List<MethodResult> answers = synchronize(calls);
+        byte[] bytes = _encoding.encode(answers);
         output.write(bytes);
         output.flush();
         return true;

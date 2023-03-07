@@ -1,8 +1,8 @@
 package jnetcall.java.tests;
 
-import jnetcall.java.client.StdIOClient;
-
 import static jnetcall.java.client.tools.ServiceEnv.buildPath;
+
+import jnetcall.java.client.StdIOClient;
 
 public final class MainCallTest extends CallTest {
 

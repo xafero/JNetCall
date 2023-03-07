@@ -1,23 +1,26 @@
 package jnetproto.java.core;
 
-import com.xafero.javaenums.Enums;
-import jnetbase.java.meta.Reflect;
-import jnetproto.java.api.DataType;
-import org.javatuples.Tuple;
-
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+
+import org.javatuples.Tuple;
+
+import com.xafero.javaenums.Enums;
+
+import jnetbase.java.meta.Reflect;
+import jnetproto.java.api.DataType;
 
 public final class DataTypes {
 
     public static Class<?> toClass(Object a) {
-        var kind = DataTypes.getKind(a);
+        IDataType kind = DataTypes.getKind(a);
         try {
             return DataTypes.getClass(kind.Kind());
         } catch (Exception e) {
@@ -54,11 +57,74 @@ public final class DataTypes {
     }
 
     public interface IDataType { DataType Kind(); }
-    private record SingleDt(DataType Kind) implements IDataType { }
-    public record EnumDt(DataType Kind, Class<?> Type) implements IDataType { }
-    public record ArrayDt(DataType Kind, int Rank, IDataType Item) implements IDataType {}
-    public record MapDt(DataType Kind, IDataType Key, IDataType Val) implements IDataType {}
-    public record ListDt(DataType Kind, IDataType Item) implements IDataType {}
+    
+    private static final class SingleDt implements IDataType {
+    	private final DataType kind;
+
+		public SingleDt(DataType kind) { 
+    		this.kind=kind;
+    	}
+		
+		@Override public DataType Kind() { return kind; }
+    }
+    
+    public static final class EnumDt implements IDataType {     	
+    	private final DataType kind;
+		private final Class<?> type;
+
+		public EnumDt(DataType kind, Class<?> type) { 
+    		this.kind=kind;
+    		this.type=type;
+    	}
+		
+		@Override public DataType Kind() { return kind; }	
+		public Class<?> Type() { return type; }
+    }
+    
+    public static final class ArrayDt implements IDataType {
+    	private final DataType kind;
+    	private final int rank;
+    	private final IDataType item;    	
+    	    	
+    	public ArrayDt(DataType kind, int rank, IDataType item) { 
+    		this.kind=kind;
+    		this.rank=rank;
+    		this.item=item;
+    	}
+    	
+    	@Override public DataType Kind() { return kind; }    	
+    	public int Rank() { return rank; }    	
+    	public IDataType Item() { return item; }
+    }
+    
+    public static final class MapDt implements IDataType {
+    	private final DataType kind;
+    	private final IDataType key;
+    	private final IDataType val;    	
+    	
+    	public MapDt(DataType kind, IDataType key, IDataType val) { 
+    		this.kind=kind;
+    		this.key=key;
+    		this.val=val;
+    	}
+    	
+    	@Override public DataType Kind() { return kind; }    	
+    	public IDataType Key() { return key; }    	
+    	public IDataType Val() { return val;	}
+    }
+    
+    public static final class ListDt implements IDataType {
+    	private final DataType kind;
+    	private final IDataType item;
+    	
+    	public ListDt(DataType kind, IDataType item) {
+    		this.kind=kind;
+    		this.item=item;
+    	}
+
+    	@Override public DataType Kind() { return kind; }    	
+		public IDataType Item() { return item; }
+    }
 
     public static IDataType getKind(Object instance)
     {
@@ -66,18 +132,18 @@ public final class DataTypes {
         {
             return new SingleDt(DataType.Null);
         }
-        var type = instance instanceof Class<?> cl ? cl :
-                instance instanceof ParameterizedType pt ? (Class<?>) pt.getRawType() :
+        Class type = instance instanceof Class<?> ? (Class)instance :
+                instance instanceof ParameterizedType ? (Class<?>)((ParameterizedType)instance).getRawType() :
                 instance.getClass();
         if (Enums.isEnum(type))
         {
-            var item = Enums.getEnumUnderlyingType(type);
+            Class item = Enums.getEnumUnderlyingType(type);
             return new EnumDt(getKind(item).Kind(), item);
         }
         if (type.isArray())
         {
-            var item = type.getComponentType();
-            var rank = Reflect.getRank(type);
+            Class item = type.getComponentType();
+            int rank = Reflect.getRank(type);
             if (rank == 1)
             {
                 if (item == Object.class)
@@ -93,9 +159,9 @@ public final class DataTypes {
         }
         if (Map.class.isAssignableFrom(type))
         {
-            var dict = (Map<?,?>)instance;
+            Map<?, ?> dict = (Map<?,?>)instance;
             Map.Entry<?,?> f = null;
-            for (var entry : dict.entrySet())
+            for (Entry<?, ?> entry : dict.entrySet())
             {
                 f = (Map.Entry<?,?>)entry;
                 break;
@@ -104,15 +170,15 @@ public final class DataTypes {
         }
         if (Set.class.isAssignableFrom(type))
         {
-            var item = instance instanceof Set<?> s
-                    ? (s.isEmpty() ? Object.class : s.iterator().next())
+            Object item = instance instanceof Set<?>
+                    ? (((Set)instance).isEmpty() ? Object.class : ((Set)instance).iterator().next())
                     : ((ParameterizedType)instance).getActualTypeArguments()[0];
             return new ListDt(DataType.Set, getKind(item));
         }
         if (List.class.isAssignableFrom(type))
         {
-            var item = instance instanceof List<?> l
-                    ? (l.isEmpty() ? Object.class : l.get(0))
+            Object item = instance instanceof List<?>
+                    ? (((List)instance).isEmpty() ? Object.class : ((List)instance).get(0))
                     : ((ParameterizedType)instance).getActualTypeArguments()[0];
             return new ListDt(DataType.List, getKind(item));
         }

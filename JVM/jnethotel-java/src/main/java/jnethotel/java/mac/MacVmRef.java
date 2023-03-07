@@ -1,14 +1,15 @@
 package jnethotel.java.mac;
 
-import com.sun.jna.Native;
-import com.sun.jna.NativeLibrary;
-import jnethotel.java.api.ICoreClr;
-import jnethotel.java.api.IVmRef;
-import jnethotel.java.linux.impl.nethost_library_unix;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import com.sun.jna.Native;
+import com.sun.jna.NativeLibrary;
+
+import jnethotel.java.api.ICoreClr;
+import jnethotel.java.api.IVmRef;
+import jnethotel.java.linux.impl.nethost_library_unix;
 
 public final class MacVmRef implements IVmRef {
 
@@ -24,9 +25,9 @@ public final class MacVmRef implements IVmRef {
 
     @Override
     public void loadLib() throws IOException {
-        var libFileName = getVmDll();
-        var libRoot = Path.of("/usr/local/share/dotnet/");
-        var libPath = Files.find(libRoot, 7,
+        String libFileName = getVmDll();
+        Path libRoot = Path.of("/usr/local/share/dotnet/");
+        String libPath = Files.find(libRoot, 7,
                         (p, b) -> p.getFileName().toString().equals(libFileName))
                 .findFirst().orElseThrow().getParent().toString();
         System.setProperty("jna.library.path", libPath);

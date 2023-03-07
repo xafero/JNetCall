@@ -1,6 +1,12 @@
 package jnetbase.java.io;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.Flushable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -52,7 +58,7 @@ public final class MemPipeStream implements Flushable, Closeable {
             try {
                 _queue.take();
                 pos = _readPos;
-                var res = super.read(b, 0, b.length);
+                int res = super.read(b, 0, b.length);
                 if (res >= 0)
                     _readPos += res;
                 return res;
@@ -64,7 +70,7 @@ public final class MemPipeStream implements Flushable, Closeable {
         @Override
         public synchronized int read(byte[] b, int off, int len) {
             pos = _readPos;
-            var res = super.read(b, off, len);
+            int res = super.read(b, off, len);
             if (res >= 0)
                 _readPos += res;
             return res;

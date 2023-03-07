@@ -1,11 +1,14 @@
 package jnetproto.java.tests;
 
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
 import com.xafero.javaenums.BitFlag;
 import com.xafero.javaenums.Enums;
 import com.xafero.javaenums.flags.IntFlag;
 import com.xafero.javaenums.units.ShortEnum;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+
+import jnetbase.java.meta.ParamName;
 
 public final class EnumTest {
     @DataProvider(name = "writeArgs1")
@@ -22,7 +25,7 @@ public final class EnumTest {
     @Test(dataProvider = "writeArgs1")
     public void shouldWrite1(String hex, Season what, String why, ErrorCode code, Days[] days)
             throws Exception {
-        var bitty = new Bitty(what, why, Enums.notNull(ErrorCode.class, code), BitFlag.of32(Days.class, days));
+        Bitty bitty = new Bitty(what, why, Enums.notNull(ErrorCode.class, code), BitFlag.of32(Days.class, days));
         ComplexTest.testWrite(hex, bitty, r -> {
             try {
                 return r.readObject(Bitty.class);
@@ -45,7 +48,7 @@ public final class EnumTest {
     @Test(dataProvider = "writeArgs2")
     public void shouldWrite2(String hex, Season[] whats, String[] whys, ErrorCode[] codes)
             throws Exception {
-        var texted = new Texted(whats, whys, codes);
+    	Texted texted = new Texted(whats, whys, codes);
         ComplexTest.testWrite(hex, texted, r -> {
             try {
                 return r.readObject(Texted.class);
@@ -55,10 +58,58 @@ public final class EnumTest {
         });
     }
 
-    public record Bitty(Season What, String Why, ErrorCode Code, BitFlag<Days> Days) {
+    public static final class Bitty {
+    	private final Season what;
+    	private final String why;
+    	private final ErrorCode code;
+    	private final BitFlag<Days> days;
+    	
+    	public Bitty(@ParamName("What") Season what, 
+    			@ParamName("Why") String why, 
+    			@ParamName("Code") ErrorCode code, 
+    			@ParamName("Days") BitFlag<Days> days) {
+    		this.what=what;
+    		this.why=why;
+    		this.code=code;
+    		this.days=days;
+    	}
+    	
+    	public Season What() {
+			return what;
+		}
+    	public String Why() {
+			return why;
+		}
+    	public ErrorCode Code() {
+			return code;
+		}
+    	public BitFlag<Days> Days() {
+			return days;
+		}
     }
 
-    public record Texted(Season[] Whats, String[] Whys, ErrorCode[] Codes) {
+    public static final class Texted {
+    	private final Season[] whats;
+    	private final String[] whys;
+    	private final ErrorCode[] codes;
+    	
+    	public Texted(@ParamName("Whats") Season[] whats, 
+    			@ParamName("Whys") String[] whys, 
+    			@ParamName("Codes") ErrorCode[] codes) {
+    		this.whats=whats;
+    		this.whys=whys;
+    		this.codes=codes;
+    	}
+    	
+    	public Season[] Whats() {
+			return whats;
+		}
+    	public String[] Whys() {
+			return whys;
+		}
+    	public ErrorCode[] Codes() {
+			return codes;
+		}
     }
 
     public enum Season {

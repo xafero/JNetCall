@@ -1,11 +1,12 @@
 package jnetcall.java.common;
 
-import jnetproto.java.tools.Tuples;
-import org.javatuples.Pair;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import org.javatuples.Pair;
+
+import jnetproto.java.tools.Tuples;
 
 public final class ByteMarks {
 

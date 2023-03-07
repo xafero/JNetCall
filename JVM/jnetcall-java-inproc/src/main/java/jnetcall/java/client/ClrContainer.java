@@ -1,10 +1,13 @@
 package jnetcall.java.client;
 
+import org.javatuples.Pair;
+
 import com.sun.jna.Function;
+
 import jnethotel.java.Clr;
 import jnethotel.java.Natives;
 import jnethotel.java.api.ICoreClr;
-import org.javatuples.Pair;
+import jnethotel.java.api.IVmRef;
 
 public final class ClrContainer implements AutoCloseable {
 
@@ -13,7 +16,7 @@ public final class ClrContainer implements AutoCloseable {
 
     public ClrContainer(String dll) {
         try {
-            var tmp = setupClr(dll);
+            Pair<Clr, Function> tmp = setupClr(dll);
             _vm = tmp.getValue0();
             _caller = tmp.getValue1();
         } catch (Exception e) {
@@ -22,16 +25,16 @@ public final class ClrContainer implements AutoCloseable {
     }
 
     private static Pair<Clr, Function> setupClr(String dll) throws Exception {
-        var vmRef = Natives.getVmRef();
+        IVmRef vmRef = Natives.getVmRef();
         vmRef.loadLib();
-        var clr = new Clr(vmRef);
-        var caller = getCallCallback(clr.getCore(), dll);
+        Clr clr = new Clr(vmRef);
+        Function caller = getCallCallback(clr.getCore(), dll);
         installStop(clr);
         return Pair.with(clr, caller);
     }
 
     private static void installStop(AutoCloseable vm) {
-        var domain = Runtime.getRuntime();
+        Runtime domain = Runtime.getRuntime();
         domain.addShutdownHook(new Thread(() -> {
             try {
                 vm.close();
@@ -42,15 +45,15 @@ public final class ClrContainer implements AutoCloseable {
     }
 
     public byte[] sendAndGetArray(byte[] input) {
-        var output = _vm.callStaticByteArrayMethod(_caller, input);
+        byte[] output = _vm.callStaticByteArrayMethod(_caller, input);
         return output;
     }
 
     private static Function getCallCallback(ICoreClr coreClr, String dll)
             throws Exception {
-        final var bootType = "X.Boot";
-        final var bootMethod = "Call";
-        final var bootDelegate = "JNetCall.Sharp.API.CallDelegate, JNetCall.Sharp.InProc";
+        final String bootType = "X.Boot";
+        final String bootMethod = "Call";
+        final String bootDelegate = "JNetCall.Sharp.API.CallDelegate, JNetCall.Sharp.InProc";
         return Clr.getCallback(coreClr, dll, bootType, bootMethod, bootDelegate);
     }
 

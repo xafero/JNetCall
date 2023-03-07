@@ -1,8 +1,8 @@
 package jnetcall.java.tests;
 
-import jnetcall.java.client.InProcClient;
-
 import static jnetcall.java.client.tools.ServiceEnv.buildPath;
+
+import jnetcall.java.client.InProcClient;
 
 public final class NativeCallTest extends CallTest {
 

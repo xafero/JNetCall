@@ -1,5 +1,12 @@
 package com.xafero.javaenums;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
+
 import com.xafero.javaenums.api.IFlag;
 import com.xafero.javaenums.bits.BitFlag16;
 import com.xafero.javaenums.bits.BitFlag32;
@@ -9,9 +16,6 @@ import com.xafero.javaenums.flags.ByteFlag;
 import com.xafero.javaenums.flags.IntFlag;
 import com.xafero.javaenums.flags.LongFlag;
 import com.xafero.javaenums.flags.ShortFlag;
-
-import java.lang.reflect.Array;
-import java.util.*;
 
 public abstract class BitFlag<T extends Enum & IFlag> {
     protected final Class<T> _enumType;
@@ -32,7 +36,7 @@ public abstract class BitFlag<T extends Enum & IFlag> {
     }
 
     public T[] toArray() {
-        var array = (T[]) Array.newInstance(_enumType, _items.size());
+        T[] array = (T[]) Array.newInstance(_enumType, _items.size());
         return _items.toArray(array);
     }
 
@@ -42,7 +46,7 @@ public abstract class BitFlag<T extends Enum & IFlag> {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        var bitFlag = (BitFlag<?>) o;
+        BitFlag<?> bitFlag = (BitFlag<?>) o;
         return _enumType.equals(bitFlag._enumType) && _items.equals(bitFlag._items);
     }
 

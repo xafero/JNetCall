@@ -1,14 +1,15 @@
 package jnethotel.java.windows;
 
+import java.nio.CharBuffer;
+
 import com.sun.jna.Function;
 import com.sun.jna.WString;
+
 import jnethotel.java.interop.BaseCoreClr;
 import jnethotel.java.interop.api.hostfxr_delegate_type;
 import jnethotel.java.windows.impl.hostfxr_initialize_parameters_windows.ByReference;
 import jnethotel.java.windows.impl.hostfxr_library_windows;
 import jnethotel.java.windows.impl.nethost_library_windows;
-
-import java.nio.CharBuffer;
 
 class WinCoreClr extends BaseCoreClr<WString, CharBuffer, ByReference> {
 

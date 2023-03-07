@@ -1,10 +1,10 @@
 package jnetcall.java.server.model;
 
-import jnetbase.java.meta.Reflect;
-import jnetcall.java.server.api.IHosting;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+
+import jnetbase.java.meta.Reflect;
+import jnetcall.java.server.api.IHosting;
 
 public final class DelegateWrap implements InvocationHandler {
 
@@ -20,14 +20,14 @@ public final class DelegateWrap implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
-        var owner = method.getDeclaringClass();
+        Class<?> owner = method.getDeclaringClass();
         if (owner.equals(_delType)) {
-            var retType = method.getReturnType();
-            var res = _host.goDynInvoke(retType, _id, args);
+            Class<?> retType = method.getReturnType();
+            Object res = _host.goDynInvoke(retType, _id, args);
             return res;
         }
         if (owner.equals(Object.class)) {
-            var name = method.getName();
+            String name = method.getName();
             if (name.equals("toString"))
                 return getId();
             if (name.equals("equals"))
@@ -41,7 +41,9 @@ public final class DelegateWrap implements InvocationHandler {
     }
 
     private boolean isEqual(Object obj) {
-        if (Reflect.getProxyHandler(obj) instanceof DelegateWrap other) {
+    	InvocationHandler handler = Reflect.getProxyHandler(obj);
+        if (handler instanceof DelegateWrap) {
+        	DelegateWrap other = (DelegateWrap)handler;
             if (getId().equals(other.getId()))
                 return true;
         }

@@ -50,9 +50,9 @@ public final class SingleThread<T extends AutoCloseable>
     }
 
     private void doMyLoop() throws Exception {
-        try (var instance = _creator.get()) {
+        try (T instance = _creator.get()) {
             while (_running) {
-                var action = _actions.take();
+                Consumer<T> action = _actions.take();
                 action.accept(instance);
             }
         }

@@ -1,15 +1,20 @@
 package jnetcall.java.client;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.concurrent.TimeUnit;
+
+import org.javatuples.Pair;
+
 import jnetbase.java.sys.Strings;
 import jnetcall.java.api.io.IPullTransport;
 import jnetcall.java.api.io.ISendTransport;
 import jnetcall.java.client.tools.ServiceEnv;
 import jnetcall.java.common.ByteMarks;
 import jnetcall.java.common.StreamInit;
-import org.javatuples.Pair;
-
-import java.io.*;
-import java.util.concurrent.TimeUnit;
 
 final class ExeTransport implements ISendTransport, IPullTransport {
 
@@ -23,7 +28,7 @@ final class ExeTransport implements ISendTransport, IPullTransport {
             if (!(new File(exe)).exists())
                 throw new FileNotFoundException("Missing: " + exe);
             _exe = exe;
-            var std = start();
+            Pair<InputStream, OutputStream> std = start();
             _parent = (IPullTransport) init.invoke(std.getValue0(), std.getValue1());
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -33,7 +38,7 @@ final class ExeTransport implements ISendTransport, IPullTransport {
     private Process _process;
 
     private Pair<InputStream, OutputStream> start() throws IOException {
-        var pwd = ServiceEnv.getCurrentDir();
+        File pwd = ServiceEnv.getCurrentDir();
         _process = new ProcessBuilder(_exe)
                 .directory(pwd)
                 .redirectInput(ProcessBuilder.Redirect.PIPE)
@@ -52,8 +57,8 @@ final class ExeTransport implements ISendTransport, IPullTransport {
 
     private static Pair<InputStream, OutputStream> writeSync(Process process)
             throws IOException {
-        var stdOut = process.getInputStream();
-        var stdIn = process.getOutputStream();
+        InputStream stdOut = process.getInputStream();
+        OutputStream stdIn = process.getOutputStream();
         return ByteMarks.writeSync(stdOut, stdIn);
     }
 
@@ -70,7 +75,7 @@ final class ExeTransport implements ISendTransport, IPullTransport {
 
     @Override
     public <T> T pull(Class<T> clazz) {
-        var msg = _parent.pull(clazz);
+    	T msg = _parent.pull(clazz);
         return msg;
     }
 

@@ -2,8 +2,14 @@ package jnetbase.java.threads;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class Tasks {
 
@@ -15,8 +21,8 @@ public final class Tasks {
         synchronized (lock) {
             if (fixedPool != null && !fixedPool.isShutdown())
                 return fixedPool;
-            var runtime = Runtime.getRuntime();
-            var processors = runtime.availableProcessors();
+            Runtime runtime = Runtime.getRuntime();
+            int processors = runtime.availableProcessors();
             return fixedPool = Executors.newFixedThreadPool(processors);
         }
     }
@@ -31,19 +37,19 @@ public final class Tasks {
 
     public static <T> List<Future<T>> invokeAll(List<Callable<T>> tasks)
             throws InterruptedException {
-        var executor = Tasks.getPool();
+        ExecutorService executor = Tasks.getPool();
         return executor.invokeAll(tasks);
     }
 
     public static <T> List<T> whenAllInvoke(List<Callable<T>> tasks)
             throws InterruptedException {
-        var future = invokeAll(tasks);
-        var unpack = future.stream().map(f -> Tasks.get(f));
+        List<Future<T>> future = invokeAll(tasks);
+        Stream<T> unpack = future.stream().map(f -> Tasks.get(f));
         return unpack.collect(Collectors.toList());
     }
 
     public static <T> List<T> whenAll(Collection<CompletableFuture<T>> tasks) {
-        var array = tasks.toArray(CompletableFuture[]::new);
+        CompletableFuture[] array = tasks.toArray(CompletableFuture[]::new);
         CompletableFuture.allOf(array).join();
         return tasks.stream().map(t -> get(t)).toList();
     }
@@ -91,7 +97,7 @@ public final class Tasks {
     }
 
     public static <T> CompletableFuture<T> wrap(Future<T> future) {
-        return future instanceof CompletableFuture<T> cf ? cf : wrap(future::get);
+        return future instanceof CompletableFuture ? (CompletableFuture<T>)future : wrap(future::get);
     }
 
     public static <T> CompletableFuture<T> wrap(Callable<T> callable) {

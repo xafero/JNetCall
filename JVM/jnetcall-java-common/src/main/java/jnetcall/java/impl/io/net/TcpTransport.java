@@ -1,14 +1,14 @@
 package jnetcall.java.impl.io.net;
 
-import jnetcall.java.api.enc.IEncoding;
-import jnetcall.java.api.io.IPullTransport;
-import jnetcall.java.api.io.ISendTransport;
-
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+
+import jnetcall.java.api.enc.IEncoding;
+import jnetcall.java.api.io.IPullTransport;
+import jnetcall.java.api.io.ISendTransport;
 
 public final class TcpTransport implements ISendTransport, IPullTransport, AutoCloseable {
 
@@ -62,8 +62,8 @@ public final class TcpTransport implements ISendTransport, IPullTransport, AutoC
         try {
             synchronized (_sendSync) {
                 forceConnect();
-                var bytes = _encoding.encode(payload);
-                var buff = ByteBuffer.wrap(bytes);
+                byte[] bytes = _encoding.encode(payload);
+                ByteBuffer buff = ByteBuffer.wrap(bytes);
                 _sender.write(buff);
             }
         } catch (Exception e) {
@@ -79,8 +79,8 @@ public final class TcpTransport implements ISendTransport, IPullTransport, AutoC
         try {
             synchronized (_receiveSync) {
                 forceAccept();
-                var buff = NetworkTools.readWithSize(_receiverConn);
-                var bytes = buff.array();
+                ByteBuffer buff = NetworkTools.readWithSize(_receiverConn);
+                byte[] bytes = buff.array();
                 return _encoding.decode(bytes, clazz);
             }
         } catch (Exception e) {

@@ -1,11 +1,6 @@
 package jnetproto.java.tests;
 
-import com.google.gson.GsonBuilder;
-import jnetbase.java.meta.TypeToken;
-import jnetproto.java.beans.ProtoConvert;
-import jnetproto.java.beans.ProtoSettings;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,7 +10,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-import static org.testng.Assert.assertEquals;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import jnetbase.java.meta.ParamName;
+import jnetbase.java.meta.TypeToken;
+import jnetproto.java.beans.ProtoConvert;
+import jnetproto.java.beans.ProtoSettings;
 
 public final class ComplexTest {
 
@@ -36,16 +40,16 @@ public final class ComplexTest {
 
     @Test(dataProvider = "writeArgs2")
     public void ShouldColl(String hex, char mode) throws Exception {
-        var isArray0 = mode == 'A';
-        var isList1 = mode == 'M';
-        var isArray1 = mode == 'B';
-        var isList2 = mode == 'N';
-        var isArray2 = mode == 'C';
-        var isListE = mode == 'O';
-        var isArrayE = mode == 'D';
+        boolean isArray0 = mode == 'A';
+        boolean isList1 = mode == 'M';
+        boolean isArray1 = mode == 'B';
+        boolean isList2 = mode == 'N';
+        boolean isArray2 = mode == 'C';
+        boolean isListE = mode == 'O';
+        boolean isArrayE = mode == 'D';
 
-        var example1 = new Call("c", "m", new Object[] { 'a' }, new String[] { "h" });
-        var example2 = new Call("d", "n", new Object[] { 'b' }, new String[] { "i" });
+        Call example1 = new Call("c", "m", new Object[] { 'a' }, new String[] { "h" });
+        Call example2 = new Call("d", "n", new Object[] { 'b' }, new String[] { "i" });
 
         Object value = isArrayE ? new Call[0]
                 : isListE ? new ArrayList<Call>()
@@ -91,9 +95,9 @@ public final class ComplexTest {
     @Test(dataProvider = "writeArgs")
     public void ShouldWrite(String hex, int number, Long bigNumber, Double decimals, String name)
             throws Exception {
-        var isErr = bigNumber == null && decimals == null;
-        var isCall = bigNumber != null && decimals == null;
-        var isRes = bigNumber == null && decimals != null;
+        boolean isErr = bigNumber == null && decimals == null;
+        boolean isCall = bigNumber != null && decimals == null;
+        boolean isRes = bigNumber == null && decimals != null;
 
         Object value = isCall ? new Call("C" + bigNumber, name,
                 new Object[]{number, "l"}, new String[]{"i", "s"})
@@ -116,15 +120,15 @@ public final class ComplexTest {
 
     static void testWrite(String hex, Object value, Function<ProtoConvert, Object> creator)
             throws Exception {
-        var s = new ProtoSettings();
+    	ProtoSettings s = new ProtoSettings();
 
-        var mem = new ByteArrayOutputStream[1];
-        try (var writer = createWriter(mem, s)) {
+        ByteArrayOutputStream[] mem = new ByteArrayOutputStream[1];
+        try (ProtoConvert writer = createWriter(mem, s)) {
             writer.writeObject(value);
-            var actual = BinaryTest.toHex(mem[0]);
+            String actual = BinaryTest.toHex(mem[0]);
             assertEquals(actual, hex);
 
-            try (var reader = createReader(mem[0], s)) {
+            try (ProtoConvert reader = createReader(mem[0], s)) {
                 Object obj = creator.apply(reader);
 
                 if (!(obj instanceof Call) && !(obj instanceof EnumTest.Texted) &&
@@ -135,9 +139,9 @@ public final class ComplexTest {
                     assertEquals(value, obj);
                     return;
                 }
-                var gson = (new GsonBuilder()).create();
-                var valueJson = gson.toJson(value);
-                var objJson = gson.toJson(obj);
+                Gson gson = (new GsonBuilder()).create();
+                String valueJson = gson.toJson(value);
+                String objJson = gson.toJson(obj);
                 assertEquals(valueJson, objJson);
             }
         }
@@ -153,14 +157,159 @@ public final class ComplexTest {
         return new ProtoConvert(new ByteArrayInputStream(mem.toByteArray()), null, s);
     }
 
-    public record Example(int Number, long BigNumber, double Decimals, String Name) { }
-    public record Invalid(int What, String Why) { }
+    public static final class Example {
+    	private final int number;
+    	private final long bigNumber;
+    	private final double decimals;
+    	private final String name;
+    	
+    	public Example(@ParamName("Number") int number, 
+    			@ParamName("BigNumber") long bigNumber, 
+    			@ParamName("Decimals") double decimals,
+    			@ParamName("Name") String name) {
+    		this.number=number;
+    		this.bigNumber=bigNumber;
+    		this.decimals=decimals;
+    		this.name=name;
+    	}
+    	
+    	public int Number() {
+			return number;
+		}
+    	public long BigNumber() {
+			return bigNumber;
+		}
+    	public double Decimals() {
+			return decimals;
+		}
+    	public String Name() {
+			return name;
+		}
+	}
+    
+    public static final class Invalid {
+    	private final int what;
+    	private final String why;
+    	
+    	public Invalid(@ParamName("What") int what, 
+    			@ParamName("Why") String why) { 
+    		this.what=what;
+    		this.why=why;
+    	} 
+    	
+    	public int What() {
+			return what;
+		}
+    	public String Why() {
+			return why;
+		}
+	}
 
-    public record Call(String C, String M, Object[] A, String[] H) { }
-    public record Result(Object R, short S) { }
+    public static final class Call {
+    	private final String c;
+    	private final String m;
+    	private final Object[] a;
+    	private final String[] h;
+    	
+    	public Call(@ParamName("C") String c, 
+    			@ParamName("M") String m, 
+    			@ParamName("A") Object[] a, 
+    			@ParamName("H") String[] h) { 
+    		this.c=c;
+    		this.m=m;
+    		this.a=a;
+    		this.h=h;
+    	}
+    	
+    	public String C() {
+			return c;
+		}
+    	public String M() {
+			return m;
+		}
+    	public Object[] A() {
+			return a;
+		}
+    	public String[] H() {
+			return h;
+		}
+	}
+    
+    public static final class Result {
+    	private final Object r;
+    	private final short s;
+    	
+    	public Result(@ParamName("R") Object r, 
+    			@ParamName("S") short s) { 
+    		this.r=r;
+    		this.s=s;
+    	} 
+    	
+    	public Object R() {
+			return r;
+		}
+    	public short S() {
+			return s;
+		}
+	}
 
-    public record CallListBag2(List<Call> Calls, byte Ord) { }
-    public record CallListBag1(List<Call> Calls) { }
-    public record CallArrayBag2(Call[] Calls, byte Ord) { }
-    public record CallArrayBag1(Call[] Calls) { }
+    public static final class CallListBag2 {
+    	private final List<Call> calls;
+    	private final byte ord;
+    	
+    	public CallListBag2(@ParamName("Calls") List<Call> calls, 
+    			@ParamName("Ord") byte ord) { 
+    		this.calls=calls;
+    		this.ord=ord;
+    	} 
+    	
+    	public List<Call> Calls() {
+			return calls;
+		}
+    	public byte Ord() {
+			return ord;
+		}
+	}
+    
+    public static final class CallListBag1 {
+    	private final List<Call> calls;
+    	
+    	public CallListBag1(@ParamName("Calls") List<Call> calls) { 
+    		this.calls=calls;
+    	}
+    	
+    	public List<Call> Calls() {
+			return calls;
+		}
+	}
+    
+    public static final class CallArrayBag2 { 
+    	private final Call[] calls;
+    	private final byte ord;
+    	
+    	public CallArrayBag2(@ParamName("Calls") Call[] calls, 
+    			@ParamName("Ord") byte ord) { 
+    		this.calls=calls;
+    		this.ord=ord;
+    	} 
+    	
+    	public Call[] Calls() {
+			return calls;
+		}
+    	public byte Ord() {
+			return ord;
+		}
+	}
+    
+    public static final class CallArrayBag1 { 
+    	private final Call[] calls;
+    	
+    	public CallArrayBag1(@ParamName("Calls") Call[] calls) { 
+    		this.calls=calls;
+    	} 
+    	
+    	public Call[] Calls() {
+			return calls;
+		}
+	}
 }

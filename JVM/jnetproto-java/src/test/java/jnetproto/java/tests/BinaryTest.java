@@ -1,5 +1,25 @@
 package jnetproto.java.tests;
 
+import static org.testng.Assert.assertEquals;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.TreeSet;
+import java.util.UUID;
+import java.util.stream.Stream;
+
+import org.apache.commons.codec.binary.Hex;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
 import jnetbase.java.meta.Reflect;
 import jnetbase.java.sys.Strings;
 import jnetproto.java.api.IDataReader;
@@ -7,19 +27,6 @@ import jnetproto.java.api.IDataWriter;
 import jnetproto.java.core.BinaryReader;
 import jnetproto.java.core.BinaryWriter;
 import jnetproto.java.tools.Tuples;
-import org.apache.commons.codec.binary.Hex;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.*;
-
-import static org.testng.Assert.assertEquals;
 
 public final class BinaryTest {
     @DataProvider(name = "writeArgs")
@@ -143,75 +150,76 @@ public final class BinaryTest {
 
     @Test(dataProvider = "writeArgs")
     public void shouldWrite(String expected, Object value) throws Exception {
-        var mem = new ByteArrayOutputStream[1];
-        try (var writer = createWriter(mem)) {
+        ByteArrayOutputStream[] mem = new ByteArrayOutputStream[1];
+        try (IDataWriter writer = createWriter(mem)) {
             writer.writeObject(value = getValue(value));
-            var actual = toHex(mem[0]);
+            String actual = toHex(mem[0]);
             assertEquals(actual, expected);
 
-            try (var reader = createReader(mem[0])) {
-                var obj = reader.readObject();
+            try (IDataReader reader = createReader(mem[0])) {
+                Object obj = reader.readObject();
                 assertEquals(obj, value);
             }
         }
     }
 
     private static Object getValue(Object value) {
-        var txt = value == null ? "" : value.toString();
-        if (value instanceof Object[] objects) {
-            if (objects[0] instanceof Character c && c == 'M') {
-                var dict = new HashMap<Object, Object>();
-                for (var i = 1; i < objects.length; i += 2) {
-                    var key = objects[i];
-                    var val = objects[i + 1];
+        String txt = value == null ? "" : value.toString();
+        if (value instanceof Object[]) {
+        	Object[] objects = (Object[])value;
+            if (objects[0] instanceof Character && (Character)objects[0] == 'M') {
+                HashMap<Object, Object> dict = new HashMap<Object, Object>();
+                for (int i = 1; i < objects.length; i += 2) {
+                    Object key = objects[i];
+                    Object val = objects[i + 1];
                     dict.put(key, val);
                 }
                 return dict;
             }
-            else if (objects[0] instanceof Character c && c == 'T')
+            else if (objects[0] instanceof Character && (Character)objects[0] == 'T')
             {
-                var tupArgs = Arrays.copyOfRange(objects, 1, objects.length);
-                var creates = Arrays.stream(Tuples.class.getMethods());
-                var create = creates.filter(m -> m.getParameterCount() == tupArgs.length);
+                Object[] tupArgs = Arrays.copyOfRange(objects, 1, objects.length);
+                Stream<Method> creates = Arrays.stream(Tuples.class.getMethods());
+                Stream<Method> create = creates.filter(m -> m.getParameterCount() == tupArgs.length);
                 return Reflect.invoke(create.findFirst().get(), null, tupArgs);
             }
-            else if (objects[0] instanceof Character c && c == 'B')
+            else if (objects[0] instanceof Character && (Character)objects[0] == 'B')
             {
-                var args = Arrays.copyOfRange(objects, 1, objects.length);
+                Object[] args = Arrays.copyOfRange(objects, 1, objects.length);
                 return args;
             }
-            else if (objects[0] instanceof Character c && c == 'L')
+            else if (objects[0] instanceof Character && (Character)objects[0] == 'L')
             {
-                var list = new LinkedList<Object>();
-                for (var i = 1; i < objects.length; i++)
+                LinkedList<Object> list = new LinkedList<Object>();
+                for (int i = 1; i < objects.length; i++)
                 {
-                    var val = objects[i];
+                    Object val = objects[i];
                     list.add(val);
                 }
                 return list;
             }
-            else if (objects[0] instanceof Character c && c == 'S')
+            else if (objects[0] instanceof Character && (Character)objects[0] == 'S')
             {
-                var set = new TreeSet<Object>();
-                for (var i = 1; i < objects.length; i++)
+                TreeSet<Object> set = new TreeSet<Object>();
+                for (int i = 1; i < objects.length; i++)
                 {
-                    var val = objects[i];
+                    Object val = objects[i];
                     set.add(val);
                 }
                 return set;
             }
         }
         if (txt.startsWith("1;")) {
-            var parts = txt.substring(2).split(";");
-            var oneArray = Arrays.stream(parts).map(s -> getValue(s)).toArray();
-            var array = Array.newInstance(oneArray[0].getClass(), oneArray.length);
-            for (var i = 0; i < oneArray.length; i++)
+            String[] parts = txt.substring(2).split(";");
+            Object[] oneArray = Arrays.stream(parts).map(s -> getValue(s)).toArray();
+            Object array = Array.newInstance(oneArray[0].getClass(), oneArray.length);
+            for (int i = 0; i < oneArray.length; i++)
                 Array.set(array, i, oneArray[i]);
             return array;
         }
         if (txt.endsWith("w"))
         {
-            var count = Integer.parseInt(txt.replace('w', ' ').trim());
+            int count = Integer.parseInt(txt.replace('w', ' ').trim());
             return Strings.repeat(count, "x");
         }
         if (txt.endsWith("m")) {
@@ -221,7 +229,7 @@ public final class BinaryTest {
             return Duration.parse(txt.replace('t', ' ').trim());
         }
         if (txt.endsWith("d") && !txt.startsWith("[")) {
-            var rawDate = txt.replace('d', ' ').trim();
+            String rawDate = txt.replace('d', ' ').trim();
             if (!rawDate.contains("T")) rawDate += "T00:00:00.0000000";
             return LocalDateTime.parse(rawDate);
         }
@@ -232,7 +240,7 @@ public final class BinaryTest {
     }
 
     static String toHex(ByteArrayOutputStream mem) {
-        var txt = Hex.encodeHexString(mem.toByteArray());
+        String txt = Hex.encodeHexString(mem.toByteArray());
         return txt.toUpperCase();
     }
 

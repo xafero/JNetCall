@@ -1,9 +1,9 @@
 package jnetcall.java.common;
 
-import jnetcall.java.api.io.ISendTransport;
-
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import jnetcall.java.api.io.ISendTransport;
 
 public interface StreamInit {
 

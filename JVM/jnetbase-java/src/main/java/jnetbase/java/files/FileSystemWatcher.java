@@ -1,16 +1,23 @@
 package jnetbase.java.files;
 
-import jnetbase.java.threads.IExecutor;
+import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
+import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.ClosedWatchServiceException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchEvent.Kind;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadFactory;
 import java.util.function.Consumer;
 
-import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
+import jnetbase.java.threads.IExecutor;
 
 public final class FileSystemWatcher implements AutoCloseable {
 
@@ -20,7 +27,7 @@ public final class FileSystemWatcher implements AutoCloseable {
     private final ThreadFactory _executor;
 
     public FileSystemWatcher(Path folder, ThreadFactory executor, WatchEvent.Kind... kinds) {
-        var root = folder.toFile();
+        File root = folder.toFile();
         if (!root.exists() || root.isFile())
             throw new UnsupportedOperationException(root.getAbsolutePath());
         try {
@@ -68,18 +75,18 @@ public final class FileSystemWatcher implements AutoCloseable {
 
     private void runLoop() throws InterruptedException {
         while (!Thread.interrupted()) {
-            var key = _watcher.take();
-            var events = key.pollEvents();
+            WatchKey key = _watcher.take();
+            List<WatchEvent<?>> events = key.pollEvents();
             key.reset();
-            for (var event : events) {
-                var kind = event.kind();
+            for (WatchEvent<?> event : events) {
+                Kind<?> kind = event.kind();
                 if (kind == OVERFLOW || !_kinds.contains(kind))
                     continue;
-                var ctx = event.context();
+                Object ctx = event.context();
                 if (!_filter.accept(null, ctx.toString()))
                     continue;
-                var path = (Path) ctx;
-                var full = _folder.resolve(path);
+                Path path = (Path) ctx;
+                Path full = _folder.resolve(path);
                 sendNotification(full);
             }
         }
@@ -98,10 +105,11 @@ public final class FileSystemWatcher implements AutoCloseable {
     }
 
     private void start() throws IOException {
-        var args = _kinds.toArray(WatchEvent.Kind[]::new);
+        Kind[] args = _kinds.toArray(WatchEvent.Kind[]::new);
         _key = _folder.register(_watcher, args);
 
-        if (_executor instanceof IExecutor ee) {
+        if (_executor instanceof IExecutor) {
+        	IExecutor ee = (IExecutor)_executor;
             _thread = ee.createThread(this::tryRun, "FileSystemWatcher");
         } else {
             _thread = _executor.newThread(this::tryRun);

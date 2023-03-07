@@ -1,11 +1,11 @@
 package com.xafero.javaenums.bits;
 
+import java.util.Collection;
+
 import com.xafero.javaenums.BitFlag;
 import com.xafero.javaenums.Enums;
 import com.xafero.javaenums.flags.IntFlag;
 import com.xafero.javaenums.units.IntEnum;
-
-import java.util.Collection;
 
 public final class BitFlag32<T extends Enum & IntFlag>
         extends BitFlag<T>

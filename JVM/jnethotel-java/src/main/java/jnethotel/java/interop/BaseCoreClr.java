@@ -1,14 +1,15 @@
 package jnethotel.java.interop;
 
+import java.io.File;
+
 import com.sun.jna.Function;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
+
 import jnethotel.java.api.ICoreClr;
 import jnethotel.java.interop.api.hostfxr_library;
 import jnethotel.java.interop.api.nethost_library;
-
-import java.io.File;
 
 public abstract class BaseCoreClr<TString, TBuffer, TByRef> implements ICoreClr {
 
@@ -24,14 +25,14 @@ public abstract class BaseCoreClr<TString, TBuffer, TByRef> implements ICoreClr 
     protected int funcFlags;
 
     public Function get_load_assembly_and_get_function_pointer_fn(String runtime_config_path) {
-        var load_assembly_and_get_function_pointer_fn = Pointer.NULL;
+        Pointer load_assembly_and_get_function_pointer_fn = Pointer.NULL;
 
-        var parameters = createByRef();
+        TByRef parameters = createByRef();
 
-        var host_context_handle = Pointer.NULL;
-        var ptr_host_context_handle = new PointerByReference(host_context_handle);
+        Pointer host_context_handle = Pointer.NULL;
+        PointerByReference ptr_host_context_handle = new PointerByReference(host_context_handle);
 
-        var rc = hostfxr_library.hostfxr_initialize_for_runtime_config(wrap(runtime_config_path),
+        int rc = hostfxr_library.hostfxr_initialize_for_runtime_config(wrap(runtime_config_path),
                 parameters, ptr_host_context_handle);
 
         host_context_handle = ptr_host_context_handle.getValue();
@@ -39,7 +40,7 @@ public abstract class BaseCoreClr<TString, TBuffer, TByRef> implements ICoreClr 
         if (rc != 0 || host_context_handle == Pointer.NULL) {
             throw new UnsupportedOperationException("hostfxr_initialize_for_runtime_config failed with: " + rc);
         } else {
-            var ptr_load_assembly_and_get_function_pointer_fn = new PointerByReference(load_assembly_and_get_function_pointer_fn);
+            PointerByReference ptr_load_assembly_and_get_function_pointer_fn = new PointerByReference(load_assembly_and_get_function_pointer_fn);
 
             rc = hostfxr_library.hostfxr_get_runtime_delegate(host_context_handle,
                     hdt_load_assembly_and_get_function_pointer,
@@ -57,17 +58,17 @@ public abstract class BaseCoreClr<TString, TBuffer, TByRef> implements ICoreClr 
     }
 
     public boolean load_hostfxr() {
-        final var maxPath = 260;
-        var buffer = allocate(maxPath);
+        final int maxPath = 260;
+        TBuffer buffer = allocate(maxPath);
 
-        var buffer_size = Pointer.createConstant(maxPath);
-        var ptr_buffer_size = new PointerByReference(buffer_size);
+        Pointer buffer_size = Pointer.createConstant(maxPath);
+        PointerByReference ptr_buffer_size = new PointerByReference(buffer_size);
 
         if (nethost_library.get_hostfxr_path(buffer, ptr_buffer_size, Pointer.NULL) != 0) {
             return false;
         }
 
-        var hostfxr_path = toString(buffer);
+        String hostfxr_path = toString(buffer);
         hostfxr_library = Native.load(hostfxr_path, getHostFxrClass());
         return true;
     }
@@ -79,19 +80,19 @@ public abstract class BaseCoreClr<TString, TBuffer, TByRef> implements ICoreClr 
             throw new Exception("Failed to resolve hostfxr");
         }
 
-        var runtime_config_path_file = new File(runtime_config_path).getAbsoluteFile();
-        var load_assembly_and_get_function_pointer_fn = get_load_assembly_and_get_function_pointer_fn(runtime_config_path_file.toString());
+        File runtime_config_path_file = new File(runtime_config_path).getAbsoluteFile();
+        Function load_assembly_and_get_function_pointer_fn = get_load_assembly_and_get_function_pointer_fn(runtime_config_path_file.toString());
 
         if (load_assembly_and_get_function_pointer_fn == Pointer.NULL) {
             throw new Exception("Failed to resolve load_assembly_and_get_function_pointer");
         }
 
-        var managed_fn = Pointer.NULL;
-        var ptr_managed_fn = new PointerByReference(managed_fn);
+        Pointer managed_fn = Pointer.NULL;
+        PointerByReference ptr_managed_fn = new PointerByReference(managed_fn);
 
-        var assembly_path_file = new File(assembly_path).getAbsoluteFile();
+        File assembly_path_file = new File(assembly_path).getAbsoluteFile();
 
-        var rc = load_assembly_and_get_function_pointer_fn.invokeInt(new Object[]{
+        int rc = load_assembly_and_get_function_pointer_fn.invokeInt(new Object[]{
                 wrap(assembly_path_file.toString()),
                 wrap(type_name),
                 wrap(method_name),
@@ -103,7 +104,7 @@ public abstract class BaseCoreClr<TString, TBuffer, TByRef> implements ICoreClr 
         managed_fn = ptr_managed_fn.getValue();
 
         if (rc != 0 || managed_fn == Pointer.NULL) {
-            var message = String.format("load_assembly_and_get_function_pointer failed with: %s", rc);
+            String message = String.format("load_assembly_and_get_function_pointer failed with: %s", rc);
             throw new Exception(message);
         }
 

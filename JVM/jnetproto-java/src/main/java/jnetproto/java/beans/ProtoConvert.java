@@ -1,13 +1,18 @@
 package jnetproto.java.beans;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Type;
+
 import jnetbase.java.meta.TypeToken;
 import jnetproto.java.api.IDataReader;
 import jnetproto.java.api.IDataWriter;
 import jnetproto.java.core.BinaryReader;
 import jnetproto.java.core.BinaryWriter;
 import jnetproto.java.tools.Conversions;
-
-import java.io.*;
 
 public final class ProtoConvert implements AutoCloseable {
 
@@ -25,14 +30,14 @@ public final class ProtoConvert implements AutoCloseable {
     }
 
     public void writeObject(Object obj) throws Exception {
-        var bytes = serializeObject(obj, _cfg);
+        byte[] bytes = serializeObject(obj, _cfg);
         synchronized (_writeLock) {
             _writer.writeBinary(bytes);
         }
     }
 
     public <T> T readObject(Class<T> clazz) throws Exception {
-        var token = TypeToken.wrap(clazz);
+        TypeToken<T> token = TypeToken.wrap(clazz);
         return readObject(token);
     }
 
@@ -58,21 +63,21 @@ public final class ProtoConvert implements AutoCloseable {
 
     private static byte[] serializeObject(Object obj, ProtoSettings s)
             throws Exception {
-        var raw = Conversions.toObjectArray(obj);
-        var args = (Object[]) raw;
+        Object raw = Conversions.toObjectArray(obj);
+        Object[] args = (Object[]) raw;
         return serializeObject(args, s);
     }
 
     private static <T> T deserializeObject(TypeToken<T> token, Object[] args, ProtoSettings s)
             throws Exception {
-        var type = token.toType();
-        var raw = Conversions.fromObjectArray(type, args);
+        Type type = token.toType();
+        Object raw = Conversions.fromObjectArray(type, args);
         return (T) raw;
     }
 
     private static byte[] serializeObject(Object[] args, ProtoSettings s)
             throws Exception {
-        try (var mem = new ByteArrayOutputStream();
+        try (ByteArrayOutputStream mem = new ByteArrayOutputStream();
              IDataWriter writer = new BinaryWriter(mem)) {
             writer.writeObject(args);
             return mem.toByteArray();
@@ -81,9 +86,9 @@ public final class ProtoConvert implements AutoCloseable {
 
     private static <T> T deserializeObject(TypeToken<T> clazz, byte[] bytes, ProtoSettings s)
             throws Exception {
-        try (var mem = new ByteArrayInputStream(bytes);
+        try (ByteArrayInputStream mem = new ByteArrayInputStream(bytes);
              IDataReader reader = new BinaryReader(mem)) {
-            var args = (Object[]) reader.readObject();
+            Object[] args = (Object[]) reader.readObject();
             return deserializeObject(clazz, args, s);
         }
     }

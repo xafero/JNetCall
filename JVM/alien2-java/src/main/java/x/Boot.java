@@ -1,13 +1,15 @@
 package x;
 
-import jnetcall.java.server.ServiceLots;
 import org.example.impl.CalculatorService;
+
+import jnetcall.java.server.ClassHosting;
+import jnetcall.java.server.ServiceLots;
 
 @SuppressWarnings("unused")
 public final class Boot {
 
     static {
-        var host = ServiceLots.create(CalculatorService.class);
+    	ClassHosting host = ServiceLots.create(CalculatorService.class);
         host.registerAll();
         host.serve();
     }

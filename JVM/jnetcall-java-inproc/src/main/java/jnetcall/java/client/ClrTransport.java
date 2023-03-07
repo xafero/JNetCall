@@ -1,15 +1,5 @@
 package jnetcall.java.client;
 
-import jnetbase.java.meta.TypeToken;
-import jnetbase.java.threads.FuncTimerTask;
-import jnetbase.java.threads.ManualResetEvent;
-import jnetbase.java.threads.SingleThread;
-import jnetcall.java.api.enc.IEncoding;
-import jnetcall.java.api.flow.MethodCall;
-import jnetcall.java.api.flow.MethodResult;
-import jnetcall.java.api.io.IPullTransport;
-import jnetcall.java.impl.enc.BinaryEncoding;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,6 +9,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import jnetbase.java.meta.TypeToken;
+import jnetbase.java.threads.FuncTimerTask;
+import jnetbase.java.threads.ManualResetEvent;
+import jnetbase.java.threads.SingleThread;
+import jnetcall.java.api.enc.IEncoding;
+import jnetcall.java.api.flow.MethodCall;
+import jnetcall.java.api.flow.MethodResult;
+import jnetcall.java.api.io.IPullTransport;
+import jnetcall.java.impl.enc.BinaryEncoding;
 
 final class ClrTransport implements IPullTransport {
 
@@ -47,17 +47,17 @@ final class ClrTransport implements IPullTransport {
         }
     }
 
-    private static final TypeToken<List<MethodResult>> mrList = new TypeToken<>() {
+    private static final TypeToken<List<MethodResult>> mrList = new TypeToken() {
     };
 
     private void onTick(FuncTimerTask t) {
         try {
             synchronized (_sync) {
-                var outputs = new ArrayList<MethodCall>();
+                ArrayList<MethodCall> outputs = new ArrayList<MethodCall>();
                 ((BlockingQueue) _outputs).drainTo(outputs);
-                var output = _encoding.encode(outputs);
-                var input = sendAndGetArray(output);
-                var inputs = _encoding.decode(input, mrList);
+                byte[] output = _encoding.encode(outputs);
+                byte[] input = sendAndGetArray(output);
+                List<MethodResult> inputs = _encoding.decode(input, mrList);
                 _inputs.addAll(inputs);
             }
         } catch (Exception e) {
@@ -67,21 +67,21 @@ final class ClrTransport implements IPullTransport {
 
     private byte[] sendAndGetArray(byte[] input) throws InterruptedException {
         synchronized (_sync) {
-            var res = new byte[1][];
-            var wait = new ManualResetEvent(false);
+            byte[][] res = new byte[1][];
+            ManualResetEvent wait = new ManualResetEvent(false);
             _single.execute(i ->
             {
                 res[0] = i.sendAndGetArray(input);
                 wait.set();
             });
             wait.waitOne();
-            var bytes = res[0];
+            byte[] bytes = res[0];
             return bytes;
         }
     }
 
     private static Timer startTimer(TimerTask task, long pollMs) {
-        var timer = new Timer(true);
+        Timer timer = new Timer(true);
         timer.scheduleAtFixedRate(task, pollMs, pollMs);
         return timer;
     }

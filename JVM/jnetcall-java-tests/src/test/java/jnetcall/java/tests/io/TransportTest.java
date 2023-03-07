@@ -1,5 +1,7 @@
 package jnetcall.java.tests.io;
 
+import org.javatuples.Pair;
+
 import jnetbase.java.meta.Reflect;
 import jnetbase.java.threads.ThreadExecutor;
 import jnetcall.java.api.enc.IEncoding;
@@ -10,8 +12,6 @@ import jnetcall.java.impl.enc.BinaryEncoding;
 import jnetcall.java.server.ClassHosting;
 import jnetcall.java.server.api.IHosting;
 import jnetcall.java.tests.CallTest;
-import org.example.impl.CalculatorService;
-import org.javatuples.Pair;
 
 public abstract class TransportTest extends CallTest {
 
@@ -28,25 +28,25 @@ public abstract class TransportTest extends CallTest {
 
     @Override
     protected <T extends AutoCloseable> T create(Class<T> clazz) {
-        var both = getBoth();
-        var left = both.getValue0();
-        var right = both.getValue1();
-        var client = createClient(clazz, left);
+        Pair<ISendTransport, ISendTransport> both = getBoth();
+        ISendTransport left = both.getValue0();
+        ISendTransport right = both.getValue1();
+        T client = createClient(clazz, left);
         createServer(TestedService.class, right, false);
         return client;
     }
 
     private static <T extends AutoCloseable> T createClient(Class<T> clazz, ISendTransport transport) {
-        var executor = new ThreadExecutor();
-        var interceptor = new ClassProxy(transport, executor);
+        ThreadExecutor executor = new ThreadExecutor();
+        ClassProxy interceptor = new ClassProxy(transport, executor);
         interceptor.listen();
         return ClientHelper.create(clazz, interceptor);
     }
 
     private static <T> IHosting createServer(Class<T> clazz, ISendTransport transport, boolean blocking) {
-        var executor = new ThreadExecutor();
-        var instance = Reflect.createNew(clazz);
-        var hosting = new ClassHosting(instance, transport, executor);
+        ThreadExecutor executor = new ThreadExecutor();
+        T instance = Reflect.createNew(clazz);
+        ClassHosting hosting = new ClassHosting(instance, transport, executor);
         hosting.registerAll();
         if (blocking)
             hosting.serveAndWait();

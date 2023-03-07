@@ -1,6 +1,7 @@
 package jnethotel.java;
 
 import com.sun.jna.Platform;
+
 import jnethotel.java.api.IVmRef;
 import jnethotel.java.bsd.BsdVmRef;
 import jnethotel.java.linux.LinuxVmRef;
@@ -19,7 +20,7 @@ public final class Natives {
         if (isBSD())
             return new BsdVmRef();
 
-        var desc = System.getProperty("os.name") + " " + System.getProperty("os.version");
+        String desc = System.getProperty("os.name") + " " + System.getProperty("os.version");
         throw new UnsupportedOperationException(desc.trim());
     }
 

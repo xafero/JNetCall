@@ -25,7 +25,7 @@ public final class ByteArrayStream extends ByteArrayInputStream {
     public synchronized void reset() {
         super.reset();
 
-        var array = _memory.toByteArray();
+        byte[] array = _memory.toByteArray();
         renew();
 
         buf = array;

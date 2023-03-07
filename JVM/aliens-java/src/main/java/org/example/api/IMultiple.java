@@ -1,12 +1,13 @@
 package org.example.api;
 
-import com.xafero.javaenums.BitFlag;
-import com.xafero.javaenums.flags.IntFlag;
-import com.xafero.javaenums.units.IntEnum;
 import org.javatuples.Pair;
 import org.javatuples.Quartet;
 import org.javatuples.Quintet;
 import org.javatuples.Triplet;
+
+import com.xafero.javaenums.BitFlag;
+import com.xafero.javaenums.flags.IntFlag;
+import com.xafero.javaenums.units.IntEnum;
 
 public interface IMultiple extends AutoCloseable {
 

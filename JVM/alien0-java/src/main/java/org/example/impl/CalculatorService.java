@@ -1,17 +1,32 @@
 package org.example.impl;
 
-import com.xafero.javaenums.BitFlag;
-import org.example.api.*;
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
+import org.example.api.ICalculator;
+import org.example.api.IDataTyped;
+import org.example.api.IMultiple;
+import org.example.api.ISimultaneous;
+import org.example.api.IStringCache;
+import org.example.api.ITriggering;
+import org.example.api.ThresholdEventArgs;
 import org.javatuples.Pair;
 import org.javatuples.Quartet;
 import org.javatuples.Quintet;
 import org.javatuples.Triplet;
 
-import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
+import com.xafero.javaenums.BitFlag;
 
 public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IStringCache,
         ISimultaneous, AutoCloseable, ITriggering {
@@ -40,7 +55,7 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
     public String ToSimpleText(byte y, short s, int i, long l, float f,
                                double d, boolean b, char c, String t,
                                BigDecimal u, UUID g) {
-        var bld = new StringBuilder();
+    	StringBuilder bld = new StringBuilder();
         bld.append(" y = " + y);
         bld.append(", s = " + s);
         bld.append(", i = " + i);
@@ -59,7 +74,7 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
     public String ToArrayText(byte[] y, short[] s, int[] i, long[] l, float[] f,
                               double[] d, boolean[] b, char[] c, String[] t,
                               BigDecimal[] u, UUID[] g) {
-        var bld = new StringBuilder();
+    	StringBuilder bld = new StringBuilder();
         bld.append(" y = " + Arrays.toString(y));
         bld.append(", s = " + Arrays.toString(s));
         bld.append(", i = " + Arrays.toString(i));
@@ -86,26 +101,26 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
 
     @Override
     public byte[] AllocateBytes(int size, byte value) {
-        var array = new byte[size];
-        for (var i = 0; i < array.length; i++)
+        byte[] array = new byte[size];
+        for (int i = 0; i < array.length; i++)
             array[i] = value;
         return array;
     }
 
     @Override
     public Set<String> GetUnique(List<String> lines, boolean withTrim) {
-        var set = new TreeSet<String>();
-        for (var line : lines)
+    	Set<String> set = new TreeSet<String>();
+        for (String line : lines)
             set.add(withTrim ? line.trim() : line);
         return set;
     }
 
     @Override
     public List<String> GetDouble(Set<String> lines) {
-        var list = new LinkedList<String>();
-        for (var line : lines)
+    	LinkedList<String> list = new LinkedList<String>();
+        for (String line : lines)
             list.add(line);
-        for (var line : lines)
+        for (String line : lines)
             list.add(line);
         return list;
     }
@@ -113,7 +128,7 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
     @Override
     public Map<String, Integer> GetSystemVariables(LocalDateTime dts, Duration dur,
                                                    Map<String, Integer> parent) {
-        var map = new LinkedHashMap<>(parent);
+    	LinkedHashMap<String, Integer> map = new LinkedHashMap<String, Integer>(parent);
         map.put("year", dts.getYear());
         map.put("seconds", (int) dur.getSeconds());
         return map;
@@ -134,7 +149,7 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
 
     @Override
     public CompletableFuture<String> removeIt() {
-        var res = CompletableFuture.completedFuture(currentWord);
+        CompletableFuture<String> res = CompletableFuture.completedFuture(currentWord);
         currentWord = null;
         return res;
     }
@@ -144,7 +159,7 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
         return CompletableFuture.supplyAsync(() -> {
             try {
                 Thread.sleep(waitMs);
-                var current = Thread.currentThread().getId();
+                long current = Thread.currentThread().getId();
                 return Pair.with(idx, current);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -206,7 +221,7 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
 
     @Override
     public String GetTextOf(WeekDay[] taken, BitFlag<Days> days) {
-        var bld = new StringBuilder();
+    	StringBuilder bld = new StringBuilder();
         bld.append(Arrays.toString(taken));
         bld.append(" | ");
         bld.append(Arrays.toString(days.toArray()));
@@ -222,7 +237,7 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
 
     @Override
     public String get(int key) throws UnsupportedOperationException {
-        var value = cache.get(key);
+        String value = cache.get(key);
         if (value == null)
             throw new UnsupportedOperationException(key + " ?!");
         return value;
@@ -244,15 +259,15 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
 
     @Override
     public boolean enumWindows(PCallBack callback, int count) {
-        for (var i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)
             callback.invoke(i, i + count + "!");
         return true;
     }
 
     @Override
     public void startPub(int count) {
-        for (var i = 0; i < count; i++) {
-            var arg = new ThresholdEventArgs(i, LocalDateTime.now());
+        for (int i = 0; i < count; i++) {
+        	ThresholdEventArgs arg = new ThresholdEventArgs(i, LocalDateTime.now());
             fireThresholdReached(this, arg);
         }
     }
@@ -260,7 +275,7 @@ public class CalculatorService implements ICalculator, IDataTyped, IMultiple, IS
     private final List<ThresholdHandler> ThresholdReached = new LinkedList<>();
 
     private void fireThresholdReached(Object sender, ThresholdEventArgs arg) {
-        for (var handler : ThresholdReached)
+        for (ThresholdHandler handler : ThresholdReached)
             handler.invoke(sender, arg);
     }
 

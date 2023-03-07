@@ -1,12 +1,12 @@
 package jnetcall.java.impl.enc;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import jnetbase.java.meta.TypeToken;
 import jnetcall.java.api.enc.IByteEncoding;
 import jnetproto.java.beans.ProtoConvert;
 import jnetproto.java.beans.ProtoSettings;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 
 public final class BinaryEncoding implements IByteEncoding {
 
@@ -18,8 +18,8 @@ public final class BinaryEncoding implements IByteEncoding {
 
     @Override
     public <T> byte[] encode(T data) throws Exception {
-        try (var output = new ByteArrayOutputStream();
-             var proto = new ProtoConvert(null, output, _config)) {
+        try (ByteArrayOutputStream output = new ByteArrayOutputStream();
+        		ProtoConvert proto = new ProtoConvert(null, output, _config)) {
             proto.writeObject(data);
             return output.toByteArray();
         }
@@ -27,18 +27,18 @@ public final class BinaryEncoding implements IByteEncoding {
 
     @Override
     public <T> T decode(byte[] data, Class<T> clazz) throws Exception {
-        try (var input = new ByteArrayInputStream(data);
-             var proto = new ProtoConvert(input, null, _config)) {
-            var res = proto.readObject(clazz);
+        try (ByteArrayInputStream input = new ByteArrayInputStream(data);
+        		ProtoConvert proto = new ProtoConvert(input, null, _config)) {
+            T res = proto.readObject(clazz);
             return res;
         }
     }
 
     @Override
     public <T> T decode(byte[] data, TypeToken<T> token) throws Exception {
-        try (var input = new ByteArrayInputStream(data);
-             var proto = new ProtoConvert(input, null, _config)) {
-            var res = proto.readObject(token);
+        try (ByteArrayInputStream input = new ByteArrayInputStream(data);
+        		ProtoConvert proto = new ProtoConvert(input, null, _config)) {
+            T res = proto.readObject(token);
             return res;
         }
     }

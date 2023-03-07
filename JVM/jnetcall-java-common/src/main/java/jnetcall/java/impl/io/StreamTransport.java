@@ -1,12 +1,12 @@
 package jnetcall.java.impl.io;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import jnetbase.java.io.IRewindable;
 import jnetcall.java.api.enc.IEncoding;
 import jnetcall.java.api.io.IPullTransport;
 import jnetcall.java.api.io.ISendTransport;
-
-import java.io.InputStream;
-import java.io.OutputStream;
 
 public final class StreamTransport implements ISendTransport, IPullTransport, AutoCloseable {
 
@@ -24,7 +24,7 @@ public final class StreamTransport implements ISendTransport, IPullTransport, Au
     @Override
     public <T> T pull(Class<T> clazz) {
         try {
-            var bytes = StreamTools.readWithSize(_streamIn);
+            byte[] bytes = StreamTools.readWithSize(_streamIn);
             return _encoding.decode(bytes, clazz);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -34,11 +34,13 @@ public final class StreamTransport implements ISendTransport, IPullTransport, Au
     @Override
     public <T> void send(T payload) {
         try {
-            var bytes = _encoding.encode(payload);
+            byte[] bytes = _encoding.encode(payload);
             _streamOut.write(bytes, 0, bytes.length);
             _streamOut.flush();
-            if (_streamOut instanceof IRewindable r)
+            if (_streamOut instanceof IRewindable) {
+            	IRewindable r = (IRewindable)_streamOut;
                 r.rewind(bytes.length);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

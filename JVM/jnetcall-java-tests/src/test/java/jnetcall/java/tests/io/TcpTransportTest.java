@@ -1,10 +1,11 @@
 package jnetcall.java.tests.io;
 
-import jnetcall.java.api.io.ISendTransport;
-import jnetcall.java.impl.io.net.TcpTransport;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.javatuples.Pair;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import jnetcall.java.api.io.ISendTransport;
+import jnetcall.java.impl.io.net.TcpTransport;
 
 public final class TcpTransportTest extends TransportTest {
 
@@ -16,15 +17,15 @@ public final class TcpTransportTest extends TransportTest {
 
     @Override
     protected Pair<ISendTransport, ISendTransport> getBoth() {
-        var offset = getNextOffset();
-        var portOne = 12001 + offset;
-        var portTwo = 12051 + offset;
-        var left = new TcpTransport(
+        int offset = getNextOffset();
+        int portOne = 12001 + offset;
+        int portTwo = 12051 + offset;
+        TcpTransport left = new TcpTransport(
                 Encoding,
                 "localhost", portOne,
                 "localhost", portTwo
         );
-        var right = new TcpTransport(
+        TcpTransport right = new TcpTransport(
                 Encoding,
                 "localhost", portTwo,
                 "localhost", portOne

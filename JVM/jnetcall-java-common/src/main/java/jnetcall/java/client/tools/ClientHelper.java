@@ -6,9 +6,9 @@ import java.lang.reflect.Proxy;
 public final class ClientHelper {
 
     public static <T> T create(Class<T> clazz, InvocationHandler handler) {
-        var loader = clazz.getClassLoader();
-        var types = new Class[]{clazz};
-        var proxy = Proxy.newProxyInstance(loader, types, handler);
+        ClassLoader loader = clazz.getClassLoader();
+        Class[] types = new Class[]{clazz};
+        Object proxy = Proxy.newProxyInstance(loader, types, handler);
         return (T) proxy;
     }
 }

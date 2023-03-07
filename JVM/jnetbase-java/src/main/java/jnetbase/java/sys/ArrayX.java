@@ -9,17 +9,17 @@ import java.util.function.BiFunction;
 public final class ArrayX {
 
     public static ArrayList<Object> asObjectList(Iterable items) {
-        var list = new ArrayList<Object>();
-        for (var item : items)
+    	ArrayList<Object> list = new ArrayList<Object>();
+        for (Object item : items)
             list.add(item);
         return list;
     }
 
     public static Object[] asObjectArray(Object raw) {
-        if (raw instanceof Iterable<?> i)
-            return asObjectArray(i);
-        var array = new Object[Array.getLength(raw)];
-        for (var i = 0; i < array.length; i++)
+        if (raw instanceof Iterable<?>)
+            return asObjectArray((Iterable<?>)raw);
+        Object[] array = new Object[Array.getLength(raw)];
+        for (int i = 0; i < array.length; i++)
             array[i] = Array.get(raw, i);
         return array;
     }
@@ -34,16 +34,16 @@ public final class ArrayX {
 
     public static Object asTypedArray(Object[] args, Class<?> type, BiFunction<Object, Type, Object> convert) {
         convert = convert == null ? ArrayX::noConvert : convert;
-        var array = Array.newInstance(type, args.length);
-        for (var i = 0; i < args.length; i++)
+        Object array = Array.newInstance(type, args.length);
+        for (int i = 0; i < args.length; i++)
             Array.set(array, i, convert.apply(args[i], type));
         return array;
     }
 
     public static List<?> asTypedArrayList(Object[] args, Type type, BiFunction<Object, Type, Object> convert) {
         convert = convert == null ? ArrayX::noConvert : convert;
-        var list = new ArrayList<Object>();
-        for (var arg : args)
+        ArrayList<Object> list = new ArrayList<Object>();
+        for (Object arg : args)
             list.add(convert.apply(arg, type));
         return list;
     }

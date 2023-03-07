@@ -1,10 +1,10 @@
 package jnethotel.java.interop.api;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
-
 import java.util.Arrays;
 import java.util.List;
+
+import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 
 public abstract class hostfxr_initialize_parameters extends Structure {
     public Pointer size;

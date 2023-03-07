@@ -13,14 +13,14 @@ public final class ThreadExecutor implements IExecutor {
 
     @Override
     public void close() {
-        for (var thread : _threads)
+        for (Thread thread : _threads)
             thread.interrupt();
         _threads.clear();
     }
 
     @Override
     public Thread createThread(Runnable action, String name) {      	
-        var task = new Thread(action);
+        Thread task = new Thread(action);
         task.setDaemon(true);
         if (name != null)
           	task.setName(name);

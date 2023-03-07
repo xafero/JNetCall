@@ -1,24 +1,20 @@
 package org.example.api;
 
-import java.time.LocalDateTime;
-
 public interface ITriggering extends AutoCloseable {
 
-    interface PCallBack {
-        boolean invoke(int hWnd, String lParam);
-    }
+	interface PCallBack {
+		boolean invoke(int hWnd, String lParam);
+	}
 
-    boolean enumWindows(PCallBack callback, int count);
+	boolean enumWindows(PCallBack callback, int count);
 
-    void addThresholdReached(ThresholdHandler handler);
-    void removeThresholdReached(ThresholdHandler handler);
+	void addThresholdReached(ThresholdHandler handler);
 
-    void startPub(int count);
+	void removeThresholdReached(ThresholdHandler handler);
 
-    record ThresholdEventArgs(int Threshold, LocalDateTime TimeReached) {
-    }
+	interface ThresholdHandler {
+		void invoke(Object sender, ThresholdEventArgs e);
+	}
 
-    interface ThresholdHandler {
-        void invoke(Object sender, ThresholdEventArgs e);
-    }
+	void startPub(int count);
 }

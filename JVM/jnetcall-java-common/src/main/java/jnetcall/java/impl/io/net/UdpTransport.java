@@ -1,13 +1,13 @@
 package jnetcall.java.impl.io.net;
 
-import jnetcall.java.api.enc.IEncoding;
-import jnetcall.java.api.io.IPullTransport;
-import jnetcall.java.api.io.ISendTransport;
-
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
+
+import jnetcall.java.api.enc.IEncoding;
+import jnetcall.java.api.io.IPullTransport;
+import jnetcall.java.api.io.ISendTransport;
 
 public final class UdpTransport implements ISendTransport, IPullTransport, AutoCloseable {
 
@@ -36,7 +36,7 @@ public final class UdpTransport implements ISendTransport, IPullTransport, AutoC
     @Override
     public <T> T pull(Class<T> clazz) {
         try {
-            var buff = ByteBuffer.allocate(65535);
+            ByteBuffer buff = ByteBuffer.allocate(65535);
             _receiver.receive(buff);
             return _encoding.decode(buff.array(), clazz);
         } catch (Exception e) {
@@ -47,8 +47,8 @@ public final class UdpTransport implements ISendTransport, IPullTransport, AutoC
     @Override
     public <T> void send(T payload) {
         try {
-            var bytes = _encoding.encode(payload);
-            var buff = ByteBuffer.wrap(bytes);
+            byte[] bytes = _encoding.encode(payload);
+            ByteBuffer buff = ByteBuffer.wrap(bytes);
             _sender.write(buff);
         } catch (Exception e) {
             throw new RuntimeException(e);

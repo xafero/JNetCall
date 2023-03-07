@@ -1,12 +1,25 @@
 package jnetbase.java.meta;
 
-import jnetbase.java.sys.Strings;
-
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.BiFunction;
+
+import jnetbase.java.sys.Strings;
 
 public final class Reflect {
 
@@ -15,9 +28,12 @@ public final class Reflect {
     }
 
     public static boolean isAsync(Type ret) {
-        return ret instanceof ParameterizedType pt
-                && pt.getRawType() instanceof Class<?> rc
-                && Future.class.isAssignableFrom(rc);
+    	if (!(ret instanceof ParameterizedType))
+    		return false;
+    	ParameterizedType pt = (ParameterizedType)ret;
+    	Type raw = pt.getRawType();
+        return raw instanceof Class<?>
+            && Future.class.isAssignableFrom((Class<?>)raw);
     }
 
     public static boolean isDelegate(Object del) {
@@ -25,14 +41,17 @@ public final class Reflect {
             return false;
         if (del.getClass().getName().contains("Lambda"))
             return true;
-        if (del instanceof Class<?> c && c.isInterface() && c.getMethods().length == 1)
-            return true;
+        if (del instanceof Class<?>) {
+        	Class<?> c = (Class<?>)del;
+        	if (c.isInterface() && c.getMethods().length == 1)
+        		return true;
+        }
         return false;
     }
 
     public static Type getTaskType(Type taskType, Type defaultArg) {
-        var taskArg = taskType instanceof ParameterizedType pt
-                ? Arrays.stream(pt.getActualTypeArguments()).findFirst().orElse(null)
+        Type taskArg = taskType instanceof ParameterizedType
+                ? Arrays.stream(((ParameterizedType)taskType).getActualTypeArguments()).findFirst().orElse(null)
                 : null;
         if (taskArg == null) {
             return defaultArg == null ? Object.class : defaultArg;
@@ -41,11 +60,11 @@ public final class Reflect {
     }
 
     public static Method getMethod(BiFunction<Object, Object[], Object> func) {
-        var type = func.getClass();
-        var fields = type.getDeclaredFields();
-        var field = fields[0];
-        var raw = getField(field, func);
-        var method = (Method) raw;
+        Class<? extends BiFunction> type = func.getClass();
+        Field[] fields = type.getDeclaredFields();
+        Field field = fields[0];
+        Object raw = getField(field, func);
+        Method method = (Method) raw;
         return method;
     }
 
@@ -59,11 +78,11 @@ public final class Reflect {
     }
 
     public static Method getTheMethod(Object delegate) {
-        var type = delegate.getClass();
-        var interfaces = type.getInterfaces();
-        var interf = interfaces[0];
-        var methods = interf.getMethods();
-        var method = methods[0];
+        Class<? extends Object> type = delegate.getClass();
+        Class<?>[] interfaces = type.getInterfaces();
+        Class<?> interf = interfaces[0];
+        Method[] methods = interf.getMethods();
+        Method method = methods[0];
         return method;
     }
 
@@ -94,7 +113,7 @@ public final class Reflect {
     }
 
     public static Method getMethod(Object obj, String name, Class<?>... args) {
-        var clazz = obj.getClass();
+        Class<? extends Object> clazz = obj.getClass();
         try {
             return clazz.getMethod(name, args);
         } catch (Exception e) {
@@ -108,10 +127,10 @@ public final class Reflect {
     }
 
     public static List<Property> getProperties(Class<?> type) {
-        var getMap = new HashMap<String, Method>();
-        var setMap = new HashMap<String, Method>();
-        for (var method : type.getMethods()) {
-            var name = method.getName();
+        HashMap<String, Method> getMap = new HashMap<String, Method>();
+        HashMap<String, Method> setMap = new HashMap<String, Method>();
+        for (Method method : type.getMethods()) {
+            String name = method.getName();
             if (name.equalsIgnoreCase("getClass"))
                 continue;
             if (Character.isUpperCase(name.charAt(0))) {
@@ -131,12 +150,21 @@ public final class Reflect {
                 continue;
             }
         }
-        var props = new ArrayList<Property>();
-        var creator = type.getConstructors()[0];
-        for (var params : creator.getParameters()) {
-            var parmName = params.getName();
-            var getter = getMap.get(parmName);
-            var setter = setMap.get(parmName);
+        ArrayList<Property> props = new ArrayList<Property>();
+        Constructor<?> creator = type.getConstructors()[0];
+        for (Parameter params : creator.getParameters()) {
+            String parmName = params.getName();
+            Method getter = getMap.get(parmName);
+            Method setter = setMap.get(parmName);
+            if (getter == null && setter == null) {
+            	ParamName pna = params.getAnnotation(ParamName.class);
+            	Deprecated pda = params.getAnnotation(Deprecated.class);
+            	parmName = pna != null ? pna.value() : pda != null ? pda.since() : null;
+            	if (parmName != null) {
+            		getter = getMap.get(parmName);
+            		setter = setMap.get(parmName);            		
+            	}
+            }
             props.add(new Property(parmName, getter, setter));
         }
         return props;
@@ -144,9 +172,13 @@ public final class Reflect {
 
     public static Class extractRawClass(Type type)
     {
-        if (type instanceof ParameterizedType pt)
-            if (pt.getRawType() instanceof Class<?> pc)
-                return pc;
+        if (type instanceof ParameterizedType) {
+        	ParameterizedType pt = (ParameterizedType)type;
+        	Type raw = pt.getRawType();
+            if (raw instanceof Class<?>) {
+                return (Class<?>)raw;
+            }
+        }
         return (Class) type;
     }
 
@@ -189,13 +221,13 @@ public final class Reflect {
     }
 
     public static <T> Constructor<T> getFirstConstructor(Class<T> clazz) {
-        for (var item : clazz.getConstructors()  )
+        for (Constructor<?> item : clazz.getConstructors()  )
             return (Constructor<T>) item;
         return null;
     }
 
     public static List<Class<?>> getInterfaces(Class<?> type) {
-        var interfaces = new LinkedHashSet<Class<?>>();
+        LinkedHashSet<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
         getAllInterfaces(type, interfaces);
         return new ArrayList<>(interfaces);
     }
@@ -203,7 +235,7 @@ public final class Reflect {
     private static void getAllInterfaces(Class<?> type, Set<Class<?>> found) {
         while (type != null)
         {
-            for (var interf : type.getInterfaces())
+            for (Class<?> interf : type.getInterfaces())
                 if (found.add(interf))
                     getAllInterfaces(interf, found);
             type = type.getSuperclass();

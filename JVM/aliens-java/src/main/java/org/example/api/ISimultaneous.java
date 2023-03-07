@@ -1,8 +1,8 @@
 package org.example.api;
 
-import org.javatuples.Pair;
-
 import java.util.concurrent.CompletableFuture;
+
+import org.javatuples.Pair;
 
 public interface ISimultaneous extends AutoCloseable {
 

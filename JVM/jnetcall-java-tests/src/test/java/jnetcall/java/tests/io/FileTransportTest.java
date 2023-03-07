@@ -1,12 +1,13 @@
 package jnetcall.java.tests.io;
 
+import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.javatuples.Pair;
+
 import jnetbase.java.threads.ThreadExecutor;
 import jnetcall.java.api.io.ISendTransport;
 import jnetcall.java.impl.io.disk.FolderTransport;
-import org.javatuples.Pair;
-
-import java.nio.file.Path;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public final class FileTransportTest extends TransportTest {
 
@@ -20,17 +21,17 @@ public final class FileTransportTest extends TransportTest {
 
     @Override
     protected Pair<ISendTransport, ISendTransport> getBoth() {
-        var offset = getNextOffset();
-        var first = Path.of(Folder, 13001 + offset + "");
-        var second = Path.of(Folder, 13051 + offset + "");
-        var exe = new ThreadExecutor();
-        var left = new FolderTransport(
+        int offset = getNextOffset();
+        Path first = Path.of(Folder, 13001 + offset + "");
+        Path second = Path.of(Folder, 13051 + offset + "");
+        ThreadExecutor exe = new ThreadExecutor();
+        FolderTransport left = new FolderTransport(
                 Encoding,
                 first,
                 second,
                 exe
         );
-        var right = new FolderTransport(
+        FolderTransport right = new FolderTransport(
                 Encoding,
                 second,
                 first,
