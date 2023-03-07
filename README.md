@@ -5,6 +5,9 @@ Java VM .NET Call abstraction
 In the past there was atleast one solution for .NET Framework 4.5+ and Java 8 for reusing software libraries written in Java.
 But now I needed the ability to call current Java 18 code from C# 10 on .NET 6, so I created this project here.
 
+## Note
+There is a backport branch for Java 8 users.
+
 ## Summary
 * Call Java from C#
 (see NET/Alienator.Sharp/Program.cs) 
