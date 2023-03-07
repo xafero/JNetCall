@@ -52,7 +52,7 @@ public final class ServiceLot implements ICaller, IPullTransport {
         }
     }
 
-    private static final TypeToken<List<MethodCall>> mcList = new TypeToken() {
+    private static final TypeToken<List<MethodCall>> mcList = new TypeToken<List<MethodCall>>() {
     };
 
     @Override

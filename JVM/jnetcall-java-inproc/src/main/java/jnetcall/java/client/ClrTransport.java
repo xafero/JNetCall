@@ -47,7 +47,7 @@ final class ClrTransport implements IPullTransport {
         }
     }
 
-    private static final TypeToken<List<MethodResult>> mrList = new TypeToken() {
+    private static final TypeToken<List<MethodResult>> mrList = new TypeToken<List<MethodResult>>() {
     };
 
     private void onTick(FuncTimerTask t) {
